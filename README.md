@@ -9,6 +9,16 @@ This project exercises [testng dataProviders](http://testng.org/doc/documentatio
   * csv [testnt csv file](http://stackoverflow.com/questions/26033985/how-to-pass-parameter-to-data-provider-in-testng-from-csv-file)
   * fillo [fillo](http://codoid.com/fillo/)
 
+### Testing
+
+For testing the data providers a Selenium test case is run with every supported data provider. The test inputs are defined as table with colums
+
+| ID |  SEARCH | COUNT |
+|----|---------|-------|
+| 1  | junit   | 100   |
+
+which are the test `ID`, the seach term and expected minimum number of articles found on the forum.
+ 
 ### Links
 
  * [xml testng DataProviders](http://testngtricks.blogspot.com/2013/05/how-to-provide-data-to-dataproviders.html)
