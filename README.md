@@ -21,10 +21,12 @@ which are the test `ID`, the seach term and expected minimum number of articles 
  
 ### Links
 
+ * [MySQL testng dataprovider](https://github.com/sskorol/selenium-camp-samples/tree/master/mysql-data-provider)
  * [xml testng DataProviders](http://testngtricks.blogspot.com/2013/05/how-to-provide-data-to-dataproviders.html)
  * [javarticles.com](http://javarticles.com/2015/03/example-of-testng-dataprovider.html)
  * [testng-users forum](https://groups.google.com/forum/#!topic/testng-users/J437qa5PSx8)
  * [passing parameters to provider via Method](http://stackoverflow.com/questions/666477/possible-to-pass-parameters-to-testng-dataprovider)
+ * [JUnitPatams](https://github.com/Pragmatists/JUnitParams) - TestNg-style `JUnitParamsRunner` and `ParametersProvider` classes.
  * [testng samples](https://habrahabr.ru/post/121234/)
  * [barancev/testng_samples](https://github.com/barancev/testng_samples)
  * [ahussan/DataDriven](https://github.com/ahussan/DataDriven)
