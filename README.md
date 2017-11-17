@@ -11,14 +11,58 @@ This project exercises [testng dataProviders](http://testng.org/doc/documentatio
 
 ### Testing
 
-For testing the data providers a Selenium test case is run with every supported data provider. The test inputs are defined as table with colums
+For example test case performs Selenium link count test with the data providers of the following supported data types:
 
-| ID |  SEARCH | COUNT |
-|----|---------|-------|
-| 1  | junit   | 100   |
+* Excel 2003 
+* Excel 2007
+* Open Office Spreadsheet
+* JSON
 
-which are the test `ID`, the seach term and expected minimum number of articles found on the forum.
- 
+The test inputs are defined as table with colums
+
+| ROWNUM |  SEARCH | COUNT |
+|--------|---------|-------|
+| 1      | junit   | 100   |
+
+which are the test `ID`, the seach term and expected minimum count of articles found on the forum by the title search.
+
+The following annotations are provided to the test methods:
+
+```java
+@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "Excel 2003")
+	public void test_with_Excel_2003(double rowNum, String search_keyword,
+			double expected_count) throws InterruptedException {
+		parseSearchResult(search_keyword, expected_count);
+	}
+```
+or
+```java
+@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "Excel 2007")
+	public void test_with_Excel_2007(double rowNum, String search_keyword,
+			double expected_count) throws InterruptedException {
+		parseSearchResult(search_keyword, expected_count);
+	}
+```
+or
+```java
+@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "OpenOffice Spreadsheet")
+	public void test_with_OpenOffice_Spreadsheet(double rowNum,
+			String search_keyword, double expected_count)
+			throws InterruptedException {
+		parseSearchResult(search_keyword, expected_count);
+	}
+```
+or
+```java
+@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "JSON")
+	public void test_with_JSON(String search_keyword, double expected_count)
+			throws InterruptedException {
+		parseSearchResult(search_keyword, expected_count);
+	}
+```
+The data provider class would load all columns from Excel 2003, Excel 2007 or OpenOffice spreadsheet respectively and run test method with every row of data. It is up to the test developer to make the test method consume the correct number and type or parameters as there are columns
+in the spreadsheet.
+
 ### Links
 
  * [MySQL testng dataprovider](https://github.com/sskorol/selenium-camp-samples/tree/master/mysql-data-provider)
@@ -26,7 +70,7 @@ which are the test `ID`, the seach term and expected minimum number of articles 
  * [javarticles.com](http://javarticles.com/2015/03/example-of-testng-dataprovider.html)
  * [testng-users forum](https://groups.google.com/forum/#!topic/testng-users/J437qa5PSx8)
  * [passing parameters to provider via Method](http://stackoverflow.com/questions/666477/possible-to-pass-parameters-to-testng-dataprovider)
- * [JUnitPatams](https://github.com/Pragmatists/JUnitParams) - TestNg-style `JUnitParamsRunner` and `ParametersProvider` classes.
+ * [JUnitParams](https://github.com/Pragmatists/JUnitParams) - TestNg-style `JUnitParamsRunner` and `ParametersProvider` classes.
  * [testng samples](https://habrahabr.ru/post/121234/)
  * [barancev/testng_samples](https://github.com/barancev/testng_samples)
  * [ahussan/DataDriven](https://github.com/ahussan/DataDriven)

@@ -25,8 +25,8 @@
     <junit.version>4.12</junit.version>
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <phantomjsdriver.version>1.2.1</phantomjsdriver.version>
-    <poi.version>3.14</poi.version>
-    <poiooxml.version>3.14</poiooxml.version>
+    <poi.version>3.17</poi.version>
+    <poiooxml.version>3.17</poiooxml.version>
     <selenium.version>2.53.1</selenium.version>
     <selenium-chrome-driver.version>2.53.0</selenium-chrome-driver.version>
     <selenium-firefox-driver.version>2.53.0</selenium-firefox-driver.version>

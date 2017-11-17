@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -40,19 +41,21 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
-
-// testng data providers
-
+// conflicts with org.jopendocument.dom.spreadsheet.Cell;
 // import org.apache.poi.ss.usermodel.Cell;
-// import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
+
 // Office 2007+ XML
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+// open office
+import org.jopendocument.dom.ODDocument;
+import org.jopendocument.dom.ODPackage;
 import org.jopendocument.dom.ODValueType;
 import org.jopendocument.dom.spreadsheet.Cell;
 import org.jopendocument.dom.spreadsheet.Sheet;
@@ -65,6 +68,7 @@ import org.jopendocument.dom.spreadsheet.SpreadSheet;
 // JSON
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -166,20 +170,21 @@ public class DataProviderTest {
 	// NOTE: sporadically fails with
 	// Timeout in parseSearchResult when run together with other tests
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "Excel 2003")
-	public void test_with_Excel_2003(String search_keyword, double expected_count)
-			throws InterruptedException {
-		parseSearchResult(search_keyword, expected_count);
-	}
-
-	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "OpenOffice Spreadsheet")
-	public void test_with_OpenOffice_Spreadsheet(String search_keyword,
+	public void test_with_Excel_2003(double rowNum, String search_keyword,
 			double expected_count) throws InterruptedException {
 		parseSearchResult(search_keyword, expected_count);
 	}
 
-	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "Excel 2007")
-	public void test_with_Excel_2007(String search_keyword, double expected_count)
+	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "OpenOffice Spreadsheet")
+	public void test_with_OpenOffice_Spreadsheet(double rowNum,
+			String search_keyword, double expected_count)
 			throws InterruptedException {
+		parseSearchResult(search_keyword, expected_count);
+	}
+
+	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "Excel 2007")
+	public void test_with_Excel_2007(double rowNum, String search_keyword,
+			double expected_count) throws InterruptedException {
 		parseSearchResult(search_keyword, expected_count);
 	}
 
@@ -246,7 +251,7 @@ public class DataProviderTest {
 	}
 
 	@DataProvider(parallel = false, name = "Excel 2007")
-	public Object[][] createData_from_Excel2007(final ITestContext context,
+	public Object[][] createDataFromExcel2007(final ITestContext context,
 			final Method method) {
 
 		// String suiteName = context.getCurrentXmlTest().getSuite().getName();
@@ -258,6 +263,7 @@ public class DataProviderTest {
 		// String testParam =
 		// context.getCurrentXmlTest().getParameter("test_param");
 
+		/*
 		@SuppressWarnings("deprecation")
 		Map<String, String> parameters = (((TestRunner) context).getTest())
 				.getParameters();
@@ -265,67 +271,59 @@ public class DataProviderTest {
 			System.out.println("Data Provider Caller Parameter: " + key + " = "
 					+ parameters.get(key));
 		}
-
-		HashMap<String, String> columns = new HashMap<>();
-		List<Object[]> testData = new ArrayList<>();
-		Object[] testDataRow = {};
+		*/
+		Map<String, String> columns = new HashMap<>();
+		List<Object[]> result = new LinkedList<>();
 		XSSFWorkbook wb = null;
+		Map<String, String> columnHeaders = new HashMap<>();
 		String fileName = "data_2007.xlsx";
+		String sheetName = "Employee Data";
 		try {
 
-			String sheetName = "Employee Data";
 			wb = new XSSFWorkbook(fileName);
-			XSSFSheet sheet = wb.getSheet(sheetName);
-			// XSSFSheet sheet = wb.getSheetAt(0);
-			// sheet.getSheetName();
-			XSSFRow row;
-			XSSFCell cell;
-			int cellIndex = 0;
-			String cellColumn = "";
-			String search_keyword = "";
-			double expected_count = 0;
-			int id = 0;
-			Iterator<Row> rows = sheet.rowIterator();
-			while (rows.hasNext()) {
-				row = (XSSFRow) rows.next();
+			XSSFSheet sheet = (sheetName.isEmpty()) ? wb.getSheetAt(0)
+					: wb.getSheet(sheetName);
 
+			Iterator<Row> rows = sheet.rowIterator();
+			Iterator<org.apache.poi.ss.usermodel.Cell> cells;
+			while (rows.hasNext()) {
+				XSSFRow row = (XSSFRow) rows.next();
+				XSSFCell cell;
 				if (row.getRowNum() == 0) {
-					// skip the header
-					Iterator<org.apache.poi.ss.usermodel.Cell> cells = row.cellIterator();
+					cells = row.cellIterator();
 					while (cells.hasNext()) {
+
 						cell = (XSSFCell) cells.next();
-						String dataHeader = cell.getStringCellValue();
-						cellIndex = cell.getColumnIndex();
-						cellColumn = CellReference.convertNumToColString(cellIndex);
-						System.err
-								.println(cellIndex + " = " + cellColumn + " " + dataHeader);
-						columns.put(cellColumn, dataHeader);
+						int columnIndex = cell.getColumnIndex();
+						String columnHeader = cell.getStringCellValue();
+						String columnName = CellReference
+								.convertNumToColString(cell.getColumnIndex());
+						columnHeaders.put(columnName, columnHeader);
+
+						/*	System.err.println(
+									columnIndex + " = " + columnName + " " + columnHeader);
+						*/
 					}
+					// skip the header
 					continue;
 				}
-				Iterator<org.apache.poi.ss.usermodel.Cell> cells = row.cellIterator();
+				List<Object> resultRow = new LinkedList<>();
+				cells = row.cellIterator();
 				while (cells.hasNext()) {
 					cell = (XSSFCell) cells.next();
-					cellColumn = CellReference
-							.convertNumToColString(cell.getColumnIndex());
+					// TODO: column selection
+					/*
 					if (columns.get(cellColumn).equals("ID")) {
 						assertEquals(cell.getCellType(), XSSFCell.CELL_TYPE_NUMERIC);
-						id = (int) cell.getNumericCellValue();
+						// id = (int) cell.getNumericCellValue();
 					}
-					if (cellColumn.equals("B")) {
-						assertEquals(cell.getCellType(), XSSFCell.CELL_TYPE_STRING);
-						search_keyword = cell.getStringCellValue();
-					}
-					if (cellColumn.equals("C")) {
-						assertEquals(cell.getCellType(), XSSFCell.CELL_TYPE_NUMERIC);
-						expected_count = cell.getNumericCellValue();
-					}
+					*/
+					Object cellValue = safeUserModeCellValue(cell);
+					// System.err.println("Cell Value: " + cellValue.toString() + " "
+					// + cellValue.getClass());
+					resultRow.add(cellValue);
 				}
-				System.err.println(String.format(
-						"Row ID:%d\tSearch keyword:'%s'\tExpected minimum link count:%d",
-						id, search_keyword, (int) expected_count));
-				testDataRow = new Object[] { search_keyword, expected_count };
-				testData.add(testDataRow);
+				result.add(resultRow.toArray());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -337,61 +335,130 @@ public class DataProviderTest {
 				}
 			}
 		}
-		Object[][] testDataArray = new Object[testData.size()][];
-		testData.toArray(testDataArray);
-		return testDataArray;
+		Object[][] resultArray = new Object[result.size()][];
+		result.toArray(resultArray);
+		return resultArray;
+	}
+
+	// Safe conversion of type Excel cell object to Object / String value
+	public static Object safeUserModeCellValue(
+			org.apache.poi.ss.usermodel.Cell cell) {
+		if (cell == null) {
+			return null;
+		}
+		CellType type = cell.getCellTypeEnum();
+		Object result;
+		switch (type) {
+		case _NONE:
+			result = null;
+			break;
+		case NUMERIC:
+			result = cell.getNumericCellValue();
+			break;
+		case STRING:
+			result = cell.getStringCellValue();
+			break;
+		case FORMULA:
+			throw new IllegalStateException("The formula cell is not supported");
+		case BLANK:
+			result = null;
+			break;
+		case BOOLEAN:
+			result = cell.getBooleanCellValue();
+			break;
+		case ERROR:
+			throw new RuntimeException("Cell has an error");
+		default:
+			throw new IllegalStateException(
+					"Cell type: " + type + " is not supported");
+		}
+		return result;
+		// return (result == null) ? null : result.toString();
+	}
+
+	// https://www.jopendocument.org/docs/org/jopendocument/dom/ODValueType.html
+	public static Object safeOOCellValue(
+			org.jopendocument.dom.spreadsheet.Cell<ODDocument> cell) {
+		if (cell == null) {
+			return null;
+		}
+		Object result;
+		ODValueType type = cell.getValueType();
+		switch (type) {
+		case FLOAT:
+			result = Double.valueOf(cell.getValue().toString());
+			break;
+		case STRING:
+			result = cell.getTextValue();
+			break;
+		case TIME:
+			result = null; // TODO
+			break;
+		case BOOLEAN:
+			result = Boolean.getBoolean(cell.getValue().toString());
+			break;
+		default:
+			throw new IllegalStateException("Can't evaluate cell value");
+		}
+		// return (result == null) ? null : result.toString();
+		return result;
 	}
 
 	@DataProvider(parallel = false, name = "Excel 2003")
-	public Object[][] createData_from_Excel2003() {
+	public Object[][] createDataFromExcel2003() {
 
-		List<Object[]> testData = new ArrayList<>();
-		Object[] testDataRow = {};
+		List<Object[]> result = new LinkedList<>();
 
 		String fileName = "data_2003.xls";
+		String sheetName = "Employee Data";
 		HSSFWorkbook wb = null;
+		Iterator<org.apache.poi.ss.usermodel.Cell> cells;
+		Map<String, String> columnHeaders = new HashMap<>();
+
 		try {
 			InputStream ExcelFileToRead = new FileInputStream(fileName);
 			wb = new HSSFWorkbook(ExcelFileToRead);
+			HSSFSheet sheet = (sheetName.isEmpty()) ? wb.getSheetAt(0)
+					: wb.getSheet(sheetName);
 
-			// HSSFSheet sheet = wb.getSheetAt(0);
-			String sheetName = "Employee Data";
-			HSSFSheet sheet = wb.getSheet(sheetName);
-			HSSFRow row;
-			HSSFCell cell;
-
-			String search_keyword = "";
-			double expected_count = 0;
-
+			/*	System.err
+			.println("Reading Excel 2003 sheet : " + sheet.getSheetName());
+			*/
 			Iterator<Row> rows = sheet.rowIterator();
 			while (rows.hasNext()) {
-				row = (HSSFRow) rows.next();
-				if (row.getRowNum() == 0) { // ignore the header
+				HSSFRow row = (HSSFRow) rows.next();
+				HSSFCell cell;
+
+				if (row.getRowNum() == 0) {
+					cells = row.cellIterator();
+					while (cells.hasNext()) {
+
+						cell = (HSSFCell) cells.next();
+						int columnIndex = cell.getColumnIndex();
+						String columnHeader = cell.getStringCellValue();
+						String columnName = CellReference
+								.convertNumToColString(cell.getColumnIndex());
+						columnHeaders.put(columnName, columnHeader);
+
+						/* System.err.println(
+								 columnIndex + " = " + columnName + " " + columnHeader);
+						*/
+					}
+					// skip the header
 					continue;
 				}
-				Iterator<org.apache.poi.ss.usermodel.Cell> cells = row.cellIterator();
+
+				cells = row.cellIterator();
+				List<Object> resultRow = new LinkedList<>();
 				while (cells.hasNext()) {
 					cell = (HSSFCell) cells.next();
-					if (cell.getColumnIndex() == 2) {
-						if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
-							expected_count = cell.getNumericCellValue();
-						} else {
-							expected_count = 0;
-						}
-					}
-					if (cell.getColumnIndex() == 1) {
-						if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
-							search_keyword = cell.getStringCellValue();
-						} else if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
-							search_keyword = Double.toString(cell.getNumericCellValue());
-						} else {
-							// TODO: Boolean, Formula, Errors
-							search_keyword = "";
-						}
-					}
+					Object cellValue = safeUserModeCellValue(cell);
+					/* System.err.println("Cell Value: " + cellValue.toString() + " "
+							+ cellValue.getClass());
+					*/
+					resultRow.add(cellValue);
 				}
-				testDataRow = new Object[] { search_keyword, expected_count };
-				testData.add(testDataRow);
+				result.add(resultRow.toArray());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -403,46 +470,49 @@ public class DataProviderTest {
 				}
 			}
 		}
-		Object[][] testDataArray = new Object[testData.size()][];
-		testData.toArray(testDataArray);
-		return testDataArray;
+		Object[][] resultArray = new Object[result.size()][];
+		result.toArray(resultArray);
+		return resultArray;
 	}
 
 	@DataProvider(parallel = false, name = "OpenOffice Spreadsheet")
 	public Object[][] createData_from_OpenOfficeSpreadsheet() {
 
 		HashMap<String, String> columns = new HashMap<>();
-		List<Object[]> testData = new ArrayList<>();
-		Object[] testDataRow = {};
+		List<Object[]> result = new LinkedList<>();
 
 		String fileName = "data.ods";
-		Sheet sheet;
-
-		String search_keyword = "";
-		double expected_count = 0;
-		int id = 0;
+		String sheetName = "Employee Data";
 
 		try {
 			File file = new File(fileName);
-			String sheetName = "Employee Data";
-			sheet = SpreadSheet.createFromFile(file).getSheet(sheetName);
-			// sheet = SpreadSheet.createFromFile(file).getFirstSheet();
-			System.err.println("Sheet name: " + sheet.getName());
-			int nColCount = sheet.getColumnCount();
-			int nRowCount = sheet.getRowCount();
+			SpreadSheet spreadSheet = SpreadSheet.createFromFile(file);
+			// https://www.programcreek.com/java-api-examples/index.php?api=org.jopendocument.dom.spreadsheet.Sheet
+			// SpreadSheet spreadSheet = SpreadSheet.get(new ODPackage(inputStream));
+			Sheet sheet = (sheetName.isEmpty()) ? spreadSheet.getFirstSheet()
+					: spreadSheet.getSheet(sheetName);
+
+			// System.err
+			// .println("Reading Open Office Spreadsheet : " + sheet.getName());
+
+			int columnCount = sheet.getColumnCount();
+			int rowCount = sheet.getRowCount();
 			@SuppressWarnings("rawtypes")
 			Cell cell = null;
-			for (int nColIndex = 0; nColIndex < nColCount; nColIndex++) {
-				String header = sheet.getImmutableCellAt(nColIndex, 0).getValue()
-						.toString();
-				if (StringUtils.isBlank(header)) {
+			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+				String columnHeader = sheet.getImmutableCellAt(columnIndex, 0)
+						.getValue().toString();
+				if (StringUtils.isBlank(columnHeader)) {
 					break;
 				}
-				String column = CellReference.convertNumToColString(nColIndex);
-				System.err.println(nColIndex + " = " + column + " " + header);
-				columns.put(column, header);
+				String columnName = CellReference.convertNumToColString(columnIndex);
+				columns.put(columnName, columnHeader);
+				/*
+				System.err
+						.println(columnIndex + " = " + columnName + " " + columnHeader);
+				 */
 			}
-			// often there may be no ranges defined
+			// NOTE: often there may be no ranges defined
 			Set<String> rangeeNames = sheet.getRangesNames();
 			Iterator<String> rangeNamesIterator = rangeeNames.iterator();
 
@@ -450,15 +520,16 @@ public class DataProviderTest {
 				System.err.println("Range = " + rangeNamesIterator.next());
 			}
 			// isCellBlank has protected access in Table
-			for (int nRowIndex = 1; nRowIndex < nRowCount
-					&& StringUtils.isNotBlank(sheet.getImmutableCellAt(0, nRowIndex)
-							.getValue().toString()); nRowIndex++) {
-				for (int nColIndex = 0; nColIndex < nColCount && StringUtils
-						.isNotBlank(sheet.getImmutableCellAt(nColIndex, nRowIndex)
-								.getValue().toString()); nColIndex++) {
-					cell = sheet.getImmutableCellAt(nColIndex, nRowIndex);
-					String cellName = CellReference.convertNumToColString(nColIndex);
-
+			for (int rowIndex = 1; rowIndex < rowCount && StringUtils.isNotBlank(sheet
+					.getImmutableCellAt(0, rowIndex).getValue().toString()); rowIndex++) {
+				List<Object> resultRow = new LinkedList<>();
+				for (int columnIndex = 0; columnIndex < columnCount && StringUtils
+						.isNotBlank(sheet.getImmutableCellAt(columnIndex, rowIndex)
+								.getValue().toString()); columnIndex++) {
+					cell = sheet.getImmutableCellAt(columnIndex, rowIndex);
+					// TODO: column selection
+					/*
+					String cellName = CellReference.convertNumToColString(columnIndex);
 					if (columns.get(cellName).equals("COUNT")) {
 						assertEquals(cell.getValueType(), ODValueType.FLOAT);
 						expected_count = Double.valueOf(cell.getValue().toString());
@@ -472,22 +543,24 @@ public class DataProviderTest {
 						assertEquals(cell.getValueType(), ODValueType.FLOAT);
 						id = Integer.decode(cell.getValue().toString());
 					}
+					*/
+					@SuppressWarnings("unchecked")
+					Object cellValue = safeOOCellValue(cell);
+					/* System.err.println("Cell Value: " + cellValue.toString() + " "
+							+ cellValue.getClass());
+					*/
+					resultRow.add(cellValue);
 				}
-
-				System.err.println(String.format(
-						"Row ID:%d\tSearch term:'%s'\tExpected minimum link count:%d", id,
-						search_keyword, (int) expected_count));
-				testDataRow = new Object[] { search_keyword, expected_count };
-				testData.add(testDataRow);
+				result.add(resultRow.toArray());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
-		Object[][] testDataArray = new Object[testData.size()][];
-		testData.toArray(testDataArray);
-		return testDataArray;
+		Object[][] resultArray = new Object[result.size()][];
+		result.toArray(resultArray);
+		return resultArray;
 	}
 
 	@DataProvider(parallel = false, name = "JSON")
@@ -497,7 +570,7 @@ public class DataProviderTest {
 		String fileName = "data.json";
 		JSONObject allTestData = new JSONObject();
 		List<Object[]> testData = new ArrayList<>();
-		ArrayList<String> hashes = new ArrayList<>();
+		List<String> hashes = new ArrayList<>();
 		String search_keyword = "";
 		double expected_count = 0;
 
