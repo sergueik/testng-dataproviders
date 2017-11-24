@@ -106,10 +106,7 @@ public class DataProviderTest {
 	public static final String TEST_DESC_STR = "Search keyword";
 
 	private static long implicit_wait_interval = 3;
-	private static int flexible_wait_interval = 5;
-	private static int page_load_timeout_interval = 30;
-	private static long wait_polling_interval = 500;
-	private static long highlight_interval = 100;
+	private static int page_load_timeout_interval = 10;
 
 	@BeforeClass(alwaysRun = true)
 	public void setupBeforeClass(final ITestContext context)
@@ -189,9 +186,10 @@ public class DataProviderTest {
 	}
 
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "JSON")
-	public void test_with_JSON(String search_keyword, double expected_count)
+	public void test_with_JSON(String strCount, String strKeyword)
 			throws InterruptedException {
-		parseSearchResult(search_keyword, expected_count);
+		double expected_count = Double.valueOf(strCount);
+		parseSearchResult(strKeyword, expected_count);
 	}
 
 	@AfterClass(alwaysRun = true)
@@ -568,27 +566,29 @@ public class DataProviderTest {
 			final Method method) throws org.json.JSONException {
 
 		String fileName = "data.json";
-		JSONObject allTestData = new JSONObject();
+		String testName = "test";
+		Boolean debug = true;
+
+		List<String> columns = new ArrayList<>();
+
+		JSONObject obj = new JSONObject();
 		List<Object[]> testData = new ArrayList<>();
+		List<Object> testDataRow = new LinkedList<>();
 		List<String> hashes = new ArrayList<>();
-		String search_keyword = "";
-		double expected_count = 0;
 
 		JSONArray rows = new JSONArray();
 
 		try {
 			byte[] encoded = Files.readAllBytes(Paths.get(fileName));
-			allTestData = new JSONObject(
-					new String(encoded, Charset.forName("UTF-8")));
+			obj = new JSONObject(new String(encoded, Charset.forName("UTF-8")));
 		} catch (org.json.JSONException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		String testName = "test";
 
-		assertTrue(allTestData.has(testName));
-		String dataString = allTestData.getString(testName);
+		assertTrue(obj.has(testName));
+		String dataString = obj.getString(testName);
 
 		try {
 			rows = new JSONArray(dataString);
@@ -601,16 +601,45 @@ public class DataProviderTest {
 			hashes.add(entry);
 		}
 		assertTrue(hashes.size() > 0);
+
+		String firstRow = hashes.get(0);
+
+		// BUG: apparently the row gets modified by org.json.JSONArray
+		// column order is not preserved
+		firstRow = firstRow.replaceAll("\n", " ").substring(1,
+				firstRow.length() - 1);
+		if (debug)
+			System.err.println("row: " + firstRow);
+
+		String[] pairs = firstRow.split(",");
+
+		for (String pair : pairs) {
+			String[] values = pair.split(":");
+
+			String column = values[0].substring(1, values[0].length() - 1).trim();
+			if (debug) {
+				System.err.println("column: " + column);
+			}
+			columns.add(column);
+		}
+
 		for (String entry : hashes) {
 			JSONObject entryObj = new JSONObject();
+			testDataRow = new LinkedList<>();
 			try {
 				entryObj = new JSONObject(entry);
 			} catch (org.json.JSONException e) {
 				e.printStackTrace();
 			}
+			for (String column : columns) {
+				testDataRow.add(entryObj.get(column).toString());
+			}
+			testData.add(testDataRow.toArray());
+
+			/*
 			@SuppressWarnings("unchecked")
 			Iterator<String> entryKeyIterator = entryObj.keys();
-
+			
 			while (entryKeyIterator.hasNext()) {
 				String entryKey = entryKeyIterator.next();
 				String entryData = entryObj.get(entryKey).toString();
@@ -625,7 +654,9 @@ public class DataProviderTest {
 				}
 			}
 			testData.add(new Object[] { search_keyword, expected_count });
+			*/
 		}
+
 		Object[][] testDataArray = new Object[testData.size()][];
 		testData.toArray(testDataArray);
 		return testDataArray;
