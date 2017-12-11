@@ -1,4 +1,4 @@
-package org.dataprovider;
+package com.github.sergueik.dataprovider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -590,22 +590,23 @@ public class DataProviderTest {
 		assertTrue(obj.has(testName));
 		String dataString = obj.getString(testName);
 
+		// possible org.json.JSONException
 		try {
 			rows = new JSONArray(dataString);
 		} catch (org.json.JSONException e) {
 			e.printStackTrace();
 		}
 		for (int i = 0; i < rows.length(); i++) {
-			String entry = rows.getString(i); // possible
-			// org.json.JSONException
+			String entry = rows.getString(i);
 			hashes.add(entry);
 		}
 		assertTrue(hashes.size() > 0);
 
 		String firstRow = hashes.get(0);
 
-		// BUG: apparently the row gets modified by org.json.JSONArray
-		// column order is not preserved
+		// NOTE: apparently after invoking org.json.JSON library the order of keys
+		// inside the firstRow will be non-deterministic
+		// https://stackoverflow.com/questions/4515676/keep-the-order-of-the-json-keys-during-json-conversion-to-csv
 		firstRow = firstRow.replaceAll("\n", " ").substring(1,
 				firstRow.length() - 1);
 		if (debug)
