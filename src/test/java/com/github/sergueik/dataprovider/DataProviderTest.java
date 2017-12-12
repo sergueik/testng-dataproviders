@@ -1,4 +1,4 @@
-package org.dataprovider;
+package com.github.sergueik.dataprovider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
