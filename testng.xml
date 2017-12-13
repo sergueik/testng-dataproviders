@@ -10,6 +10,7 @@
         <methods>
           <include name="test_with_Excel_2007"/>
           <include name="test_with_JSON"/>
+                    <include name="test1_csv"/>
           <include name="test_with_OpenOffice_Spreadsheet"/>
           <include name="test_with_Excel_2003"/>
         </methods>

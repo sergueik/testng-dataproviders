@@ -1,39 +1,16 @@
 package com.github.sergueik.dataprovider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import java.lang.reflect.Method;
-import java.nio.charset.Charset;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
-
-import java.util.concurrent.TimeUnit;
-
-import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 // OLE2 Office Documents
@@ -46,55 +23,29 @@ import org.apache.poi.ss.usermodel.Row;
 // conflicts with org.jopendocument.dom.spreadsheet.Cell;
 // import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellReference;
-
 // Office 2007+ XML
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 // open office
 import org.jopendocument.dom.ODDocument;
-import org.jopendocument.dom.ODPackage;
 import org.jopendocument.dom.ODValueType;
 import org.jopendocument.dom.spreadsheet.Cell;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
-
-// NOTE: cannot import org.apache.poi.ss.usermodel.Cell:
-// a type with the same simple name is already defined by the single-type-import of org.jopendocument.dom.spreadsheet.Cell
-// import org.apache.poi.ss.usermodel.Cell;
-
-// JSON
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.IAttributes;
 import org.testng.ITestContext;
-import org.testng.TestRunner;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-import org.testng.annotations.DataProvider;
+
+/**
+ * @ExcelParametersProvider container class for testng dataProvider method
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ */
 
 public class ExcelParametersProvider {
 
 	@DataProvider(parallel = false, name = "OpenOffice Spreadsheet")
-	public Object[][] createData_from_OpenOfficeSpreadsheet() {
+	public static Object[][] createData_from_OpenOfficeSpreadsheet() {
 
 		HashMap<String, String> columns = new HashMap<>();
 		List<Object[]> result = new LinkedList<>();
@@ -182,7 +133,7 @@ public class ExcelParametersProvider {
 	}
 
 	@DataProvider(parallel = false, name = "Excel 2007")
-	public Object[][] createDataFromExcel2007(final ITestContext context,
+	public static Object[][] createDataFromExcel2007(final ITestContext context,
 			final Method method) {
 
 		// String suiteName = context.getCurrentXmlTest().getSuite().getName();
@@ -272,7 +223,7 @@ public class ExcelParametersProvider {
 	}
 
 	@DataProvider(parallel = false, name = "Excel 2003")
-	public Object[][] createDataFromExcel2003() {
+	public static Object[][] createDataFromExcel2003() {
 
 		List<Object[]> result = new LinkedList<>();
 
