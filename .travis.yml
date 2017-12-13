@@ -1,13 +1,13 @@
 language: java
 script: mvn test
 addons:
-   firefox: "46.0"
+  firefox: '46.0'
 before_install:
- - "export DISPLAY=:99.0"
- - "export TRAVIS=true"
- - "sh -e /etc/init.d/xvfb start"
+  - 'export DISPLAY=:99.0'
+  - 'export TRAVIS=true'
+  - 'sh -e /etc/init.d/xvfb start'
 after_script:
-- "sh -e /etc/init.d/xvfb stop"
+  - 'sh -e /etc/init.d/xvfb stop'
 jdk:
   - oraclejdk8
 notifications:

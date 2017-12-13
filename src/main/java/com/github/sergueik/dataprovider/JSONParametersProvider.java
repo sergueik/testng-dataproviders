@@ -31,13 +31,14 @@ import org.testng.annotations.DataProvider;
  */
 public class JSONParametersProvider {
 
+	private static boolean debug = false;
+
 	@DataProvider(parallel = false, name = "JSON")
 	public static Object[][] createData_from_JSON(final ITestContext context,
 			final Method method) throws org.json.JSONException {
 
 		String fileName = "data.json";
 		String testName = "test";
-		Boolean debug = true;
 
 		List<String> columns = new ArrayList<>();
 

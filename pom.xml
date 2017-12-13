@@ -28,8 +28,8 @@
     <poi.version>3.17</poi.version>
     <poiooxml.version>3.17</poiooxml.version>
     <selenium.version>2.53.1</selenium.version>
-    <selenium-chrome-driver.version>2.53.0</selenium-chrome-driver.version>
-    <selenium-firefox-driver.version>2.53.0</selenium-firefox-driver.version>
+    <selenium-chrome-driver.version>${selenium.version}</selenium-chrome-driver.version>
+    <selenium-firefox-driver.version>${selenium.version}</selenium-firefox-driver.version>
     <testng.version>6.8.8</testng.version>
   </properties>
   <dependencies>

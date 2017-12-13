@@ -43,6 +43,7 @@ import org.testng.annotations.DataProvider;
  */
 
 public class ExcelParametersProvider {
+	private static boolean debug = false;
 
 	@DataProvider(parallel = false, name = "OpenOffice Spreadsheet")
 	public static Object[][] createData_from_OpenOfficeSpreadsheet() {
@@ -60,9 +61,10 @@ public class ExcelParametersProvider {
 			// SpreadSheet spreadSheet = SpreadSheet.get(new ODPackage(inputStream));
 			Sheet sheet = (sheetName.isEmpty()) ? spreadSheet.getFirstSheet()
 					: spreadSheet.getSheet(sheetName);
-
-			// System.err
-			// .println("Reading Open Office Spreadsheet : " + sheet.getName());
+			if (debug) {
+				System.err
+						.println("Reading Open Office Spreadsheet : " + sheet.getName());
+			}
 
 			int columnCount = sheet.getColumnCount();
 			int rowCount = sheet.getRowCount();
@@ -76,17 +78,19 @@ public class ExcelParametersProvider {
 				}
 				String columnName = CellReference.convertNumToColString(columnIndex);
 				columns.put(columnName, columnHeader);
-				/*
-				System.err
-						.println(columnIndex + " = " + columnName + " " + columnHeader);
-				 */
+				if (debug) {
+					System.err
+							.println(columnIndex + " = " + columnName + " " + columnHeader);
+				}
 			}
 			// NOTE: often there may be no ranges defined
 			Set<String> rangeeNames = sheet.getRangesNames();
 			Iterator<String> rangeNamesIterator = rangeeNames.iterator();
 
 			while (rangeNamesIterator.hasNext()) {
-				System.err.println("Range = " + rangeNamesIterator.next());
+				if (debug) {
+					System.err.println("Range = " + rangeNamesIterator.next());
+				}
 			}
 			// isCellBlank has protected access in Table
 			for (int rowIndex = 1; rowIndex < rowCount && StringUtils.isNotBlank(sheet
@@ -115,9 +119,10 @@ public class ExcelParametersProvider {
 					*/
 					@SuppressWarnings("unchecked")
 					Object cellValue = safeOOCellValue(cell);
-					/* System.err.println("Cell Value: " + cellValue.toString() + " "
-							+ cellValue.getClass());
-					*/
+					if (debug) {
+						System.err.println("Cell Value: " + cellValue.toString() + " "
+								+ cellValue.getClass());
+					}
 					resultRow.add(cellValue);
 				}
 				result.add(resultRow.toArray());
@@ -181,10 +186,10 @@ public class ExcelParametersProvider {
 						String columnName = CellReference
 								.convertNumToColString(cell.getColumnIndex());
 						columnHeaders.put(columnName, columnHeader);
-
-						/*	System.err.println(
+						if (debug) {
+							System.err.println(
 									columnIndex + " = " + columnName + " " + columnHeader);
-						*/
+						}
 					}
 					// skip the header
 					continue;
@@ -201,8 +206,10 @@ public class ExcelParametersProvider {
 					}
 					*/
 					Object cellValue = safeUserModeCellValue(cell);
-					// System.err.println("Cell Value: " + cellValue.toString() + " "
-					// + cellValue.getClass());
+					if (debug) {
+						System.err.println("Cell Value: " + cellValue.toString() + " "
+								+ cellValue.getClass());
+					}
 					resultRow.add(cellValue);
 				}
 				result.add(resultRow.toArray());
@@ -238,10 +245,10 @@ public class ExcelParametersProvider {
 			wb = new HSSFWorkbook(ExcelFileToRead);
 			HSSFSheet sheet = (sheetName.isEmpty()) ? wb.getSheetAt(0)
 					: wb.getSheet(sheetName);
-
-			/*	System.err
-			.println("Reading Excel 2003 sheet : " + sheet.getSheetName());
-			*/
+			if (debug) {
+				System.err
+						.println("Reading Excel 2003 sheet : " + sheet.getSheetName());
+			}
 			Iterator<Row> rows = sheet.rowIterator();
 			while (rows.hasNext()) {
 				HSSFRow row = (HSSFRow) rows.next();
@@ -257,10 +264,10 @@ public class ExcelParametersProvider {
 						String columnName = CellReference
 								.convertNumToColString(cell.getColumnIndex());
 						columnHeaders.put(columnName, columnHeader);
-
-						/* System.err.println(
-								 columnIndex + " = " + columnName + " " + columnHeader);
-						*/
+						if (debug) {
+							System.err.println(
+									columnIndex + " = " + columnName + " " + columnHeader);
+						}
 					}
 					// skip the header
 					continue;
@@ -271,9 +278,10 @@ public class ExcelParametersProvider {
 				while (cells.hasNext()) {
 					cell = (HSSFCell) cells.next();
 					Object cellValue = safeUserModeCellValue(cell);
-					/* System.err.println("Cell Value: " + cellValue.toString() + " "
-							+ cellValue.getClass());
-					*/
+					if (debug) {
+						System.err.println("Cell Value: " + cellValue.toString() + " "
+								+ cellValue.getClass());
+					}
 					resultRow.add(cellValue);
 				}
 				result.add(resultRow.toArray());

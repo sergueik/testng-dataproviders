@@ -1,16 +1,17 @@
 <?xml version="1.0"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Suite 1" verbose="10" configfailurepolicy="continue">
+  <!-- NOTE: testng parameters are not currently used in the test -->
   <parameter name="selenium.host" value="127.0.0.1"/>
   <parameter name="selenium.port" value="4444"/>
-  <parameter name="selenium.browser" value="chrome"/>
+  <parameter name="selenium.browser" value="firefox"/>
   <test name="Parse Search Result" preserve-order="true" parallel="false">
     <classes>
       <class name="com.github.sergueik.dataprovider.DataProviderTest">
         <methods>
           <include name="test_with_Excel_2007"/>
           <include name="test_with_JSON"/>
-                    <include name="test1_csv"/>
+          <include name="test1_csv"/>
           <include name="test_with_OpenOffice_Spreadsheet"/>
           <include name="test_with_Excel_2003"/>
         </methods>
