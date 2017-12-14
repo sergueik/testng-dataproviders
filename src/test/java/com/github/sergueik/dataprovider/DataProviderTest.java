@@ -12,7 +12,9 @@ import java.util.regex.Pattern;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
@@ -38,9 +40,17 @@ import static org.testng.Assert.assertTrue;
 
 import org.apache.commons.lang3.StringUtils;
 
+import io.github.bonigarcia.wdm.Architecture;
+import io.github.bonigarcia.wdm.BrowserManager;
+import io.github.bonigarcia.wdm.Downloader;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import io.github.bonigarcia.wdm.FirefoxDriverManager;
+import io.github.bonigarcia.wdm.ChromeDriverManager;
+
 public class DataProviderTest {
 
-	public RemoteWebDriver driver = null;
+	public WebDriver driver = null;
+	private WebDriverWait wait;
 
 	// for grid testing
 	public String seleniumHost = null;
@@ -75,17 +85,22 @@ public class DataProviderTest {
 	public void setupBeforeClass(final ITestContext context)
 			throws InterruptedException {
 		if (env.containsKey("TRAVIS") && env.get("TRAVIS").equals("true")) {
-			// temporarily stub under Travis
-			return;
+			// use DriverManager under Travis
+			// https://github.com/eviltester/selenium-driver-manager-example
+			ChromeDriverManager.getInstance().setup();
+			driver = new ChromeDriver();
+		} else {
+			// https://github.com/eviltester/selenium-driver-manager-example/blob/master/pom.xml
+			DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+			// only set when supported
+			// capabilities.setCapability("marionette", false);
+			LoggingPreferences logging_preferences = new LoggingPreferences();
+			logging_preferences.enable(LogType.BROWSER, Level.ALL);
+			capabilities.setCapability(CapabilityType.LOGGING_PREFS,
+					logging_preferences);
+			driver = new FirefoxDriver(capabilities);
 		}
-		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-		// only set when supported
-		// capabilities.setCapability("marionette", false);
-		LoggingPreferences logging_preferences = new LoggingPreferences();
-		logging_preferences.enable(LogType.BROWSER, Level.ALL);
-		capabilities.setCapability(CapabilityType.LOGGING_PREFS,
-				logging_preferences);
-		driver = new FirefoxDriver(capabilities);
+		wait = new WebDriverWait(driver, 30);
 		try {
 			driver.manage().window().setSize(new Dimension(600, 800));
 			driver.manage().timeouts().pageLoadTimeout(page_load_timeout_interval,
@@ -135,14 +150,7 @@ public class DataProviderTest {
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2003", dataProviderClass = ExcelParametersProvider.class)
 	public void test_with_Excel_2003(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
-		if (env.containsKey("TRAVIS") && env.get("TRAVIS").equals("true")) {
-			// temporarily stub under Travis
-			System.err.println(String.format("Keyword: %s Count : %s", searchKeyword,
-					expectedCount));
-
-		} else {
-			parseSearchResult(searchKeyword, expectedCount);
-		}
+		parseSearchResult(searchKeyword, expectedCount);
 	}
 
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
@@ -267,7 +275,6 @@ public class DataProviderTest {
 				.println(String.format("Search keyword: \"%s\"\tMinimal Link #: \"%d\"",
 						searchKeyword, (int) expectedCount));
 
-		WebDriverWait wait = new WebDriverWait(driver, 30);
 		wait.until(ExpectedConditions
 				.visibilityOfElementLocated(By.id("inner_search_form")));
 		WebElement element = wait.until(
