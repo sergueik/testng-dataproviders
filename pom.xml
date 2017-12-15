@@ -163,11 +163,10 @@
           <suiteXmlFiles>
             <suiteXmlFile>testng.xml</suiteXmlFile>
           </suiteXmlFiles>
-<!--
           <systemPropertyVariables>
             <webdriver.chrome.driver>c:/java/selenium/chromedriver.exe</webdriver.chrome.driver>
+            <webdriver.gecko.driver>c:/java/selenium/geckodriver.exe</webdriver.gecko.driver>
           </systemPropertyVariables>
--->
         </configuration>
       </plugin>
       <plugin>

@@ -43,19 +43,31 @@ import org.testng.annotations.DataProvider;
  */
 
 public class ExcelParametersProvider {
+
 	private static boolean debug = false;
+	private static String filePath = null;
+	private static String sheetName = "Employee Data";
 
 	@DataProvider(parallel = false, name = "OpenOffice Spreadsheet")
-	public static Object[][] createData_from_OpenOfficeSpreadsheet() {
+	public static Object[][] createData_from_OpenOfficeSpreadsheet(
+			final ITestContext context, final Method method) {
+		DataFileParameters parameters = method
+				.getAnnotation(DataFileParameters.class);
+		if (parameters != null) {
+			filePath = String.format("%s/%s",
+					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
+							? System.getProperty("user.dir") : parameters.path(),
+					parameters.name());
+		} else {
+			throw new RuntimeException(
+					"Missing / invalid DataFileParameters annotation");
+		}
 
 		HashMap<String, String> columns = new HashMap<>();
 		List<Object[]> result = new LinkedList<>();
 
-		String fileName = "data.ods";
-		String sheetName = "Employee Data";
-
 		try {
-			File file = new File(fileName);
+			File file = new File(filePath);
 			SpreadSheet spreadSheet = SpreadSheet.createFromFile(file);
 			// https://www.programcreek.com/java-api-examples/index.php?api=org.jopendocument.dom.spreadsheet.Sheet
 			// SpreadSheet spreadSheet = SpreadSheet.get(new ODPackage(inputStream));
@@ -140,6 +152,17 @@ public class ExcelParametersProvider {
 	@DataProvider(parallel = false, name = "Excel 2007")
 	public static Object[][] createDataFromExcel2007(final ITestContext context,
 			final Method method) {
+		DataFileParameters parameters = method
+				.getAnnotation(DataFileParameters.class);
+		if (parameters != null) {
+			filePath = String.format("%s/%s",
+					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
+							? System.getProperty("user.dir") : parameters.path(),
+					parameters.name());
+		} else {
+			throw new RuntimeException(
+					"Missing / invalid DataFileParameters annotation");
+		}
 
 		// String suiteName = context.getCurrentXmlTest().getSuite().getName();
 		System.err.println("Data Provider Caller Suite: "
@@ -163,11 +186,10 @@ public class ExcelParametersProvider {
 		List<Object[]> result = new LinkedList<>();
 		XSSFWorkbook wb = null;
 		Map<String, String> columnHeaders = new HashMap<>();
-		String fileName = "data_2007.xlsx";
-		String sheetName = "Employee Data";
+		// String filePath = "data_2007.xlsx";
+		// String sheetName = "Employee Data";
 		try {
-
-			wb = new XSSFWorkbook(fileName);
+			wb = new XSSFWorkbook(filePath);
 			XSSFSheet sheet = (sheetName.isEmpty()) ? wb.getSheetAt(0)
 					: wb.getSheet(sheetName);
 
@@ -230,18 +252,30 @@ public class ExcelParametersProvider {
 	}
 
 	@DataProvider(parallel = false, name = "Excel 2003")
-	public static Object[][] createDataFromExcel2003() {
+	public static Object[][] createDataFromExcel2003(final ITestContext context,
+			final Method method) {
 
+		DataFileParameters parameters = method
+				.getAnnotation(DataFileParameters.class);
+		if (parameters != null) {
+			filePath = String.format("%s/%s",
+					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
+							? System.getProperty("user.dir") : parameters.path(),
+					parameters.name());
+		} else {
+			throw new RuntimeException(
+					"Missing / invalid DataFileParameters annotation");
+		}
 		List<Object[]> result = new LinkedList<>();
 
-		String fileName = "data_2003.xls";
-		String sheetName = "Employee Data";
+		// String filePath = "data_2003.xls";
+		// String sheetName = "Employee Data";
 		HSSFWorkbook wb = null;
 		Iterator<org.apache.poi.ss.usermodel.Cell> cells;
 		Map<String, String> columnHeaders = new HashMap<>();
 
 		try {
-			InputStream ExcelFileToRead = new FileInputStream(fileName);
+			InputStream ExcelFileToRead = new FileInputStream(filePath);
 			wb = new HSSFWorkbook(ExcelFileToRead);
 			HSSFSheet sheet = (sheetName.isEmpty()) ? wb.getSheetAt(0)
 					: wb.getSheet(sheetName);

@@ -41,7 +41,8 @@ public class CSVParametersProvider {
 					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
 							? System.getProperty("user.dir") : parameters.path(),
 					parameters.name());
-			encoding = parameters.encoding();
+			encoding = parameters.encoding().isEmpty() ? "UTF-8"
+					: parameters.encoding();
 		} else {
 			throw new RuntimeException(
 					"Missing / invalid DataFileParameters annotation");

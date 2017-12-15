@@ -57,6 +57,7 @@ public class DataProviderTest {
 	public String seleniumPort = null;
 	public String seleniumBrowser = null;
 
+	private static Map<String, String> env = System.getenv();
 	public String baseUrl = "http://habrahabr.ru/search/?";
 	private String searchInputSelector = "form[id='inner_search_form'] div[class='search-field__wrap'] input[name='q']";
 	// XPath does not work well with CDP
@@ -86,14 +87,16 @@ public class DataProviderTest {
 			throws InterruptedException {
 		if (env.containsKey("TRAVIS") && env.get("TRAVIS").equals("true")) {
 			// use DriverManager under Travis
-			// https://github.com/eviltester/selenium-driver-manager-example
+			// https://github.com/bonigarcia/webdrivermanager-examples
 			ChromeDriverManager.getInstance().setup();
 			driver = new ChromeDriver();
 		} else {
 			// https://github.com/eviltester/selenium-driver-manager-example/blob/master/pom.xml
 			DesiredCapabilities capabilities = DesiredCapabilities.firefox();
 			// only set when supported
-			// capabilities.setCapability("marionette", false);
+			// org.openqa.selenium.WebDriverException: WebDriver Missing
+			// 'marionetteProtocol'
+			capabilities.setCapability("marionette", false);
 			LoggingPreferences logging_preferences = new LoggingPreferences();
 			logging_preferences.enable(LogType.BROWSER, Level.ALL);
 			capabilities.setCapability(CapabilityType.LOGGING_PREFS,
@@ -148,12 +151,14 @@ public class DataProviderTest {
 	}
 
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2003", dataProviderClass = ExcelParametersProvider.class)
+	@DataFileParameters(name = "data_2003.xls"	, path = ".")
 	public void test_with_Excel_2003(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
 		parseSearchResult(searchKeyword, expectedCount);
 	}
 
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
+	@DataFileParameters(name = "data.ods", path = ".")
 	public void test_with_OpenOffice_Spreadsheet(double rowNum,
 			String searchKeyword, double expectedCount) throws InterruptedException {
 		if (env.containsKey("TRAVIS") && env.get("TRAVIS").equals("true")) {
@@ -166,6 +171,7 @@ public class DataProviderTest {
 	}
 
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2007", dataProviderClass = ExcelParametersProvider.class)
+	@DataFileParameters(name = "data_2007.xlsx", path = ".")
 	public void test_with_Excel_2007(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
 		if (env.containsKey("TRAVIS") && env.get("TRAVIS").equals("true")) {
@@ -177,9 +183,9 @@ public class DataProviderTest {
 		}
 	}
 
-	private static Map<String, String> env = System.getenv();
 
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "JSON", dataProviderClass = JSONParametersProvider.class)
+	@DataFileParameters(name = "data.json", path = "")
 	public void test_with_JSON(String strCount, String strKeyword)
 			throws InterruptedException {
 
