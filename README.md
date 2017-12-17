@@ -30,7 +30,7 @@ The following annotations are provided to the test methods:
 
 ```java
 @Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "Excel 2003")
-@DataFileParameters(name = "data_2003.xls"	, path = ".") 
+@DataFileParameters(name = "data_2003.xls", path = "${USERPROFILE}\\Desktop", sheetName = "Employee Data")
 	public void test_with_Excel_2003(double rowNum, String search_keyword,
 			double expected_count) throws InterruptedException {
 		parseSearchResult(search_keyword, expected_count);

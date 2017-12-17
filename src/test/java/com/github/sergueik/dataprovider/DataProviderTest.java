@@ -152,7 +152,7 @@ public class DataProviderTest {
 	}
 
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2003", dataProviderClass = ExcelParametersProvider.class)
-	@DataFileParameters(name = "data_2003.xls", sheetName = "Employee Data")
+	@DataFileParameters(name = "data_2003.xls", path = "${USERPROFILE}\\Desktop", sheetName = "Employee Data")
 	public void test_with_Excel_2003(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
 		parseSearchResult(searchKeyword, expectedCount);

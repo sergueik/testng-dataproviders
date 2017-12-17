@@ -56,7 +56,8 @@ public class ExcelParametersProvider {
 		if (parameters != null) {
 			filePath = String.format("%s/%s",
 					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
-							? System.getProperty("user.dir") : parameters.path(),
+							? System.getProperty("user.dir")
+							: Utils.resolveEnvVars(parameters.path()),
 					parameters.name());
 			sheetName = parameters.sheetName();
 		} else {
@@ -158,7 +159,8 @@ public class ExcelParametersProvider {
 		if (parameters != null) {
 			filePath = String.format("%s/%s",
 					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
-							? System.getProperty("user.dir") : parameters.path(),
+							? System.getProperty("user.dir")
+							: Utils.resolveEnvVars(parameters.path()),
 					parameters.name());
 			sheetName = parameters.sheetName();
 		} else {
@@ -260,12 +262,16 @@ public class ExcelParametersProvider {
 		if (parameters != null) {
 			filePath = String.format("%s/%s",
 					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
-							? System.getProperty("user.dir") : parameters.path(),
+							? System.getProperty("user.dir")
+							: Utils.resolveEnvVars(parameters.path()),
 					parameters.name());
 			sheetName = parameters.sheetName();
 		} else {
 			throw new RuntimeException(
 					"Missing / invalid DataFileParameters annotation");
+		}
+		if (debug) {
+			System.err.println("Reading file: " + filePath);
 		}
 		List<Object[]> result = new LinkedList<>();
 
