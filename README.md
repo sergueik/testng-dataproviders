@@ -30,6 +30,7 @@ The following annotations are provided to the test methods:
 
 ```java
 @Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "Excel 2003")
+@DataFileParameters(name = "data_2003.xls"	, path = ".") 
 	public void test_with_Excel_2003(double rowNum, String search_keyword,
 			double expected_count) throws InterruptedException {
 		parseSearchResult(search_keyword, expected_count);
@@ -38,6 +39,7 @@ The following annotations are provided to the test methods:
 or
 ```java
 @Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "Excel 2007")
+@DataFileParameters(name = "data_2007.xlsx", path = ".")
 	public void test_with_Excel_2007(double rowNum, String search_keyword,
 			double expected_count) throws InterruptedException {
 		parseSearchResult(search_keyword, expected_count);
@@ -46,6 +48,7 @@ or
 or
 ```java
 @Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "OpenOffice Spreadsheet")
+@DataFileParameters(name = "data.ods", path = ".")
 	public void test_with_OpenOffice_Spreadsheet(double rowNum,
 			String search_keyword, double expected_count)
 			throws InterruptedException {
@@ -55,6 +58,7 @@ or
 or
 ```java
 @Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "JSON")
+@DataFileParameters(name = "data.json", path = "")
 	public void test_with_JSON(String search_keyword, double expected_count)
 			throws InterruptedException {
 		parseSearchResult(search_keyword, expected_count);

@@ -46,7 +46,7 @@ public class ExcelParametersProvider {
 
 	private static boolean debug = false;
 	private static String filePath = null;
-	private static String sheetName = "Employee Data";
+	private static String sheetName = null;
 
 	@DataProvider(parallel = false, name = "OpenOffice Spreadsheet")
 	public static Object[][] createData_from_OpenOfficeSpreadsheet(
@@ -58,6 +58,7 @@ public class ExcelParametersProvider {
 					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
 							? System.getProperty("user.dir") : parameters.path(),
 					parameters.name());
+			sheetName = parameters.sheetName();
 		} else {
 			throw new RuntimeException(
 					"Missing / invalid DataFileParameters annotation");
@@ -159,6 +160,7 @@ public class ExcelParametersProvider {
 					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
 							? System.getProperty("user.dir") : parameters.path(),
 					parameters.name());
+			sheetName = parameters.sheetName();
 		} else {
 			throw new RuntimeException(
 					"Missing / invalid DataFileParameters annotation");
@@ -186,8 +188,6 @@ public class ExcelParametersProvider {
 		List<Object[]> result = new LinkedList<>();
 		XSSFWorkbook wb = null;
 		Map<String, String> columnHeaders = new HashMap<>();
-		// String filePath = "data_2007.xlsx";
-		// String sheetName = "Employee Data";
 		try {
 			wb = new XSSFWorkbook(filePath);
 			XSSFSheet sheet = (sheetName.isEmpty()) ? wb.getSheetAt(0)
@@ -262,14 +262,13 @@ public class ExcelParametersProvider {
 					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
 							? System.getProperty("user.dir") : parameters.path(),
 					parameters.name());
+			sheetName = parameters.sheetName();
 		} else {
 			throw new RuntimeException(
 					"Missing / invalid DataFileParameters annotation");
 		}
 		List<Object[]> result = new LinkedList<>();
 
-		// String filePath = "data_2003.xls";
-		// String sheetName = "Employee Data";
 		HSSFWorkbook wb = null;
 		Iterator<org.apache.poi.ss.usermodel.Cell> cells;
 		Map<String, String> columnHeaders = new HashMap<>();

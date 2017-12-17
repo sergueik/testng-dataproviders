@@ -72,7 +72,7 @@ public class DataProviderTest {
 	public static final String TEST_DESC_STR = "Search keyword";
 
 	private static long implicit_wait_interval = 3;
-	private static int page_load_timeout_interval = 10;
+	private static int page_load_timeout_interval = 30;
 
 	// NOTE: Firefox sporadically fails with
 	// org.openqa.selenium.WebDriverException:
@@ -124,23 +124,24 @@ public class DataProviderTest {
 	@BeforeMethod
 	public void handleTestMethodInformation(final ITestContext context,
 			final Method method) {
-		String suiteName = context.getCurrentXmlTest().getSuite().getName();
+		final String suiteName = context.getCurrentXmlTest().getSuite().getName();
+		final String methodName = method.getName();
+		final String testName = context.getCurrentXmlTest().getName();
+
 		System.err.println("BeforeMethod Suite: " + suiteName);
-		String testName = context.getCurrentXmlTest().getName();
 		System.err.println("BeforeMethod Test: " + testName);
-		String methodName = method.getName();
 		System.err.println("BeforeMethod Method: " + methodName);
 		// String dataProvider = ((IDataProvidable)annotation).getDataProvider();
 		// System.err.println("Data Provider: " + dataProvider);
 		@SuppressWarnings("deprecation")
-		Map<String, String> parameters = (((TestRunner) context).getTest())
+		final Map<String, String> parameters = (((TestRunner) context).getTest())
 				.getParameters();
-		Set<String> keys = parameters.keySet();
+		final Set<String> keys = parameters.keySet();
 		for (String key : keys) {
 			System.out.println(
 					"BeforeMethod Parameter: " + key + " = " + parameters.get(key));
 		}
-		Set<java.lang.String> attributeNames = ((IAttributes) context)
+		final Set<java.lang.String> attributeNames = ((IAttributes) context)
 				.getAttributeNames();
 		if (attributeNames.size() > 0) {
 			for (String attributeName : attributeNames) {
@@ -151,7 +152,7 @@ public class DataProviderTest {
 	}
 
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2003", dataProviderClass = ExcelParametersProvider.class)
-	@DataFileParameters(name = "data_2003.xls"	, path = ".")
+	@DataFileParameters(name = "data_2003.xls", sheetName = "Employee Data")
 	public void test_with_Excel_2003(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
 		parseSearchResult(searchKeyword, expectedCount);
@@ -171,7 +172,7 @@ public class DataProviderTest {
 	}
 
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2007", dataProviderClass = ExcelParametersProvider.class)
-	@DataFileParameters(name = "data_2007.xlsx", path = ".")
+	@DataFileParameters(name = "data_2007.xlsx", path = ".", sheetName = "Employee Data")
 	public void test_with_Excel_2007(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
 		if (env.containsKey("TRAVIS") && env.get("TRAVIS").equals("true")) {
@@ -183,9 +184,8 @@ public class DataProviderTest {
 		}
 	}
 
-
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "JSON", dataProviderClass = JSONParametersProvider.class)
-	@DataFileParameters(name = "data.json", path = "")
+	@DataFileParameters(name = "data.json")
 	public void test_with_JSON(String strCount, String strKeyword)
 			throws InterruptedException {
 
