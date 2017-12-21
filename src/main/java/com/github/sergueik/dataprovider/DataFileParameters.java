@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DataFileParameters {
 	String name();
-	String path();
+	String path() default "";
 	String encoding() default "UTF-8";
+	String sheetName() default "test";
 }

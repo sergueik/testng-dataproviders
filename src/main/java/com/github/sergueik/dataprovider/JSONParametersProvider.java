@@ -32,13 +32,27 @@ import org.testng.annotations.DataProvider;
 public class JSONParametersProvider {
 
 	private static boolean debug = false;
+	private static String filePath = null;
+	private static String dataKey = "test";
+	private static String encoding = null;
 
 	@DataProvider(parallel = false, name = "JSON")
 	public static Object[][] createData_from_JSON(final ITestContext context,
 			final Method method) throws org.json.JSONException {
 
-		String fileName = "data.json";
-		String testName = "test";
+		DataFileParameters parameters = method
+				.getAnnotation(DataFileParameters.class);
+		if (parameters != null) {
+			filePath = String.format("%s/%s",
+					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
+							? System.getProperty("user.dir") : Utils.resolveEnvVars(parameters.path()),
+					parameters.name());
+			encoding = parameters.encoding().isEmpty() ? "UTF-8"
+					: parameters.encoding();
+		} else {
+			throw new RuntimeException(
+					"Missing / invalid DataFileParameters annotation");
+		}
 
 		List<String> columns = new ArrayList<>();
 
@@ -50,7 +64,7 @@ public class JSONParametersProvider {
 		JSONArray rows = new JSONArray();
 
 		try {
-			byte[] encoded = Files.readAllBytes(Paths.get(fileName));
+			byte[] encoded = Files.readAllBytes(Paths.get(filePath));
 			obj = new JSONObject(new String(encoded, Charset.forName("UTF-8")));
 		} catch (org.json.JSONException e) {
 			e.printStackTrace();
@@ -58,8 +72,8 @@ public class JSONParametersProvider {
 			e.printStackTrace();
 		}
 
-		assertTrue(obj.has(testName));
-		String dataString = obj.getString(testName);
+		assertTrue(obj.has(dataKey));
+		String dataString = obj.getString(dataKey);
 
 		// possible org.json.JSONException
 		try {
@@ -133,5 +147,4 @@ public class JSONParametersProvider {
 		testData.toArray(testDataArray);
 		return testDataArray;
 	}
-
 }
