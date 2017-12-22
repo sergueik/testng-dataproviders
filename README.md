@@ -1,4 +1,5 @@
-### Info
+###  TestNg-DataProviders [![BuildStatus](https://travis-ci.org/sergueik/testng-dataproviders.svg?branch=master)](https://travis-ci.org/sergueik/testng-dataproviders.svg?branch=maste://travis-ci.org/sergueik/testng-dataproviders.svg?branch=master)
+
 
 This project exercises [testng dataProviders](http://testng.org/doc/documentation-main.html#parameters-dataproviders)
 
@@ -8,6 +9,8 @@ This project exercises [testng dataProviders](http://testng.org/doc/documentatio
   * Custom JSON [org.json.JSON](http://www.docjar.com/docs/api/org/json/JSONObject.html)
   * csv [testnt csv file](http://stackoverflow.com/questions/26033985/how-to-pass-parameter-to-data-provider-in-testng-from-csv-file)
   * fillo [fillo](http://codoid.com/fillo/)
+
+
 
 ### Testing
 
