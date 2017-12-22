@@ -1,4 +1,8 @@
 package com.github.sergueik.dataprovider;
+/**
+ * Copyright 2017 Serguei Kouzmine
+ */
+
 
 import java.io.File;
 import java.io.FileInputStream;

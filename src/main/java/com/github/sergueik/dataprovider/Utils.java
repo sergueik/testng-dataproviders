@@ -1,7 +1,7 @@
 package com.github.sergueik.dataprovider;
 
 /**
- * Copyright 2014 - 2017 Serguei Kouzmine
+ * Copyright 2017 Serguei Kouzmine
  */
 
 import java.io.BufferedReader;
@@ -40,7 +40,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Common utilities class for Selenium WebDriver Elementor Tool (SWET)
+ * Common utilities class for testng dataProviders
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 

@@ -1,4 +1,8 @@
 package com.github.sergueik.dataprovider;
+/**
+ * Copyright 2017 Serguei Kouzmine
+ */
+
 
 import static org.junit.Assert.assertTrue;
 
