@@ -89,5 +89,9 @@ in the spreadsheet.
  * [converting gradle to pom](https://stackoverflow.com/questions/12888490/gradle-build-gradle-to-maven-pom-xml)
  * [using gradle maven plugin to produce pom.xml](https://stackoverflow.com/questions/17281927/how-to-make-gradle-generate-a-valid-pom-xml-file-at-the-root-of-a-project-for-ma)
 
+### Maven Central
+
+Status: [pending](https://issues.sonatype.org/browse/OSSRH-36773?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel)
+
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
