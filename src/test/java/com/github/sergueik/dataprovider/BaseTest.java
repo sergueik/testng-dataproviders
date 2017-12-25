@@ -63,7 +63,8 @@ public class BaseTest {
 	protected static Map<String, String> env = System.getenv();
 	public String baseUrl = "http://habrahabr.ru/search/?";
 	private String searchInputSelector = "form[id='inner_search_form'] div[class='search-field__wrap'] input[name='q']";
-	// XPath does not work well with CDP
+	
+	// NOTE: xpath does not work well with CDP
 	private String searchInputXPath = "//form[@id='inner_search_form']/div[@class='search-field__wrap']/input[@name='q']";
 	private String pubsCountSelector = "span[class*='tabs-menu__item-counter'][class*='tabs-menu__item-counter_total']";
 
@@ -231,13 +232,6 @@ public class BaseTest {
 			System.err.println("No publications");
 		}
 		assertTrue(publicationsFound >= expectedCount);
-	}
-
-	// static disconnected data provider
-	@DataProvider(parallel = true)
-	public Object[][] dataProviderInline() {
-		return new Object[][] { { "junit", 100.0 }, { "testng", 30.0 },
-				{ "spock", 10.0 }, };
 	}
 
 }
