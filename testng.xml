@@ -7,7 +7,7 @@
   <parameter name="selenium.browser" value="firefox"/>
   <test name="Parse Search Result" preserve-order="true" parallel="false">
     <classes>
-      <class name="com.github.sergueik.dataprovider.DataProviderTest">
+      <class name="com.github.sergueik.dataprovider.TestNgDataProviderTest">
         <methods>
           <include name="test_with_Excel_2007"/>
           <include name="test_with_JSON"/>
