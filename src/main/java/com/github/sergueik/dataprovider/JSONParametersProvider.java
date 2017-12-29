@@ -3,7 +3,6 @@ package com.github.sergueik.dataprovider;
  * Copyright 2017 Serguei Kouzmine
  */
 
-
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -14,6 +13,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -39,26 +39,34 @@ public class JSONParametersProvider {
 	private static String filePath = null;
 	private static String dataKey = "test";
 	private static String encoding = null;
+	private static List<String> columns = new ArrayList<>();
 
 	@DataProvider(parallel = false, name = "JSON")
 	public static Object[][] createData_from_JSON(final ITestContext context,
 			final Method method) throws org.json.JSONException {
 
-		DataFileParameters parameters = method
-				.getAnnotation(DataFileParameters.class);
+		JSONDataFileParameters parameters = method
+				.getAnnotation(JSONDataFileParameters.class);
 		if (parameters != null) {
 			filePath = String.format("%s/%s",
 					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
-							? System.getProperty("user.dir") : Utils.resolveEnvVars(parameters.path()),
+							? System.getProperty("user.dir")
+							: Utils.resolveEnvVars(parameters.path()),
 					parameters.name());
 			encoding = parameters.encoding().isEmpty() ? "UTF-8"
 					: parameters.encoding();
+			dataKey = parameters.dataKey();
+			columns = Arrays.asList(parameters.columns().split("(?:\\||,| )"));
+			if (debug) {
+				System.err.println("file path: " + filePath);
+				System.err.println("data key: " + dataKey);
+				System.err
+						.println("columns: " + Arrays.deepToString(columns.toArray()));
+			}
 		} else {
 			throw new RuntimeException(
-					"Missing / invalid DataFileParameters annotation");
+					"Missing / invalid JSONDataFileParameters annotation");
 		}
-
-		List<String> columns = new ArrayList<>();
 
 		JSONObject obj = new JSONObject();
 		List<Object[]> testData = new ArrayList<>();
@@ -99,8 +107,9 @@ public class JSONParametersProvider {
 		firstRow = firstRow.replaceAll("\n", " ").substring(1,
 				firstRow.length() - 1);
 		if (debug)
-			System.err.println("row: " + firstRow);
+			System.err.println("1st row: " + firstRow);
 
+		List<String> actualColumns = new ArrayList<>();
 		String[] pairs = firstRow.split(",");
 
 		for (String pair : pairs) {
@@ -110,7 +119,7 @@ public class JSONParametersProvider {
 			if (debug) {
 				System.err.println("column: " + column);
 			}
-			columns.add(column);
+			actualColumns.add(column);
 		}
 
 		for (String entry : hashes) {
@@ -121,6 +130,7 @@ public class JSONParametersProvider {
 			} catch (org.json.JSONException e) {
 				e.printStackTrace();
 			}
+			// actualColumns is ignored
 			for (String column : columns) {
 				testDataRow.add(entryObj.get(column).toString());
 			}

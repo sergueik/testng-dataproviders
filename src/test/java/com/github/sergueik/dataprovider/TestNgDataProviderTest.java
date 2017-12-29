@@ -18,14 +18,14 @@ import org.testng.annotations.Test;
 
 public class TestNgDataProviderTest extends BaseTest {
 
-	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2003", dataProviderClass = ExcelParametersProvider.class)
+	@Test(enabled = false, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2003", dataProviderClass = ExcelParametersProvider.class)
 	@DataFileParameters(name = "data_2003.xls", path = "${USERPROFILE}\\Desktop", sheetName = "Employee Data")
 	public void test_with_Excel_2003(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
 		parseSearchResult(searchKeyword, expectedCount);
 	}
 
-	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
+	@Test(enabled = false, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
 	@DataFileParameters(name = "data.ods", path = ".")
 	public void test_with_OpenOffice_Spreadsheet(double rowNum,
 			String searchKeyword, double expectedCount) throws InterruptedException {
@@ -38,7 +38,7 @@ public class TestNgDataProviderTest extends BaseTest {
 		}
 	}
 
-	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2007", dataProviderClass = ExcelParametersProvider.class)
+	@Test(enabled = false, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2007", dataProviderClass = ExcelParametersProvider.class)
 	@DataFileParameters(name = "data_2007.xlsx", path = ".", sheetName = "Employee Data")
 	public void test_with_Excel_2007(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
@@ -52,7 +52,8 @@ public class TestNgDataProviderTest extends BaseTest {
 	}
 
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "JSON", dataProviderClass = JSONParametersProvider.class)
-	@DataFileParameters(name = "data.json")
+	@JSONDataFileParameters(name = "data.json", dataKey = "test", columns = "keyword,count"
+	/* columns attribute should not be empty */)
 	public void test_with_JSON(String strCount, String strKeyword)
 			throws InterruptedException {
 
@@ -66,7 +67,7 @@ public class TestNgDataProviderTest extends BaseTest {
 		}
 	}
 
-	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "csv", dataProviderClass = CSVParametersProvider.class)
+	@Test(enabled = false, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "csv", dataProviderClass = CSVParametersProvider.class)
 	@DataFileParameters(name = "data.csv", path = ".")
 	public void test1_csv(String... args) {
 		if (env.containsKey("TRAVIS") && env.get("TRAVIS").equals("true")) {
@@ -81,7 +82,7 @@ public class TestNgDataProviderTest extends BaseTest {
 		}
 	}
 
-	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "csv", dataProviderClass = CSVParametersProvider.class)
+	@Test(enabled = false, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "csv", dataProviderClass = CSVParametersProvider.class)
 	@DataFileParameters(name = "data.csv", path = "")
 	public void test2_csv(String column1, String column2, String column3)
 			throws InterruptedException {

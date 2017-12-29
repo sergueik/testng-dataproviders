@@ -1,17 +1,21 @@
 {
     "test": [{
         "keyword": "junit",
-        "count": 101.0
+        "count": 101.0,
+        "comment": "",
+        "other unused column": "",
     }, {
+        "comment": "",
         "keyword": "testng",
         "count": 31.0
     }, {
         "keyword": "spock",
+        "comment": "",
         "count": 11.0
     }],
     "other_test": [{
         "keyword": "not used",
         "count": 1.0
+
     }]
-}
 }

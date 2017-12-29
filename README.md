@@ -21,13 +21,31 @@ For example test case performs Selenium link count test with the data providers 
 * Open Office Spreadsheet
 * JSON
 
-The test inputs are defined as table with colums
+The test inputs are defined as spreadsheet with columns
 
 | ROWNUM |  SEARCH | COUNT |
 |--------|---------|-------|
 | 1      | junit   | 100   |
 
-which are the test `ID`, the seach term and expected minimum count of articles found on the forum by the title search.
+or a JSON file with the following structure: 
+```javascript
+{
+    "test": [{
+        "keyword": "junit",
+        "count": 101.0,
+        "comment": "",
+        "other unused column": "",
+    }, {
+        "comment": "",
+        "keyword": "testng",
+        "count": 31.0
+    }, 
+...
+]
+}
+```
+
+which represent the test `id`, the *seach term* and *expected minimum count* of articles found on the forum through title search.
 
 The following annotations are provided to the test methods:
 
@@ -61,13 +79,15 @@ or
 or
 ```java
 @Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "JSON")
-@DataFileParameters(name = "data.json", path = "")
+@JSONDataFileParameters(name = "data.json", dataKey = "test", columns = "keyword,count"
+  // one need to list value columns explicitly with JSON due to the way org.json.JSONObject is implemented
 	public void test_with_JSON(String search_keyword, double expected_count)
 			throws InterruptedException {
 		parseSearchResult(search_keyword, expected_count);
 	}
 ```
-The data provider class would load all columns from Excel 2003, Excel 2007 or OpenOffice spreadsheet respectively and run test method with every row of data. It is up to the test developer to make the test method consume the correct number and type or parameters as there are columns
+The data provider class would load all columns from Excel 2003, Excel 2007 or OpenOffice spreadsheet respectively and columns defined for JSON data provider
+and run test method with every row of data. It is up to the test developer to make the test method consume the correct number and type or parameters as the columns
 in the spreadsheet.
 
 ### Links
