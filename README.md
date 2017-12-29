@@ -111,7 +111,8 @@ in the spreadsheet.
 
 ### Maven Central
 
-Status: [pending](https://issues.sonatype.org/browse/OSSRH-36773?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel)
+The snapshot versions are deployed to `https://oss.sonatype.org/content/repositories/snapshots/com/github/sergueik/dataprovider/`
+The release versions status: [Release pending](https://issues.sonatype.org/browse/OSSRH-36773?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
