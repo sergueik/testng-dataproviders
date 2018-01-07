@@ -114,5 +114,20 @@ in the spreadsheet.
 The snapshot versions are deployed to `https://oss.sonatype.org/content/repositories/snapshots/com/github/sergueik/dataprovider/`
 The release versions status: [Release pending](https://issues.sonatype.org/browse/OSSRH-36773?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel)
 
+To use the snapshot version, add the following to `pom.xml`:
+```xml
+<dependency>
+  <groupId>com.github.sergueik.dataprovider</groupId>
+  <artifactId>dataprovider</artifactId>
+  <version>1.2-SNAPSHOT</version>
+</dependency>
+<repositories>
+  <repository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+  </repository>
+</repositories>
+```
+
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
