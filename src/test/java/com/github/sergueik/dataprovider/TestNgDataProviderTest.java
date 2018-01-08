@@ -18,14 +18,14 @@ import org.testng.annotations.Test;
 
 public class TestNgDataProviderTest extends BaseTest {
 
-	@Test(enabled = false, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2003", dataProviderClass = ExcelParametersProvider.class)
+	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2003", dataProviderClass = ExcelParametersProvider.class)
 	@DataFileParameters(name = "data_2003.xls", path = "${USERPROFILE}\\Desktop", sheetName = "Employee Data")
 	public void test_with_Excel_2003(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
 		parseSearchResult(searchKeyword, expectedCount);
 	}
 
-	@Test(enabled = false, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
+	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
 	@DataFileParameters(name = "data.ods", path = ".")
 	public void test_with_OpenOffice_Spreadsheet(double rowNum,
 			String searchKeyword, double expectedCount) throws InterruptedException {
@@ -38,7 +38,7 @@ public class TestNgDataProviderTest extends BaseTest {
 		}
 	}
 
-	@Test(enabled = false, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2007", dataProviderClass = ExcelParametersProvider.class)
+	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2007", dataProviderClass = ExcelParametersProvider.class)
 	@DataFileParameters(name = "data_2007.xlsx", path = ".", sheetName = "Employee Data")
 	public void test_with_Excel_2007(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
@@ -51,7 +51,7 @@ public class TestNgDataProviderTest extends BaseTest {
 		}
 	}
 
-	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "JSON", dataProviderClass = JSONParametersProvider.class)
+	@Test(enabled = false, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "JSON", dataProviderClass = JSONParametersProvider.class)
 	@JSONDataFileParameters(name = "data.json", dataKey = "test", columns = "keyword,count"
 	/* columns attribute should not be empty */)
 	public void test_with_JSON(String strCount, String strKeyword)

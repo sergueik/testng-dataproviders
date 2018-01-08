@@ -3,7 +3,6 @@ package com.github.sergueik.dataprovider;
 /**
  * Copyright 2017 Serguei Kouzmine
  */
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -104,81 +103,86 @@ public class Utils {
 	}
 
 	public List<Object[]> createDataFromOpenOfficeSpreadsheet(
-			InputStream inputStream) {
-
-		Map<String, String> columns = new HashMap<>();
+			SpreadSheet spreadSheet) {
+		HashMap<String, String> columns = new HashMap<>();
 		List<Object[]> result = new LinkedList<>();
+		Sheet sheet = (sheetName.isEmpty()) ? spreadSheet.getFirstSheet()
+				: spreadSheet.getSheet(sheetName);
+		if (debug) {
+			System.err
+					.println("Reading Open Office Spreadsheet : " + sheet.getName());
+		}
+		int columnCount = sheet.getColumnCount();
+		int rowCount = sheet.getRowCount();
+		@SuppressWarnings("rawtypes")
+		Cell cell = null;
+		for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+			String columnHeader = sheet.getImmutableCellAt(columnIndex, 0).getValue()
+					.toString();
+			if (StringUtils.isBlank(columnHeader)) {
+				break;
+			}
+			String columnName = CellReference.convertNumToColString(columnIndex);
+			columns.put(columnName, columnHeader);
+			if (debug) {
+				System.err
+						.println(columnIndex + " = " + columnName + " " + columnHeader);
+			}
+		}
+		// NOTE: often there may be no ranges defined
+		Set<String> rangeeNames = sheet.getRangesNames();
+		Iterator<String> rangeNamesIterator = rangeeNames.iterator();
 
-		// Sheet sheet;
-		// SpreadSheet spreadSheet;
+		while (rangeNamesIterator.hasNext()) {
+			if (debug) {
+				System.err.println("Range = " + rangeNamesIterator.next());
+			}
+		}
+		// isCellBlank has protected access in Table
+		for (int rowIndex = 1; rowIndex < rowCount && StringUtils.isNotBlank(sheet
+				.getImmutableCellAt(0, rowIndex).getValue().toString()); rowIndex++) {
+			List<Object> resultRow = new LinkedList<>();
+			for (int columnIndex = 0; columnIndex < columnCount && StringUtils
+					.isNotBlank(sheet.getImmutableCellAt(columnIndex, rowIndex).getValue()
+							.toString()); columnIndex++) {
+				cell = sheet.getImmutableCellAt(columnIndex, rowIndex);
+				// TODO: column selection
+				/*
+				String cellName = CellReference.convertNumToColString(columnIndex);
+				if (columns.get(cellName).equals("COUNT")) {
+					assertEquals(cell.getValueType(), ODValueType.FLOAT);
+					expected_count = Double.valueOf(cell.getValue().toString());
+				}
+				if (columns.get(cellName).equals("SEARCH")) {
+					assertEquals(cell.getValueType(), ODValueType.STRING);
+					search_keyword = cell.getTextValue();
+				}
+				if (columns.get(cellName).equals("ID")) {
+					System.err.println("Column: " + columns.get(cellName));
+					assertEquals(cell.getValueType(), ODValueType.FLOAT);
+					id = Integer.decode(cell.getValue().toString());
+				}
+				*/
+				@SuppressWarnings("unchecked")
+				Object cellValue = safeOOCellValue(cell);
+				if (debug) {
+					System.err.println("Cell Value: " + cellValue.toString() + " "
+							+ cellValue.getClass());
+				}
+				resultRow.add(cellValue);
+			}
+			result.add(resultRow.toArray());
+		}
+		return result;
+	}
 
+	public List<Object[]> createDataFromOpenOfficeSpreadsheet(
+			InputStream inputStream) {
+		List<Object[]> result = new LinkedList<>();
 		try {
 			// https://www.programcreek.com/java-api-examples/index.php?api=org.jopendocument.dom.spreadsheet.Sheet
 			SpreadSheet spreadSheet = SpreadSheet.get(new ODPackage(inputStream));
-			Sheet sheet = (sheetName.isEmpty()) ? spreadSheet.getFirstSheet()
-					: spreadSheet.getSheet(sheetName);
-
-			// System.err
-			// .println("Reading Open Office Spreadsheet : " + sheet.getName());
-
-			int columnCount = sheet.getColumnCount();
-			int rowCount = sheet.getRowCount();
-			@SuppressWarnings("rawtypes")
-			Cell cell = null;
-			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-				String columnHeader = sheet.getImmutableCellAt(columnIndex, 0)
-						.getValue().toString();
-				if (StringUtils.isBlank(columnHeader)) {
-					break;
-				}
-				String columnName = CellReference.convertNumToColString(columnIndex);
-				columns.put(columnName, columnHeader);
-				/*
-				System.err
-						.println(columnIndex + " = " + columnName + " " + columnHeader);
-				 */
-			}
-			// NOTE: often there may be no ranges defined
-			Set<String> rangeeNames = sheet.getRangesNames();
-			Iterator<String> rangeNamesIterator = rangeeNames.iterator();
-
-			while (rangeNamesIterator.hasNext()) {
-				System.err.println("Range = " + rangeNamesIterator.next());
-			}
-			// isCellBlank has protected access in Table
-			for (int rowIndex = 1; rowIndex < rowCount && StringUtils.isNotBlank(sheet
-					.getImmutableCellAt(0, rowIndex).getValue().toString()); rowIndex++) {
-				List<Object> resultRow = new LinkedList<>();
-				for (int columnIndex = 0; columnIndex < columnCount && StringUtils
-						.isNotBlank(sheet.getImmutableCellAt(columnIndex, rowIndex)
-								.getValue().toString()); columnIndex++) {
-					cell = sheet.getImmutableCellAt(columnIndex, rowIndex);
-					// TODO: column selection
-					/*
-					String cellName = CellReference.convertNumToColString(columnIndex);
-					if (columns.get(cellName).equals("COUNT")) {
-						assertEquals(cell.getValueType(), ODValueType.FLOAT);
-						expected_count = Double.valueOf(cell.getValue().toString());
-					}
-					if (columns.get(cellName).equals("SEARCH")) {
-						assertEquals(cell.getValueType(), ODValueType.STRING);
-						search_keyword = cell.getTextValue();
-					}
-					if (columns.get(cellName).equals("ID")) {
-						System.err.println("Column: " + columns.get(cellName));
-						assertEquals(cell.getValueType(), ODValueType.FLOAT);
-						id = Integer.decode(cell.getValue().toString());
-					}
-					*/
-					@SuppressWarnings("unchecked")
-					Object cellValue = safeOOCellValue(cell);
-					/* System.err.println("Cell Value: " + cellValue.toString() + " "
-							+ cellValue.getClass());
-					*/
-					resultRow.add(cellValue);
-				}
-				result.add(resultRow.toArray());
-			}
+			result = createDataFromOpenOfficeSpreadsheet(spreadSheet);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (NullPointerException e) {
@@ -189,82 +193,12 @@ public class Utils {
 
 	public List<Object[]> createDataFromOpenOfficeSpreadsheet(String filePath) {
 
-		HashMap<String, String> columns = new HashMap<>();
 		List<Object[]> result = new LinkedList<>();
 
 		try {
 			File file = new File(filePath);
 			SpreadSheet spreadSheet = SpreadSheet.createFromFile(file);
-			// https://www.programcreek.com/java-api-examples/index.php?api=org.jopendocument.dom.spreadsheet.Sheet
-			// SpreadSheet spreadSheet = SpreadSheet.get(new ODPackage(inputStream));
-			Sheet sheet = (sheetName.isEmpty()) ? spreadSheet.getFirstSheet()
-					: spreadSheet.getSheet(sheetName);
-			if (debug) {
-				System.err
-						.println("Reading Open Office Spreadsheet : " + sheet.getName());
-			}
-
-			int columnCount = sheet.getColumnCount();
-			int rowCount = sheet.getRowCount();
-			@SuppressWarnings("rawtypes")
-			Cell cell = null;
-			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-				String columnHeader = sheet.getImmutableCellAt(columnIndex, 0)
-						.getValue().toString();
-				if (StringUtils.isBlank(columnHeader)) {
-					break;
-				}
-				String columnName = CellReference.convertNumToColString(columnIndex);
-				columns.put(columnName, columnHeader);
-				if (debug) {
-					System.err
-							.println(columnIndex + " = " + columnName + " " + columnHeader);
-				}
-			}
-			// NOTE: often there may be no ranges defined
-			Set<String> rangeeNames = sheet.getRangesNames();
-			Iterator<String> rangeNamesIterator = rangeeNames.iterator();
-
-			while (rangeNamesIterator.hasNext()) {
-				if (debug) {
-					System.err.println("Range = " + rangeNamesIterator.next());
-				}
-			}
-			// isCellBlank has protected access in Table
-			for (int rowIndex = 1; rowIndex < rowCount && StringUtils.isNotBlank(sheet
-					.getImmutableCellAt(0, rowIndex).getValue().toString()); rowIndex++) {
-				List<Object> resultRow = new LinkedList<>();
-				for (int columnIndex = 0; columnIndex < columnCount && StringUtils
-						.isNotBlank(sheet.getImmutableCellAt(columnIndex, rowIndex)
-								.getValue().toString()); columnIndex++) {
-					cell = sheet.getImmutableCellAt(columnIndex, rowIndex);
-					// TODO: column selection
-					/*
-					String cellName = CellReference.convertNumToColString(columnIndex);
-					if (columns.get(cellName).equals("COUNT")) {
-						assertEquals(cell.getValueType(), ODValueType.FLOAT);
-						expected_count = Double.valueOf(cell.getValue().toString());
-					}
-					if (columns.get(cellName).equals("SEARCH")) {
-						assertEquals(cell.getValueType(), ODValueType.STRING);
-						search_keyword = cell.getTextValue();
-					}
-					if (columns.get(cellName).equals("ID")) {
-						System.err.println("Column: " + columns.get(cellName));
-						assertEquals(cell.getValueType(), ODValueType.FLOAT);
-						id = Integer.decode(cell.getValue().toString());
-					}
-					*/
-					@SuppressWarnings("unchecked")
-					Object cellValue = safeOOCellValue(cell);
-					if (debug) {
-						System.err.println("Cell Value: " + cellValue.toString() + " "
-								+ cellValue.getClass());
-					}
-					resultRow.add(cellValue);
-				}
-				result.add(resultRow.toArray());
-			}
+			result = createDataFromOpenOfficeSpreadsheet(spreadSheet);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (NullPointerException e) {
@@ -273,66 +207,71 @@ public class Utils {
 		return result;
 	}
 
+	public List<Object[]> createDataFromExcel2003(HSSFWorkbook workBook) {
+		List<Object[]> result = new LinkedList<>();
+
+		Iterator<org.apache.poi.ss.usermodel.Cell> cells;
+		Map<String, String> columnHeaders = new HashMap<>();
+		HSSFSheet sheet = (sheetName.isEmpty()) ? workBook.getSheetAt(0)
+				: workBook.getSheet(sheetName);
+		if (debug) {
+			System.err.println("Reading Excel 2003 sheet : " + sheet.getSheetName());
+		}
+		Iterator<Row> rows = sheet.rowIterator();
+		while (rows.hasNext()) {
+			HSSFRow row = (HSSFRow) rows.next();
+			HSSFCell cell;
+
+			if (row.getRowNum() == 0) {
+				cells = row.cellIterator();
+				while (cells.hasNext()) {
+
+					cell = (HSSFCell) cells.next();
+					int columnIndex = cell.getColumnIndex();
+					String columnHeader = cell.getStringCellValue();
+					String columnName = CellReference
+							.convertNumToColString(cell.getColumnIndex());
+					columnHeaders.put(columnName, columnHeader);
+					if (debug) {
+						System.err
+								.println(columnIndex + " = " + columnName + " " + columnHeader);
+					}
+				}
+				// skip the header
+				continue;
+			}
+
+			cells = row.cellIterator();
+			List<Object> resultRow = new LinkedList<>();
+			while (cells.hasNext()) {
+				cell = (HSSFCell) cells.next();
+				Object cellValue = safeUserModeCellValue(cell);
+				if (debug) {
+					System.err.println("Cell Value: " + cellValue.toString() + " "
+							+ cellValue.getClass());
+				}
+				resultRow.add(cellValue);
+			}
+			result.add(resultRow.toArray());
+		}
+		return result;
+	}
+
 	public List<Object[]> createDataFromExcel2003(String filePath) {
 
 		List<Object[]> result = new LinkedList<>();
-
-		HSSFWorkbook wb = null;
-		Iterator<org.apache.poi.ss.usermodel.Cell> cells;
-		Map<String, String> columnHeaders = new HashMap<>();
+		HSSFWorkbook workBook = null;
 
 		try {
 			InputStream ExcelFileToRead = new FileInputStream(filePath);
-			wb = new HSSFWorkbook(ExcelFileToRead);
-			HSSFSheet sheet = (sheetName.isEmpty()) ? wb.getSheetAt(0)
-					: wb.getSheet(sheetName);
-			if (debug) {
-				System.err
-						.println("Reading Excel 2003 sheet : " + sheet.getSheetName());
-			}
-			Iterator<Row> rows = sheet.rowIterator();
-			while (rows.hasNext()) {
-				HSSFRow row = (HSSFRow) rows.next();
-				HSSFCell cell;
-
-				if (row.getRowNum() == 0) {
-					cells = row.cellIterator();
-					while (cells.hasNext()) {
-
-						cell = (HSSFCell) cells.next();
-						int columnIndex = cell.getColumnIndex();
-						String columnHeader = cell.getStringCellValue();
-						String columnName = CellReference
-								.convertNumToColString(cell.getColumnIndex());
-						columnHeaders.put(columnName, columnHeader);
-						if (debug) {
-							System.err.println(
-									columnIndex + " = " + columnName + " " + columnHeader);
-						}
-					}
-					// skip the header
-					continue;
-				}
-
-				cells = row.cellIterator();
-				List<Object> resultRow = new LinkedList<>();
-				while (cells.hasNext()) {
-					cell = (HSSFCell) cells.next();
-					Object cellValue = safeUserModeCellValue(cell);
-					if (debug) {
-						System.err.println("Cell Value: " + cellValue.toString() + " "
-								+ cellValue.getClass());
-					}
-					resultRow.add(cellValue);
-				}
-				result.add(resultRow.toArray());
-			}
+			workBook = new HSSFWorkbook(ExcelFileToRead);
+			result = createDataFromExcel2003(workBook);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if (wb != null) {
+			if (workBook != null) {
 				try {
-					wb.close();
+					workBook.close();
 				} catch (IOException e) {
 				}
 			}
@@ -343,59 +282,17 @@ public class Utils {
 	public List<Object[]> createDataFromExcel2003(InputStream inputStream) {
 
 		List<Object[]> result = new LinkedList<>();
-		HSSFWorkbook wb = null;
-		Iterator<org.apache.poi.ss.usermodel.Cell> cells;
-		Map<String, String> columnHeaders = new HashMap<>();
+		HSSFWorkbook workBook = null;
 
 		try {
-			wb = new HSSFWorkbook(inputStream);
-			HSSFSheet sheet = wb.getSheetAt(0);
-
-			/*	System.err
-						.println("Reading Excel 2003 sheet : " + sheet.getSheetName());
-			*/
-			Iterator<Row> rows = sheet.rowIterator();
-			while (rows.hasNext()) {
-				HSSFRow row = (HSSFRow) rows.next();
-				HSSFCell cell;
-
-				if (row.getRowNum() == 0) {
-					cells = row.cellIterator();
-					while (cells.hasNext()) {
-
-						cell = (HSSFCell) cells.next();
-						int columnIndex = cell.getColumnIndex();
-						String columnHeader = cell.getStringCellValue();
-						String columnName = CellReference
-								.convertNumToColString(cell.getColumnIndex());
-						columnHeaders.put(columnName, columnHeader);
-
-						/* System.err.println(
-								 columnIndex + " = " + columnName + " " + columnHeader);
-						*/
-					}
-					// skip the header
-					continue;
-				}
-
-				cells = row.cellIterator();
-				List<Object> resultRow = new LinkedList<>();
-				while (cells.hasNext()) {
-					cell = (HSSFCell) cells.next();
-					Object cellValue = safeUserModeCellValue(cell);
-					/* System.err.println("Cell Value: " + cellValue.toString() + " "
-							+ cellValue.getClass());
-					*/
-					resultRow.add(cellValue);
-				}
-				result.add(resultRow.toArray());
-			}
+			workBook = new HSSFWorkbook(inputStream);
+			result = createDataFromExcel2003(workBook);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if (wb != null) {
+			if (workBook != null) {
 				try {
-					wb.close();
+					workBook.close();
 				} catch (IOException e) {
 				}
 			}
@@ -403,65 +300,70 @@ public class Utils {
 		return result;
 	}
 
-	public List<Object[]> createDataFromExcel2007(String filePath) {
-		Map<String, String> columns = new HashMap<>();
+	public List<Object[]> createDataFromExcel2007(XSSFWorkbook workBook) {
 		List<Object[]> result = new LinkedList<>();
-		XSSFWorkbook wb = null;
-		Map<String, String> columnHeaders = new HashMap<>();
-		try {
-			wb = new XSSFWorkbook(filePath);
-			XSSFSheet sheet = (sheetName.isEmpty()) ? wb.getSheetAt(0)
-					: wb.getSheet(sheetName);
+		Map<String, String> columns = new HashMap<>();
+		XSSFSheet sheet = (sheetName.isEmpty()) ? workBook.getSheetAt(0)
+				: workBook.getSheet(sheetName);
 
-			Iterator<Row> rows = sheet.rowIterator();
-			Iterator<org.apache.poi.ss.usermodel.Cell> cells;
-			while (rows.hasNext()) {
-				XSSFRow row = (XSSFRow) rows.next();
-				XSSFCell cell;
-				if (row.getRowNum() == 0) {
-					cells = row.cellIterator();
-					while (cells.hasNext()) {
-
-						cell = (XSSFCell) cells.next();
-						int columnIndex = cell.getColumnIndex();
-						String columnHeader = cell.getStringCellValue();
-						String columnName = CellReference
-								.convertNumToColString(cell.getColumnIndex());
-						columnHeaders.put(columnName, columnHeader);
-						if (debug) {
-							System.err.println(
-									columnIndex + " = " + columnName + " " + columnHeader);
-						}
-					}
-					// skip the header
-					continue;
-				}
-				List<Object> resultRow = new LinkedList<>();
+		Iterator<Row> rows = sheet.rowIterator();
+		Iterator<org.apache.poi.ss.usermodel.Cell> cells;
+		while (rows.hasNext()) {
+			XSSFRow row = (XSSFRow) rows.next();
+			XSSFCell cell;
+			if (row.getRowNum() == 0) {
 				cells = row.cellIterator();
 				while (cells.hasNext()) {
+
 					cell = (XSSFCell) cells.next();
-					// TODO: column selection
-					/*
-					if (columns.get(cellColumn).equals("ID")) {
-						assertEquals(cell.getCellType(), XSSFCell.CELL_TYPE_NUMERIC);
-						// id = (int) cell.getNumericCellValue();
-					}
-					*/
-					Object cellValue = safeUserModeCellValue(cell);
+					int columnIndex = cell.getColumnIndex();
+					String columnHeader = cell.getStringCellValue();
+					String columnName = CellReference
+							.convertNumToColString(cell.getColumnIndex());
+					columns.put(columnName, columnHeader);
 					if (debug) {
-						System.err.println("Cell Value: " + cellValue.toString() + " "
-								+ cellValue.getClass());
+						System.err
+								.println(columnIndex + " = " + columnName + " " + columnHeader);
 					}
-					resultRow.add(cellValue);
 				}
-				result.add(resultRow.toArray());
+				// skip the header
+				continue;
 			}
+			List<Object> resultRow = new LinkedList<>();
+			cells = row.cellIterator();
+			while (cells.hasNext()) {
+				cell = (XSSFCell) cells.next();
+				// TODO: column selection
+				/*
+				if (columns.get(cellColumn).equals("ID")) {
+					assertEquals(cell.getCellType(), XSSFCell.CELL_TYPE_NUMERIC);
+					// id = (int) cell.getNumericCellValue();
+				}
+				*/
+				Object cellValue = safeUserModeCellValue(cell);
+				if (debug) {
+					System.err.println("Cell Value: " + cellValue.toString() + " "
+							+ cellValue.getClass());
+				}
+				resultRow.add(cellValue);
+			}
+			result.add(resultRow.toArray());
+		}
+		return result;
+	}
+
+	public List<Object[]> createDataFromExcel2007(String filePath) {
+		List<Object[]> result = new LinkedList<>();
+		XSSFWorkbook workBook = null;
+		try {
+			workBook = new XSSFWorkbook(filePath);
+			result = createDataFromExcel2007(workBook);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if (wb != null) {
+			if (workBook != null) {
 				try {
-					wb.close();
+					workBook.close();
 				} catch (IOException e) {
 				}
 			}
@@ -472,65 +374,17 @@ public class Utils {
 	public List<Object[]> createDataFromExcel2007(InputStream inputStream) {
 
 		List<Object[]> result = new LinkedList<>();
-		Iterator<org.apache.poi.ss.usermodel.Cell> cells;
-		XSSFWorkbook wb = null;
-		Map<String, String> columnHeaders = new HashMap<>();
+		XSSFWorkbook workBook = null;
 
 		try {
-			wb = new XSSFWorkbook(inputStream);
-			XSSFSheet sheet = (sheetName.isEmpty()) ? wb.getSheetAt(0)
-					: wb.getSheet(sheetName);
-
-			/*	System.err
-						.println("Reading Excel 2007 sheet : " + sheet.getSheetName());
-			*/
-
-			Iterator<Row> rows = sheet.rowIterator();
-			while (rows.hasNext()) {
-				XSSFRow row = (XSSFRow) rows.next();
-				XSSFCell cell;
-				if (row.getRowNum() == 0) {
-					cells = row.cellIterator();
-					while (cells.hasNext()) {
-
-						cell = (XSSFCell) cells.next();
-						int columnIndex = cell.getColumnIndex();
-						String columnHeader = cell.getStringCellValue();
-						String columnName = CellReference
-								.convertNumToColString(cell.getColumnIndex());
-						columnHeaders.put(columnName, columnHeader);
-
-						/*	System.err.println(
-									columnIndex + " = " + columnName + " " + columnHeader);
-						*/
-					}
-					// skip the header
-					continue;
-				}
-				List<Object> resultRow = new LinkedList<>();
-				cells = row.cellIterator();
-				while (cells.hasNext()) {
-					cell = (XSSFCell) cells.next();
-					// TODO: column selection
-					/*
-					if (columns.get(cellColumn).equals("ID")) {
-						assertEquals(cell.getCellType(), XSSFCell.CELL_TYPE_NUMERIC);
-						// id = (int) cell.getNumericCellValue();
-					}
-					*/
-					Object cellValue = safeUserModeCellValue(cell);
-					// System.err.println("Cell Value: " + cellValue.toString() + " "
-					// + cellValue.getClass());
-					resultRow.add(cellValue);
-				}
-				result.add(resultRow.toArray());
-			}
+			workBook = new XSSFWorkbook(inputStream);
+			result = createDataFromExcel2007(workBook);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if (wb != null) {
+			if (workBook != null) {
 				try {
-					wb.close();
+					workBook.close();
 				} catch (IOException e) {
 				}
 			}
