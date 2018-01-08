@@ -16,81 +16,59 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class TestNgDataProviderTest extends BaseTest {
+public class TestNgDataProviderTest {
 
-	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2003", dataProviderClass = ExcelParametersProvider.class)
+	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2003", dataProviderClass = ExcelParametersProvider.class)
 	@DataFileParameters(name = "data_2003.xls", path = "${USERPROFILE}\\Desktop", sheetName = "Employee Data")
 	public void test_with_Excel_2003(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
-		parseSearchResult(searchKeyword, expectedCount);
+		// parseSearchResult(searchKeyword, expectedCount);
+		System.err.println(
+				String.format("Keyword: %s Count : %s", searchKeyword, expectedCount));
+
 	}
 
-	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
+	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
 	@DataFileParameters(name = "data.ods", path = ".")
 	public void test_with_OpenOffice_Spreadsheet(double rowNum,
 			String searchKeyword, double expectedCount) throws InterruptedException {
-		if (env.containsKey("TRAVIS") && env.get("TRAVIS").equals("true")) {
-			// temporarily stub under Travis
-			System.err.println(String.format("Keyword: %s Count : %s", searchKeyword,
-					expectedCount));
-		} else {
-			parseSearchResult(searchKeyword, expectedCount);
-		}
+		System.err.println(
+				String.format("Keyword: %s Count : %s", searchKeyword, expectedCount));
 	}
 
-	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2007", dataProviderClass = ExcelParametersProvider.class)
+	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2007", dataProviderClass = ExcelParametersProvider.class)
 	@DataFileParameters(name = "data_2007.xlsx", path = ".", sheetName = "Employee Data")
 	public void test_with_Excel_2007(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
-		if (env.containsKey("TRAVIS") && env.get("TRAVIS").equals("true")) {
-			// temporarily stub under Travis
-			System.err.println(String.format("Keyword: %s Count : %s", searchKeyword,
-					expectedCount));
-		} else {
-			parseSearchResult(searchKeyword, expectedCount);
-		}
+		System.err.println(
+				String.format("Keyword: %s Count : %s", searchKeyword, expectedCount));
 	}
 
-	@Test(enabled = false, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "JSON", dataProviderClass = JSONParametersProvider.class)
+	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "JSON", dataProviderClass = JSONParametersProvider.class)
 	@JSONDataFileParameters(name = "data.json", dataKey = "test", columns = "keyword,count"
 	/* columns attribute should not be empty */)
-	public void test_with_JSON(String strCount, String strKeyword)
+	public void test_with_JSON(String expectedCount, String searchKeyword)
 			throws InterruptedException {
+		System.err.println(
+				String.format("Keyword: %s Count : %s", searchKeyword, expectedCount));
 
-		if (env.containsKey("TRAVIS") && env.get("TRAVIS").equals("true")) {
-			// temporarily stub under Travis
-			System.err.println(
-					String.format("Keyword: %s Count : %s", strKeyword, strCount));
-
-		} else {
-			parseSearchResult(strKeyword, Double.valueOf(strCount));
-		}
 	}
 
-	@Test(enabled = false, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "csv", dataProviderClass = CSVParametersProvider.class)
+	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "csv", dataProviderClass = CSVParametersProvider.class)
 	@DataFileParameters(name = "data.csv", path = ".")
 	public void test1_csv(String... args) {
-		if (env.containsKey("TRAVIS") && env.get("TRAVIS").equals("true")) {
-			// temporarily stub under Travis
-			System.err.println(StringUtils.join(args, ","));
-			System.err.println(String.join(",", (CharSequence[]) args));
-		} else {
-			try {
-				parseSearchResult(args[1], Double.valueOf(args[2]));
-			} catch (InterruptedException e) {
-			}
-		}
+		System.err.println(StringUtils.join(args, ","));
+		System.err.println(String.join(",", (CharSequence[]) args));
+		System.err.println(String.format("Keyword: %s Count : %s", args[1],
+				Double.valueOf(args[2])));
+
 	}
 
-	@Test(enabled = false, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "csv", dataProviderClass = CSVParametersProvider.class)
+	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "csv", dataProviderClass = CSVParametersProvider.class)
 	@DataFileParameters(name = "data.csv", path = "")
 	public void test2_csv(String column1, String column2, String column3)
 			throws InterruptedException {
-		// System.err.println(column1 + " " + column2 + " " + column3);
-		try {
-			parseSearchResult(column2, Double.valueOf(column3));
-		} catch (InterruptedException e) {
-		}
+		System.err.println(column1 + " " + column2 + " " + column3);
 	}
 
 	// NOTE: cannot change signature of the method to include annotation:
@@ -131,10 +109,6 @@ public class TestNgDataProviderTest extends BaseTest {
 
 	@AfterClass(alwaysRun = true)
 	public void cleanupSuite() {
-		if (driver != null) {
-			driver.close();
-			driver.quit();
-		}
 	}
 
 	// static disconnected data provider

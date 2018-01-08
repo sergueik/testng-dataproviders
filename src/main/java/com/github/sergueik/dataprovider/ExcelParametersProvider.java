@@ -16,14 +16,14 @@ import org.testng.annotations.DataProvider;
 
 public class ExcelParametersProvider {
 
-	private Utils utils = Utils.getInstance();
+	private static Utils utils = Utils.getInstance();
 	private static boolean debug = false;
 	private static String filePath = null;
 	private static String sheetName = null;
 	private static String columnNames = "*";
 
 	@DataProvider(parallel = false, name = "OpenOffice Spreadsheet")
-	public Object[][] createData_from_OpenOfficeSpreadsheet(
+	public static Object[][] createData_from_OpenOfficeSpreadsheet(
 			final ITestContext context, final Method method) {
 		DataFileParameters parameters = method
 				.getAnnotation(DataFileParameters.class);
@@ -48,7 +48,7 @@ public class ExcelParametersProvider {
 	}
 
 	@DataProvider(parallel = false, name = "Excel 2007")
-	public Object[][] createDataFromExcel2007(final ITestContext context,
+	public static Object[][] createDataFromExcel2007(final ITestContext context,
 			final Method method) {
 		DataFileParameters parameters = method
 				.getAnnotation(DataFileParameters.class);
@@ -94,7 +94,7 @@ public class ExcelParametersProvider {
 	}
 
 	@DataProvider(parallel = false, name = "Excel 2003")
-	public Object[][] createDataFromExcel2003(final ITestContext context,
+	public static Object[][] createDataFromExcel2003(final ITestContext context,
 			final Method method) {
 
 		DataFileParameters parameters = method
