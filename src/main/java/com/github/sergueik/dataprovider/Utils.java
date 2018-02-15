@@ -1,5 +1,4 @@
 package com.github.sergueik.dataprovider;
-
 /**
  * Copyright 2017 Serguei Kouzmine
  */
@@ -243,16 +242,18 @@ public class Utils {
 
 			cells = row.cellIterator();
 			List<Object> resultRow = new LinkedList<>();
-			while (cells.hasNext()) {
-				cell = (HSSFCell) cells.next();
-				Object cellValue = safeUserModeCellValue(cell);
-				if (debug) {
-					System.err.println("Cell Value: " + cellValue.toString() + " "
-							+ cellValue.getClass());
+			if (cells.hasNext()) {
+				while (cells.hasNext()) {
+					cell = (HSSFCell) cells.next();
+					Object cellValue = safeUserModeCellValue(cell);
+					if (debug) {
+						System.err.println("Cell Value: " + cellValue.toString() + " "
+								+ cellValue.getClass());
+					}
+					resultRow.add(cellValue);
 				}
-				resultRow.add(cellValue);
+				result.add(resultRow.toArray());
 			}
-			result.add(resultRow.toArray());
 		}
 		return result;
 	}
@@ -331,23 +332,25 @@ public class Utils {
 			}
 			List<Object> resultRow = new LinkedList<>();
 			cells = row.cellIterator();
-			while (cells.hasNext()) {
-				cell = (XSSFCell) cells.next();
-				// TODO: column selection
-				/*
-				if (columns.get(cellColumn).equals("ID")) {
-					assertEquals(cell.getCellType(), XSSFCell.CELL_TYPE_NUMERIC);
-					// id = (int) cell.getNumericCellValue();
+			if (cells.hasNext()) {
+				while (cells.hasNext()) {
+					cell = (XSSFCell) cells.next();
+					// TODO: column selection
+					/*
+					if (columns.get(cellColumn).equals("ID")) {
+						assertEquals(cell.getCellType(), XSSFCell.CELL_TYPE_NUMERIC);
+						// id = (int) cell.getNumericCellValue();
+					}
+					*/
+					Object cellValue = safeUserModeCellValue(cell);
+					if (debug) {
+						System.err.println("Cell Value: " + cellValue.toString() + " "
+								+ cellValue.getClass());
+					}
+					resultRow.add(cellValue);
 				}
-				*/
-				Object cellValue = safeUserModeCellValue(cell);
-				if (debug) {
-					System.err.println("Cell Value: " + cellValue.toString() + " "
-							+ cellValue.getClass());
-				}
-				resultRow.add(cellValue);
+				result.add(resultRow.toArray());
 			}
-			result.add(resultRow.toArray());
 		}
 		return result;
 	}
