@@ -1,12 +1,10 @@
-package com.github.sergueik.dataprovider;
+package com.github.sergueik.testng;
 /**
  * Copyright 2017 Serguei Kouzmine
  */
 
-import static org.junit.Assert.assertTrue;
+// import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
@@ -16,17 +14,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.regex.Pattern;
-
-// NOTE: cannot import org.apache.poi.ss.usermodel.Cell:
-// a type with the same simple name is already defined by the single-type-import of org.jopendocument.dom.spreadsheet.Cell
-// import org.apache.poi.ss.usermodel.Cell;
 
 // JSON
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.ITestContext;
+
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 
 /**
@@ -84,7 +78,7 @@ public class JSONParametersProvider {
 			e.printStackTrace();
 		}
 
-		assertTrue(obj.has(dataKey));
+		Assert.assertTrue(obj.has(dataKey));
 		String dataString = obj.getString(dataKey);
 
 		// possible org.json.JSONException
@@ -97,7 +91,7 @@ public class JSONParametersProvider {
 			String entry = rows.getString(i);
 			hashes.add(entry);
 		}
-		assertTrue(hashes.size() > 0);
+		Assert.assertTrue(hashes.size() > 0);
 
 		String firstRow = hashes.get(0);
 

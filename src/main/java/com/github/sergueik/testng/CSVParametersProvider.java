@@ -1,4 +1,4 @@
-package com.github.sergueik.dataprovider;
+package com.github.sergueik.testng;
 /**
  * Copyright 2017 Serguei Kouzmine
  */
@@ -42,7 +42,8 @@ public class CSVParametersProvider {
 		if (parameters != null) {
 			filePath = String.format("%s/%s",
 					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
-							? System.getProperty("user.dir") : Utils.resolveEnvVars(parameters.path()),
+							? System.getProperty("user.dir")
+							: Utils.resolveEnvVars(parameters.path()),
 					parameters.name());
 			encoding = parameters.encoding().isEmpty() ? "UTF-8"
 					: parameters.encoding();

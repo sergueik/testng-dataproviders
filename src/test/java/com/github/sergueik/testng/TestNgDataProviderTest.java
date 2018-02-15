@@ -1,4 +1,4 @@
-package com.github.sergueik.dataprovider;
+package com.github.sergueik.testng;
 /**
  * Copyright 2017 Serguei Kouzmine
  */
@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+
 import org.testng.IAttributes;
 import org.testng.ITestContext;
 import org.testng.TestRunner;
@@ -16,6 +17,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import org.testng.Assert;
+
 public class TestNgDataProviderTest {
 
 	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2003", dataProviderClass = ExcelParametersProvider.class)
@@ -23,8 +26,8 @@ public class TestNgDataProviderTest {
 	public void test_with_Excel_2003(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
 		// parseSearchResult(searchKeyword, expectedCount);
-		System.err.println(
-				String.format("Keyword: %s Count : %s", searchKeyword, expectedCount));
+
+		dataTest(searchKeyword, expectedCount);
 
 	}
 
@@ -32,16 +35,14 @@ public class TestNgDataProviderTest {
 	@DataFileParameters(name = "data.ods", path = ".")
 	public void test_with_OpenOffice_Spreadsheet(double rowNum,
 			String searchKeyword, double expectedCount) throws InterruptedException {
-		System.err.println(
-				String.format("Keyword: %s Count : %s", searchKeyword, expectedCount));
+		dataTest(searchKeyword, expectedCount);
 	}
 
 	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2007", dataProviderClass = ExcelParametersProvider.class)
 	@DataFileParameters(name = "data_2007.xlsx", path = ".", sheetName = "Employee Data")
 	public void test_with_Excel_2007(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
-		System.err.println(
-				String.format("Keyword: %s Count : %s", searchKeyword, expectedCount));
+		dataTest(searchKeyword, expectedCount);
 	}
 
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "JSON", dataProviderClass = JSONParametersProvider.class)
@@ -49,8 +50,7 @@ public class TestNgDataProviderTest {
 	/* columns attribute should not be empty */)
 	public void test_with_JSON(String expectedCount, String searchKeyword)
 			throws InterruptedException {
-		System.err.println(
-				String.format("Keyword: %s Count : %s", searchKeyword, expectedCount));
+		dataTest(searchKeyword, expectedCount);
 
 	}
 
@@ -116,6 +116,25 @@ public class TestNgDataProviderTest {
 	public Object[][] dataProviderInline() {
 		return new Object[][] { { "junit", 100.0 }, { "testng", 30.0 },
 				{ "spock", 10.0 }, };
+	}
+
+	private void dataTest(String keyword, double count) {
+		Assert.assertNotNull(keyword);
+		Assert.assertTrue(keyword.matches("(?:junit|testng|spock)"));
+		Assert.assertTrue(((int) count > 0));
+		System.err.println(
+				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
+						keyword, (int) count));
+	}
+
+	private void dataTest(String keyword, String strCount) {
+		Assert.assertNotNull(keyword);
+		Assert.assertTrue(keyword.matches("(?:junit|testng|spock)"));
+		double count = Double.valueOf(strCount);
+		Assert.assertTrue(((int) count > 0));
+		System.err.println(
+				String.format("Search keyword:'%s'\tExpected minimum link count: %s",
+						keyword, strCount));
 	}
 
 }

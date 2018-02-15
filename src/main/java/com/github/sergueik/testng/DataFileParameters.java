@@ -1,8 +1,7 @@
-package com.github.sergueik.dataprovider;
+package com.github.sergueik.testng;
 /**
  * Copyright 2017 Serguei Kouzmine
  */
-
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

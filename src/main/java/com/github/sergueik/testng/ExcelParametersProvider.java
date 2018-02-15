@@ -1,4 +1,4 @@
-package com.github.sergueik.dataprovider;
+package com.github.sergueik.testng;
 /**
  * Copyright 2017 Serguei Kouzmine
  */
@@ -47,6 +47,7 @@ public class ExcelParametersProvider {
 		return resultArray;
 	}
 
+  
 	@DataProvider(parallel = false, name = "Excel 2007")
 	public static Object[][] createDataFromExcel2007(final ITestContext context,
 			final Method method) {

@@ -1,4 +1,5 @@
-package com.github.sergueik.dataprovider;
+package com.github.sergueik.testng;
+
 /**
  * Copyright 2017 Serguei Kouzmine
  */
