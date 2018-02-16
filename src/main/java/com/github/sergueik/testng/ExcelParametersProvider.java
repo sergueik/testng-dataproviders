@@ -29,10 +29,18 @@ public class ExcelParametersProvider {
 				.getAnnotation(DataFileParameters.class);
 		if (parameters != null) {
 			filePath = String.format("%s/%s",
-					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
-							? System.getProperty("user.dir")
-							: Utils.resolveEnvVars(parameters.path()),
+					(parameters.path().isEmpty()
+							|| parameters.path().equalsIgnoreCase("."))
+									? System.getProperty("user.dir")
+									: Utils.resolveEnvVars(parameters.path()),
 					parameters.name());
+			// if the path is relative assume it is under ${user.dir}
+			if (!filePath.matches("^[/\\\\].*")
+					&& !filePath.matches("^(?i:[A-Z]):.*")) {
+				filePath = String.format("%s/%s", System.getProperty("user.dir"),
+						filePath);
+			}
+
 			sheetName = parameters.sheetName();
 		} else {
 			throw new RuntimeException(
@@ -47,7 +55,6 @@ public class ExcelParametersProvider {
 		return resultArray;
 	}
 
-  
 	@DataProvider(parallel = false, name = "Excel 2007")
 	public static Object[][] createDataFromExcel2007(final ITestContext context,
 			final Method method) {

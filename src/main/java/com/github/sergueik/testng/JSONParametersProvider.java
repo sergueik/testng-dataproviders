@@ -43,9 +43,10 @@ public class JSONParametersProvider {
 				.getAnnotation(JSONDataFileParameters.class);
 		if (parameters != null) {
 			filePath = String.format("%s/%s",
-					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
-							? System.getProperty("user.dir")
-							: Utils.resolveEnvVars(parameters.path()),
+					(parameters.path().isEmpty()
+							|| parameters.path().equalsIgnoreCase("."))
+									? System.getProperty("user.dir")
+									: Utils.resolveEnvVars(parameters.path()),
 					parameters.name());
 			encoding = parameters.encoding().isEmpty() ? "UTF-8"
 					: parameters.encoding();

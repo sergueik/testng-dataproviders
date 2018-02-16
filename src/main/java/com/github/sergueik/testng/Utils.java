@@ -76,17 +76,18 @@ public class Utils {
 		if (null == input) {
 			return null;
 		}
-		Pattern p = Pattern.compile("\\$(?:\\{(\\w+)\\}|(\\w+))");
-		Matcher m = p.matcher(input);
-		StringBuffer sb = new StringBuffer();
-		while (m.find()) {
-			String envVarName = null == m.group(1) ? m.group(2) : m.group(1);
+		Pattern pattern = Pattern.compile("\\$(?:\\{(\\w+)\\}|(\\w+))");
+		Matcher matcher = pattern.matcher(input);
+		StringBuffer stringBuilder = new StringBuffer();
+		while (matcher.find()) {
+			String envVarName = null == matcher.group(1) ? matcher.group(2)
+					: matcher.group(1);
 			String envVarValue = getPropertyEnv(envVarName, null);
-			m.appendReplacement(sb,
+			matcher.appendReplacement(stringBuilder,
 					null == envVarValue ? "" : envVarValue.replace("\\", "\\\\"));
 		}
-		m.appendTail(sb);
-		return sb.toString();
+		matcher.appendTail(stringBuilder);
+		return stringBuilder.toString();
 	}
 
 	// origin:

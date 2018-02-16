@@ -1,6 +1,5 @@
 ###  TestNg-DataProviders [![BuildStatus](https://travis-ci.org/sergueik/testng-dataproviders.svg?branch=master)](https://travis-ci.org/sergueik/testng-dataproviders.svg?branch=maste://travis-ci.org/sergueik/testng-dataproviders.svg?branch=master)
 
-
 This project exercises [testng dataProviders](http://testng.org/doc/documentation-main.html#parameters-dataproviders)
 
   * Excel 2003 OLE documents - Horrible SpreadSheet Format [org.apache.poi.hssf.usermodel.*)](http://shanmugavelc.blogspot.com/2011/08/apache-poi-read-excel-for-use-of.html)
@@ -9,8 +8,6 @@ This project exercises [testng dataProviders](http://testng.org/doc/documentatio
   * Custom JSON [org.json.JSON](http://www.docjar.com/docs/api/org/json/JSONObject.html)
   * csv [testnt csv file](http://stackoverflow.com/questions/26033985/how-to-pass-parameter-to-data-provider-in-testng-from-csv-file)
   * fillo [fillo](http://codoid.com/fillo/)
-
-
 
 ### Testing
 
@@ -69,7 +66,7 @@ or
 or
 ```java
 @Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "searches publications for a keyword", dataProvider = "OpenOffice Spreadsheet")
-@DataFileParameters(name = "data.ods", path = ".")
+@DataFileParameters(name = "data.ods", path = "src/main/resources") // when datafile path is relative assume it is under ${user.dir}
 	public void test_with_OpenOffice_Spreadsheet(double rowNum,
 			String search_keyword, double expected_count)
 			throws InterruptedException {
@@ -86,7 +83,7 @@ or
 		parseSearchResult(search_keyword, expected_count);
 	}
 ```
-The data provider class would load all columns from Excel 2003, Excel 2007 or OpenOffice spreadsheet respectively and columns defined for JSON data provider
+The data provider class will load all columns from Excel 2003, Excel 2007 or OpenOffice spreadsheet respectively and columns defined for JSON data provider
 and run test method with every row of data. It is up to the test developer to make the test method consume the correct number and type or parameters as the columns
 in the spreadsheet.
 
@@ -117,9 +114,9 @@ The release versions status: [Release pending](https://issues.sonatype.org/brows
 To use the snapshot version, add the following to `pom.xml`:
 ```xml
 <dependency>
-  <groupId>com.github.sergueik.dataprovider</groupId>
+  <groupId>com.github.sergueik.testng</groupId>
   <artifactId>dataprovider</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.3-SNAPSHOT</version>
 </dependency>
 <repositories>
   <repository>
