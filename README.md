@@ -13,7 +13,7 @@ This project exercises [testng dataProviders](http://testng.org/doc/documentatio
 
 For example test case performs Selenium link count test with the data providers of the following supported data types:
 
-* Excel 2003 
+* Excel 2003
 * Excel 2007
 * Open Office Spreadsheet
 * JSON
@@ -24,7 +24,7 @@ The test inputs are defined as spreadsheet with columns
 |--------|---------|-------|
 | 1      | junit   | 100   |
 
-or a JSON file with the following structure: 
+or a JSON file with the following structure:
 ```javascript
 {
     "test": [{
@@ -36,7 +36,7 @@ or a JSON file with the following structure:
         "comment": "",
         "keyword": "testng",
         "count": 31.0
-    }, 
+    },
 ...
 ]
 }
@@ -86,6 +86,32 @@ or
 The data provider class will load all columns from Excel 2003, Excel 2007 or OpenOffice spreadsheet respectively and columns defined for JSON data provider
 and run test method with every row of data. It is up to the test developer to make the test method consume the correct number and type or parameters as the columns
 in the spreadsheet.
+
+To enable debug messages during the data loading, set the `debug` flag with `@DataFileParameters` attribute:
+```java
+	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2007", dataProviderClass = ExcelParametersProvider.class)
+	@DataFileParameters(name = "data_2007.xlsx", path = ".", sheetName = "Employee Data", debug = true)
+	public void test_with_Excel_2007(double rowNum, String searchKeyword,
+			double expectedCount) throws InterruptedException {
+		dataTest(searchKeyword, expectedCount);
+	}
+```
+
+this will show the following:
+```shell
+Data Provider Caller Suite: Suite 1
+Data Provider Caller Test: Parse Search Result
+Data Provider Caller Method: test_with_Excel_2007
+0 = A ID
+1 = B SEARCH
+2 = C COUNT
+Cell Value: 1.0 class java.lang.Double
+Cell Value: junit class java.lang.String
+Cell Value: 104.0 class java.lang.Double
+...
+row 0 : [1.0, junit, 104.0]
+...```
+
 
 ### Links
 

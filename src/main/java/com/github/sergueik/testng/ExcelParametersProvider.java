@@ -4,6 +4,7 @@ package com.github.sergueik.testng;
  */
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 import org.testng.ITestContext;
@@ -21,6 +22,11 @@ public class ExcelParametersProvider {
 	private static String filePath = null;
 	private static String sheetName = null;
 	private static String columnNames = "*";
+
+	// passed via ExcelParameters
+	// public void setDebug(boolean debug) {
+	// this.debug = debug;
+	// }
 
 	@DataProvider(parallel = false, name = "OpenOffice Spreadsheet")
 	public static Object[][] createData_from_OpenOfficeSpreadsheet(
@@ -48,6 +54,7 @@ public class ExcelParametersProvider {
 		}
 		utils.setSheetName(sheetName);
 		utils.setColumnNames(columnNames);
+		debug = parameters.debug();
 		utils.setDebug(debug);
 		List<Object[]> result = utils.createDataFromOpenOfficeSpreadsheet(filePath);
 		Object[][] resultArray = new Object[result.size()][];
@@ -72,12 +79,18 @@ public class ExcelParametersProvider {
 					"Missing / invalid DataFileParameters annotation");
 		}
 
+		utils.setSheetName(sheetName);
+		utils.setColumnNames(columnNames);
+		debug = parameters.debug();
+		utils.setDebug(debug);
 		// String suiteName = context.getCurrentXmlTest().getSuite().getName();
-		System.err.println("Data Provider Caller Suite: "
-				+ context.getCurrentXmlTest().getSuite().getName());
-		System.err.println(
-				"Data Provider Caller Test: " + context.getCurrentXmlTest().getName());
-		System.out.println("Data Provider Caller Method: " + method.getName());
+		if (debug) {
+			System.err.println("Data Provider Caller Suite: "
+					+ context.getCurrentXmlTest().getSuite().getName());
+			System.err.println("Data Provider Caller Test: "
+					+ context.getCurrentXmlTest().getName());
+			System.out.println("Data Provider Caller Method: " + method.getName());
+		}
 		// String testParam =
 		// context.getCurrentXmlTest().getParameter("test_param");
 
@@ -91,10 +104,15 @@ public class ExcelParametersProvider {
 		}
 		*/
 
-		utils.setSheetName(sheetName);
-		utils.setColumnNames(columnNames);
-		utils.setDebug(debug);
 		List<Object[]> result = utils.createDataFromExcel2007(filePath);
+		if (debug) {
+			int cnt = 0;
+			for (Object[] row : result) {
+				System.err
+						.println(String.format("row %d : %s", cnt, Arrays.toString(row)));
+				cnt++;
+			}
+		}
 		Object[][] resultArray = new Object[result.size()][];
 		result.toArray(resultArray);
 		return resultArray;
@@ -124,6 +142,7 @@ public class ExcelParametersProvider {
 
 		utils.setSheetName(sheetName);
 		utils.setColumnNames(columnNames);
+		debug = parameters.debug();
 		utils.setDebug(debug);
 		List<Object[]> result = utils.createDataFromExcel2003(filePath);
 		Object[][] resultArray = new Object[result.size()][];

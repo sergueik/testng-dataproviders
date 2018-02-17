@@ -52,6 +52,7 @@ public class JSONParametersProvider {
 					: parameters.encoding();
 			dataKey = parameters.dataKey();
 			columns = Arrays.asList(parameters.columns().split("(?:\\||,| )"));
+			debug = parameters.debug();
 			if (debug) {
 				System.err.println("file path: " + filePath);
 				System.err.println("data key: " + dataKey);

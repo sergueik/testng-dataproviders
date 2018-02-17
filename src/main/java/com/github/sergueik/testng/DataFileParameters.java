@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
 public @interface DataFileParameters {
 	String name();
 	String path() default "";
+	boolean debug() default false;
 	String encoding() default "UTF-8";
 	String sheetName() default "test";
 }

@@ -17,5 +17,5 @@ public @interface JSONDataFileParameters {
 	String encoding() default "UTF-8";
 	String dataKey() default "test";
 	String columns(); // cannot be null
-
+	boolean debug() default false;
 }

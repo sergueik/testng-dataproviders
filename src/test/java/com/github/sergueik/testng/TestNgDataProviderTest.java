@@ -27,20 +27,19 @@ public class TestNgDataProviderTest {
 	public void test_with_Excel_2003(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
 		// parseSearchResult(searchKeyword, expectedCount);
-
 		dataTest(searchKeyword, expectedCount);
 
 	}
 
 	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
-	@DataFileParameters(name = "data.ods", path = "src/main/resources")
+	@DataFileParameters(name = "data.ods", path = "src/main/resources", debug = false)
 	public void test_with_OpenOffice_Spreadsheet(double rowNum,
 			String searchKeyword, double expectedCount) throws InterruptedException {
 		dataTest(searchKeyword, expectedCount);
 	}
 
 	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2007", dataProviderClass = ExcelParametersProvider.class)
-	@DataFileParameters(name = "data_2007.xlsx", path = ".", sheetName = "Employee Data")
+	@DataFileParameters(name = "data_2007.xlsx", path = ".", sheetName = "Employee Data", debug = true)
 	public void test_with_Excel_2007(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
 		dataTest(searchKeyword, expectedCount);
