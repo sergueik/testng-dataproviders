@@ -19,6 +19,7 @@ public class ExcelParametersProvider {
 
 	private static Utils utils = Utils.getInstance();
 	private static boolean debug = false;
+	private static boolean loadEmptyColumns = false;
 	private static String filePath = null;
 	private static String sheetName = null;
 	private static String columnNames = "*";
@@ -55,7 +56,10 @@ public class ExcelParametersProvider {
 		utils.setSheetName(sheetName);
 		utils.setColumnNames(columnNames);
 		debug = parameters.debug();
+		loadEmptyColumns = parameters.loadEmptyColumns();
+		utils.setLoadEmptyColumns(loadEmptyColumns);
 		utils.setDebug(debug);
+
 		List<Object[]> result = utils.createDataFromOpenOfficeSpreadsheet(filePath);
 		Object[][] resultArray = new Object[result.size()][];
 		result.toArray(resultArray);
@@ -83,6 +87,8 @@ public class ExcelParametersProvider {
 		utils.setColumnNames(columnNames);
 		debug = parameters.debug();
 		utils.setDebug(debug);
+		loadEmptyColumns = parameters.loadEmptyColumns();
+		utils.setLoadEmptyColumns(loadEmptyColumns);
 		// String suiteName = context.getCurrentXmlTest().getSuite().getName();
 		if (debug) {
 			System.err.println("Data Provider Caller Suite: "
@@ -144,6 +150,8 @@ public class ExcelParametersProvider {
 		utils.setColumnNames(columnNames);
 		debug = parameters.debug();
 		utils.setDebug(debug);
+		loadEmptyColumns = parameters.loadEmptyColumns();
+		utils.setLoadEmptyColumns(loadEmptyColumns);
 		List<Object[]> result = utils.createDataFromExcel2003(filePath);
 		Object[][] resultArray = new Object[result.size()][];
 		result.toArray(resultArray);

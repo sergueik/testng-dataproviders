@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -59,6 +60,7 @@ public class Utils {
 	private String sheetName;
 	private String columnNames = "*";
 	private boolean debug = false;
+	private boolean loadEmptyColumns = true;
 
 	public void setSheetName(String sheetName) {
 		this.sheetName = sheetName;
@@ -70,6 +72,10 @@ public class Utils {
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
+	}
+
+	public void setLoadEmptyColumns(boolean value) {
+		this.loadEmptyColumns = value;
 	}
 
 	public static String resolveEnvVars(String input) {
@@ -143,34 +149,40 @@ public class Utils {
 		for (int rowIndex = 1; rowIndex < rowCount && StringUtils.isNotBlank(sheet
 				.getImmutableCellAt(0, rowIndex).getValue().toString()); rowIndex++) {
 			List<Object> resultRow = new LinkedList<>();
-			for (int columnIndex = 0; columnIndex < columnCount && StringUtils
-					.isNotBlank(sheet.getImmutableCellAt(columnIndex, rowIndex).getValue()
-							.toString()); columnIndex++) {
+			for (int columnIndex = 0; columnIndex < columns.keySet()
+					.size(); columnIndex++) {
 				cell = sheet.getImmutableCellAt(columnIndex, rowIndex);
-				// TODO: column selection
-				/*
-				String cellName = CellReference.convertNumToColString(columnIndex);
-				if (columns.get(cellName).equals("COUNT")) {
-					assertEquals(cell.getValueType(), ODValueType.FLOAT);
-					expected_count = Double.valueOf(cell.getValue().toString());
+				if (StringUtils.isNotBlank(cell.getValue().toString())) {
+
+					// TODO: column selection
+					/*
+					String cellName = CellReference.convertNumToColString(columnIndex);
+					if (columns.get(cellName).equals("COUNT")) {
+						assertEquals(cell.getValueType(), ODValueType.FLOAT);
+						expected_count = Double.valueOf(cell.getValue().toString());
+					}
+					if (columns.get(cellName).equals("SEARCH")) {
+						assertEquals(cell.getValueType(), ODValueType.STRING);
+						search_keyword = cell.getTextValue();
+					}
+					if (columns.get(cellName).equals("ID")) {
+						System.err.println("Column: " + columns.get(cellName));
+						assertEquals(cell.getValueType(), ODValueType.FLOAT);
+						id = Integer.decode(cell.getValue().toString());
+					}
+					*/
+					@SuppressWarnings("unchecked")
+					Object cellValue = safeOOCellValue(cell);
+					if (debug) {
+						System.err.println("Cell Value: " + cellValue.toString() + " "
+								+ cellValue.getClass());
+					}
+					resultRow.add(cellValue);
+				} else {
+					if (loadEmptyColumns) {
+						resultRow.add(null);
+					}
 				}
-				if (columns.get(cellName).equals("SEARCH")) {
-					assertEquals(cell.getValueType(), ODValueType.STRING);
-					search_keyword = cell.getTextValue();
-				}
-				if (columns.get(cellName).equals("ID")) {
-					System.err.println("Column: " + columns.get(cellName));
-					assertEquals(cell.getValueType(), ODValueType.FLOAT);
-					id = Integer.decode(cell.getValue().toString());
-				}
-				*/
-				@SuppressWarnings("unchecked")
-				Object cellValue = safeOOCellValue(cell);
-				if (debug) {
-					System.err.println("Cell Value: " + cellValue.toString() + " "
-							+ cellValue.getClass());
-				}
-				resultRow.add(cellValue);
 			}
 			result.add(resultRow.toArray());
 		}
@@ -243,16 +255,40 @@ public class Utils {
 			}
 
 			cells = row.cellIterator();
-			List<Object> resultRow = new LinkedList<>();
 			if (cells.hasNext()) {
-				while (cells.hasNext()) {
-					cell = (HSSFCell) cells.next();
-					Object cellValue = safeUserModeCellValue(cell);
-					if (debug) {
-						System.err.println("Cell Value: " + cellValue.toString() + " "
-								+ cellValue.getClass());
+				List<Object> resultRow = new LinkedList<>();
+				if (loadEmptyColumns) {
+					// fill the Array with nulls
+					IntStream.range(0, columnHeaders.keySet().size())
+							.forEach(o -> resultRow.add(null));
+					// inject sparsely defined columns
+					while (cells.hasNext()) {
+						cell = (HSSFCell) cells.next();
+						if (cell != null) {
+							Object cellValue = safeUserModeCellValue(cell);
+							if (debug) {
+								try {
+									System.err.println(String.format("Loading Cell[%d] = %s %s",
+											cell.getColumnIndex(), cellValue.toString(),
+											cellValue.getClass()));
+								} catch (NullPointerException e) {
+									System.err.println(
+											"Exception loading cell " + cell.getColumnIndex());
+								}
+							}
+							resultRow.set(cell.getColumnIndex(), cellValue);
+						}
 					}
-					resultRow.add(cellValue);
+				} else {
+					while (cells.hasNext()) {
+						cell = (HSSFCell) cells.next();
+						Object cellValue = safeUserModeCellValue(cell);
+						if (debug) {
+							System.err.println("Cell Value: " + cellValue.toString() + " "
+									+ cellValue.getClass());
+						}
+						resultRow.add(cellValue);
+					}
 				}
 				result.add(resultRow.toArray());
 			}
@@ -335,23 +371,38 @@ public class Utils {
 			List<Object> resultRow = new LinkedList<>();
 			cells = row.cellIterator();
 			if (cells.hasNext()) {
-				while (cells.hasNext()) {
-					cell = (XSSFCell) cells.next();
-					// TODO: column selection
-					/*
-					if (columns.get(cellColumn).equals("ID")) {
-						assertEquals(cell.getCellType(), XSSFCell.CELL_TYPE_NUMERIC);
-						// id = (int) cell.getNumericCellValue();
+				if (loadEmptyColumns) {
+					// fill the Array with nulls
+					IntStream.range(0, columns.keySet().size())
+							.forEach(o -> resultRow.add(null));
+					// inject sparsely defined columns
+					while (cells.hasNext()) {
+						cell = (XSSFCell) cells.next();
+						// TODO: column selection
+						if (cell != null) {
+							Object cellValue = safeUserModeCellValue(cell);
+							if (debug) {
+								System.err.println(String.format("Cell Value: \"%s\" %s",
+										cellValue.toString(), cellValue.getClass()));
+							}
+							resultRow.add(cellValue);
+						}
 					}
-					*/
-					Object cellValue = safeUserModeCellValue(cell);
-					if (debug) {
-						System.err.println("Cell Value: " + cellValue.toString() + " "
-								+ cellValue.getClass());
+				} else {
+					while (cells.hasNext()) {
+						cell = (XSSFCell) cells.next();
+						// TODO: column selection
+						if (cell != null) {
+							Object cellValue = safeUserModeCellValue(cell);
+							if (debug) {
+								System.err.println(String.format("Cell Value: \"%s\" %s",
+										cellValue.toString(), cellValue.getClass()));
+							}
+							resultRow.add(cellValue);
+						}
 					}
-					resultRow.add(cellValue);
+					result.add(resultRow.toArray());
 				}
-				result.add(resultRow.toArray());
 			}
 		}
 		return result;
