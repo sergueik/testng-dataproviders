@@ -32,7 +32,7 @@
     <selenium-chrome-driver.version>${selenium.version}</selenium-chrome-driver.version>
     <selenium-firefox-driver.version>${selenium.version}</selenium-firefox-driver.version>
     <testng.version>6.11</testng.version>
-    <webdrivermanager.version>2.1.0</webdrivermanager.version>
+    <webdrivermanager.version>2.2.1</webdrivermanager.version>
     <mainClass>com.github.sergueik.testng.EntryPoint</mainClass>
   </properties>
   <dependencies>
