@@ -4,7 +4,7 @@
   <groupId>com.github.sergueik.testng</groupId>
   <artifactId>dataprovider</artifactId>
   <packaging>jar</packaging>
-  <version>1.4-SNAPSHOT</version>
+  <version>1.5-SNAPSHOT</version>
   <name>app</name>
   <url>http://maven.apache.org</url>
   <developers>
@@ -25,7 +25,6 @@
     <json.version>20170516</json.version>
     <json-path.version>2.4.0</json-path.version>
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
-    <phantomjsdriver.version>1.2.1</phantomjsdriver.version>
     <poi.version>3.17</poi.version>
     <poiooxml.version>3.17</poiooxml.version>
     <selenium.version>3.8.1</selenium.version>
@@ -120,12 +119,6 @@
       <groupId>com.jayway.jsonpath</groupId>
       <artifactId>json-path</artifactId>
       <version>${json-path.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.codeborne</groupId>
-      <artifactId>phantomjsdriver</artifactId>
-      <version>${phantomjsdriver.version}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
