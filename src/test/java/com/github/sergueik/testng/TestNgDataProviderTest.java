@@ -1,9 +1,10 @@
 package com.github.sergueik.testng;
 /**
- * Copyright 2017 Serguei Kouzmine
+ * Copyright 2017,2018 Serguei Kouzmine
  */
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,6 +19,11 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 // https://www.programcreek.com/java-api-examples/org.testng.Assert
 import org.testng.Assert;
+
+//NOTE: a need to switch to hamcrest-all.jar and Matchers 
+//just for resolving method 'containsInAnyOrder'
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TestNgDataProviderTest {
 
@@ -123,6 +129,13 @@ public class TestNgDataProviderTest {
 	private void dataTest(String keyword, double count) {
 		Assert.assertNotNull(keyword);
 		Assert.assertTrue(keyword.matches("(?:junit|testng|spock)"));
+		/*
+		Object[] expected = new Object[] { "junit", "testng", "spock" };
+		HashSet<Object> resultHashset = new HashSet<Object>();
+		resultHashset.add(keyword);
+		assertThat(resultHashset, containsInAnyOrder(expected));
+		*/
+		assertThat(keyword, isOneOf("junit", "testng", "spock"));
 		Assert.assertTrue(((int) count > 0));
 		System.err.println(
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",

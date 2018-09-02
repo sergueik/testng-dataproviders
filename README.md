@@ -132,6 +132,7 @@ row 0 : [1.0, junit, 104.0]
  * [sskorol/tesst-data-supplier](https://github.com/sskorol/test-data-supplier)
  * [converting gradle to pom](https://stackoverflow.com/questions/12888490/gradle-build-gradle-to-maven-pom-xml)
  * [using gradle maven plugin to produce pom.xml](https://stackoverflow.com/questions/17281927/how-to-make-gradle-generate-a-valid-pom-xml-file-at-the-root-of-a-project-for-ma)
+ * [Selenium data driven testing with Excel](https://www.swtestacademy.com/data-driven-excel-selenium/)
 
 ### Maven Central
 
