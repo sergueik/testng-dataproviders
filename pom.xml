@@ -32,7 +32,7 @@
     <selenium-chrome-driver.version>${selenium.version}</selenium-chrome-driver.version>
     <selenium-firefox-driver.version>${selenium.version}</selenium-firefox-driver.version>
     <testng.version>6.13.1</testng.version>
-    <webdrivermanager.version>2.2.5</webdrivermanager.version>
+    <webdrivermanager.version>3.0.0</webdrivermanager.version>
     <mainClass>EntryPoint</mainClass>
   </properties>
   <dependencies>
