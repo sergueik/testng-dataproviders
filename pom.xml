@@ -27,7 +27,7 @@
     <json-path.version>2.4.0</json-path.version>
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <poi.version>3.17</poi.version>
-    <poiooxml.version>3.17</poiooxml.version>
+    <poiooxml.version>${poi.version}</poiooxml.version>
     <selenium.version>3.13.0</selenium.version>
     <selenium-chrome-driver.version>${selenium.version}</selenium-chrome-driver.version>
     <selenium-firefox-driver.version>${selenium.version}</selenium-firefox-driver.version>
@@ -176,7 +176,7 @@
   </distributionManagement>
   <profiles>
     <profile>
-      <id>testng</id>
+      <id>chrome</id>
       <properties>
         <browser.name>chrome</browser.name>
       </properties>
@@ -250,7 +250,7 @@
       </build>
     </profile>
     <profile>
-      <id>junit</id>
+      <id>firefox</id>
       <properties>
         <browser.name>firefox</browser.name>
       </properties>

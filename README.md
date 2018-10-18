@@ -154,6 +154,12 @@ To use the snapshot version, add the following to `pom.xml`:
   </repository>
 </repositories>
 ```
+### Apache POI compatibility
+
+  * The default version of the supported Apache POI is 3.17.
+  * Older versions of the package require minor code refactoring. Note that you may also have to clear the other versions of poi and poi-ooxml jars from maven cache '~/.m2/repository'
+  * Project can be built with Apache POI 4.0.0 by modifying `poi.version` to `4.0.0` within `&lt;properties&gt;` node in the `pom.xml` - the profile `poi40` does not work correctly.
+  * Creating branches and tags is a work in progress.
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
