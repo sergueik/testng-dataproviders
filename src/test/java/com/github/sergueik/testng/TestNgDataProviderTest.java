@@ -57,7 +57,6 @@ public class TestNgDataProviderTest {
 	public void test_with_JSON(String expectedCount, String searchKeyword)
 			throws InterruptedException {
 		dataTest(searchKeyword, expectedCount);
-
 	}
 
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "csv", dataProviderClass = CSVParametersProvider.class)

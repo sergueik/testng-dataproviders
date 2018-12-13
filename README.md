@@ -9,6 +9,8 @@ This project exercises [testng dataProviders](http://testng.org/doc/documentatio
   * csv [testnt csv file](http://stackoverflow.com/questions/26033985/how-to-pass-parameter-to-data-provider-in-testng-from-csv-file)
   * fillo [fillo](http://codoid.com/fillo/)
 
+Unlike core TestNg data providers configurable through annotation constant parameters this Data provider class features runtime-flexible data file paths iparameterization enabling one running the jar with environment-specific test data without recompiling the java project. This feature was requested in one of the forums and was easy to implement - details in in __Extra Features__ section below.
+
 ### Testing
 
 For example test case performs Selenium link count test with the data providers of the following supported data types:
@@ -112,6 +114,124 @@ Cell Value: 104.0 class java.lang.Double
 row 0 : [1.0, junit, 104.0]
 ...
 ```
+### Extra Features
+
+This data provider overcomes the known difficulty of core TestNG or Junit parameter annotations: developer is
+[not allowed](https://stackoverflow.com/questions/16509065/get-rid-of-the-value-for-annotation-attribute-must-be-a-constant-expression-me) to redefine the dataprovider attributes like for example the data source path:
+
+```java
+public static final String dataPath = "file:src/test/resources/data.json";
+  @Test
+  @ExcelParameters(filepath = dataPath)
+  public void test( double rowNum, String keyword, double count) {
+   // actual code ot the  test
+  }
+```
+In the above, one is only allowed to initialize the `testDataPath` to a `String`(or `int`) primitive type, in particular even
+declaring the same (pseudo-const) data in a separate class:
+
+```java
+public class ParamData {
+  public final static String dataPath = "file:src/test/resources/data.json";
+}
+```
+and assigning the result to the vatiable in the main test class,
+```java
+public class FileParamsTest {
+
+  private final static String dataPath = ParamData.dataPath;
+```
+would fail to compile:
+```sh
+Compilation failure:
+[ERROR] FileParamsTest.java: element value must be a constant expression
+```
+so it likely not doable.
+
+However it is quite easy to allow such flexibility in the data provider class `ExcelParametersProvider` itself by adding an extra class variable named  e.g. `testEnvironment` that would receive its value from e.g. the environment variable named `TEST_ENVIRONMENT` that, when set, would override the data file paths
+that in were specified through the `file://` protocol
+and which therefore refer to the system files (not to data embedded in the jar):
+so  the regular test data provider annotation
+```java
+  @Test
+  @ExcelParameters(filepath = "file:src/test/resources/data.xlsx")
+  public void test(double rowNum, String keyword, double count) {
+    try {
+    dataTest(keyword, count);
+    } catch (IllegalStateException e) {
+    System.err.println(String.format("keyword: %s , cound : %d ", keyword, count));
+    }
+  }
+
+```
+in the presence of the environment `TEST_ENVIRONMENT` with the value `dev` will make it read parameters of the test from `src/test/resources/dev/data.xlsx` dather then `src/test/resources/data.xlsx`.
+
+It is implemented directly in the `ExcelParametersProvider` provider in a very basic fashion as shown below:
+
+```java
+public class ExcelParametersProvider
+implements ParametersProvider<ExcelParameters> {
+
+  private final static String testEnvironment = (System.getenv("TEST_ENVIRONMENT") != null) ? System.getenv("TEST_ENVIRONMENT") : "";
+
+  private static String amendFilePath(String filePath) {
+    if (debug) {
+      System.err.print(
+        String.format("Amending the %s with %s", filePath, testEnvironment));       }
+    // Inject the directory into the file path
+    String updatedFilePath = filePath.replaceAll("^(.*)/([^/]+)$",
+    String.format("$1/%s/$2", testEnvironment));
+    if (debug) {
+      System.err.println(String.format(" => %s", updatedFilePath));
+    }
+    return updatedFilePath;
+}
+```
+
+and take it into account to redefine the inputs during initialization:
+
+```java
+    filePath = String.format("%s/%s",
+        (parameters.path().isEmpty()
+            || parameters.path().equalsIgnoreCase("."))
+                ? System.getProperty("user.dir")
+                : Utils.resolveEnvVars(parameters.path()),
+        parameters.name());
+    // if the path is relative assume it is under ${user.dir}
+    if (!filePath.matches("^[/\\\\].*")
+        && !filePath.matches("^(?i:[A-Z]):.*")) {
+      filePath = String.format("%s/%s", System.getProperty("user.dir"),
+          filePath);
+    }
+    if (testEnvironment != null && testEnvironment != "") {
+      filePath = amendFilePath(filePath);
+    }
+
+```
+
+therefore the test
+```cmd
+mkdir dev
+mkdir src\main\resources\dev
+copy src\main\resources\data.* src\main\resources\dev\
+copy data*.* dev
+set  TEST_ENVIRONMENT=dev
+mvn test
+```
+works as expected (the example shows debug output for Open Office data file `data.ods` originally red from `src/main/resources`):
+
+```cmd
+Amending the c:\developer\sergueik\testng-dataproviders/src/main/resources/data.
+ods with dev => c:\developer\sergueik\testng-dataproviders/src/main/resources/de
+v/data.ods
+BeforeMethod Suite: Suite 1
+Reading Open Office Spreadsheet: Employee Data
+Cell Value: "1.0" class java.lang.Double
+Cell Value: "junit" class java.lang.String
+Cell Value: "202.0" class java.lang.Double
+Cell Value: "2.0" class java.lang.Double
+```
+One can easily make this behavior optional, turn the `TEST_ENVIRONMENT` envirnmant name a separate parameter or switch to store definitions of environment specifics into the property file (this is work in progress). Similar changes will be soon available to
 
 ### Links
 

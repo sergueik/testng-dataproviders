@@ -23,6 +23,9 @@ public class ExcelParametersProvider {
 	private static String filePath = null;
 	private static String sheetName = null;
 	private static String columnNames = "*";
+	private final static String testEnvironment = (System
+			.getenv("TEST_ENVIRONMENT") != null) ? System.getenv("TEST_ENVIRONMENT")
+					: "";
 
 	// passed via ExcelParameters
 	// public void setDebug(boolean debug) {
@@ -47,7 +50,9 @@ public class ExcelParametersProvider {
 				filePath = String.format("%s/%s", System.getProperty("user.dir"),
 						filePath);
 			}
-
+			if (testEnvironment != null && testEnvironment != "") {
+				filePath = amendFilePath(filePath);
+			}
 			sheetName = parameters.sheetName();
 		} else {
 			throw new RuntimeException(
@@ -77,6 +82,9 @@ public class ExcelParametersProvider {
 							? System.getProperty("user.dir")
 							: Utils.resolveEnvVars(parameters.path()),
 					parameters.name());
+			if (testEnvironment != null && testEnvironment != "") {
+				filePath = amendFilePath(filePath);
+			}
 			sheetName = parameters.sheetName();
 		} else {
 			throw new RuntimeException(
@@ -137,6 +145,9 @@ public class ExcelParametersProvider {
 							? System.getProperty("user.dir")
 							: Utils.resolveEnvVars(parameters.path()),
 					parameters.name());
+			if (testEnvironment != null && testEnvironment != "") {
+				filePath = amendFilePath(filePath);
+			}
 			sheetName = parameters.sheetName();
 		} else {
 			throw new RuntimeException(
@@ -156,5 +167,19 @@ public class ExcelParametersProvider {
 		Object[][] resultArray = new Object[result.size()][];
 		result.toArray(resultArray);
 		return resultArray;
+	}
+
+	private static String amendFilePath(String filePath) {
+		if (debug) {
+			System.err.print(
+					String.format("Amending the %s with %s", filePath, testEnvironment));
+		}
+		// Inject the directory into the file path
+		String updatedFilePath = filePath.replaceAll("^(.*)/([^/]+)$",
+				String.format("$1/%s/$2", testEnvironment));
+		if (debug) {
+			System.err.println(String.format(" => %s", updatedFilePath));
+		}
+		return updatedFilePath;
 	}
 }
