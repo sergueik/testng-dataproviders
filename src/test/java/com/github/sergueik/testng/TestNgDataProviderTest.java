@@ -37,8 +37,16 @@ public class TestNgDataProviderTest {
 
 	}
 
+	public final static String dataPath = "src/main/resources";
+	// NOTE: cannot do
+	// dataPath = param();
+
+	public static final String param() {
+		return "src/main/resources";
+	}
+
 	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
-	@DataFileParameters(name = "data.ods", path = "src/main/resources", debug = false)
+	@DataFileParameters(name = "data.ods", path = dataPath, debug = false)
 	public void test_with_OpenOffice_Spreadsheet(double rowNum,
 			String searchKeyword, double expectedCount) throws InterruptedException {
 		dataTest(searchKeyword, expectedCount);

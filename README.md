@@ -120,51 +120,52 @@ This data provider overcomes the known difficulty of core TestNG or Junit parame
 [not allowed](https://stackoverflow.com/questions/16509065/get-rid-of-the-value-for-annotation-attribute-must-be-a-constant-expression-me) to redefine the dataprovider attributes like for example the data source path:
 
 ```java
-public static final String dataPath = "file:src/test/resources/data.json";
-  @Test
-  @ExcelParameters(filepath = dataPath)
-  public void test( double rowNum, String keyword, double count) {
-   // actual code ot the  test
+  public static final String dataPath = "src/main/resources";
+
+@Test(enabled = true, dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
+  @DataFileParameters(name = "data.ods", path = dataPath, debug = false)
+  public void test(double rowNum,
+    String searchKeyword, double expectedCount) throws InterruptedException {
+    // actual code ot the  test
   }
 ```
-In the above, one is only allowed to initialize the `testDataPath` to a `String`(or `int`) primitive type, in particular even
-declaring the same (pseudo-const) data in a separate class:
+In the above, one is only allowed to initialize the `dataPath` to a `String` (or `int`) primitive type, in particular even
+declaring the same (pseudo-const) value in a separate class:
 
 ```java
 public class ParamData {
-  public final static String dataPath = "file:src/test/resources/data.json";
+  public final static String dataPath = "src/main/resources";
 }
 ```
 and assigning the result to the vatiable in the main test class,
 ```java
 public class FileParamsTest {
-
   private final static String dataPath = ParamData.dataPath;
+```
+or assigning the method rerturn value to the parameter:
+```
+  public final static String dataPath = param();
+
+  public static final String param() {
+    return "src/main/resources";
+  }
 ```
 would fail to compile:
 ```sh
 Compilation failure:
-[ERROR] FileParamsTest.java: element value must be a constant expression
+[ERROR]TestNgDataProviderTest.java: element value must be a constant expression
 ```
 so it likely not doable.
 
-However it is quite easy to allow such flexibility in the data provider class `ExcelParametersProvider` itself by adding an extra class variable named  e.g. `testEnvironment` that would receive its value from e.g. the environment variable named `TEST_ENVIRONMENT` that, when set, would override the data file paths
-that in were specified through the `file://` protocol
-and which therefore refer to the system files (not to data embedded in the jar):
-so  the regular test data provider annotation
+However it is quite easy to allow such flexibility in the data provider class `ExcelParametersProvider` itself by adding an extra class variable named  e.g. `testEnvironment` that would receive its value from e.g. the environment variable named `TEST_ENVIRONMENT` that, when set, would override the data file path value in the test method annotation:
 ```java
-  @Test
-  @ExcelParameters(filepath = "file:src/test/resources/data.xlsx")
-  public void test(double rowNum, String keyword, double count) {
-    try {
-    dataTest(keyword, count);
-    } catch (IllegalStateException e) {
-    System.err.println(String.format("keyword: %s , cound : %d ", keyword, count));
-    }
+  @Test(enabled = true, dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
+  @DataFileParameters(name = "data.ods", path = "src/main/resources", debug = false)
+  public void test(double rowNum, String searchKeyword, double expectedCount) throws InterruptedException {
+   dataTest(searchKeyword, expectedCount);
   }
-
 ```
-in the presence of the environment `TEST_ENVIRONMENT` with the value `dev` will make it read parameters of the test from `src/test/resources/dev/data.xlsx` dather then `src/test/resources/data.xlsx`.
+in the presence of the environment `TEST_ENVIRONMENT` with the value `dev` will make it read parameters of the test from `src/main/resources/dev/data.ods` rather then `src/main/resources/data.ods`.
 
 It is implemented directly in the `ExcelParametersProvider` provider in a very basic fashion as shown below:
 
