@@ -28,14 +28,20 @@
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <poi.version>3.17</poi.version>
     <poiooxml.version>${poi.version}</poiooxml.version>
-    <selenium.version>3.14.0</selenium.version>
+    <selenium.version>3.13.0</selenium.version>
+    <!-- not all ${selenium.version} -->
     <selenium-chrome-driver.version>${selenium.version}</selenium-chrome-driver.version>
     <selenium-firefox-driver.version>${selenium.version}</selenium-firefox-driver.version>
     <testng.version>6.14.3</testng.version>
-    <webdrivermanager.version>3.1.1</webdrivermanager.version>
+    <webdrivermanager.version>3.2.0</webdrivermanager.version>
     <mainClass>EntryPoint</mainClass>
   </properties>
   <dependencies>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>${testng.version}</version>
+    </dependency>
     <dependency>
       <groupId>io.github.bonigarcia</groupId>
       <artifactId>webdrivermanager</artifactId>
