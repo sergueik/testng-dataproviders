@@ -1,6 +1,6 @@
 package com.github.sergueik.testng;
 /**
- * Copyright 2017 Serguei Kouzmine
+ * Copyright 2017-2019 Serguei Kouzmine
  */
 
 import java.io.File;
@@ -81,10 +81,13 @@ public class CSVParametersProvider {
 		return testDataArray;
 	}
 
-	private static String readFile(String path, Charset encoding)
-			throws IOException {
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
-		return new String(encoded, encoding);
+	private static String readFile(String path, Charset encoding) {
+		try {
+			byte[] encoded = Files.readAllBytes(Paths.get(path));
+			return new String(encoded, encoding);
+		} catch (IOException e) {
+			return null;
+		}
 	}
 
 }

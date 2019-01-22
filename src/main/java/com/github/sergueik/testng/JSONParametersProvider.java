@@ -1,6 +1,6 @@
 package com.github.sergueik.testng;
 /**
- * Copyright 2017 Serguei Kouzmine
+ * Copyright 2017-2019 Serguei Kouzmine
  */
 
 // import static org.junit.Assert.assertTrue;
@@ -35,8 +35,9 @@ public class JSONParametersProvider {
 	private static String encoding = null;
 	private static List<String> columns = new ArrayList<>();
 
+	// TODO: will break with versions of JSON newer than 20080701
 	@DataProvider(parallel = false, name = "JSON")
-	public static Object[][] createData_from_JSON(final ITestContext context,
+	public static Object[][] createDataFromJSON(final ITestContext context,
 			final Method method) throws org.json.JSONException {
 
 		JSONDataFileParameters parameters = method
