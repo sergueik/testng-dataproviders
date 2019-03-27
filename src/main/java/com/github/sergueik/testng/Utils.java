@@ -123,6 +123,11 @@ public class Utils {
 			SpreadSheet spreadSheet) {
 		HashMap<String, String> columns = new HashMap<>();
 		List<Object[]> result = new LinkedList<>();
+		if (debug) {
+			System.err.println(
+					"Opening " + (sheetName.isEmpty() ? "first sheet" : sheetName));
+		}
+
 		Sheet sheet = (sheetName.isEmpty()) ? spreadSheet.getFirstSheet()
 				: spreadSheet.getSheet(sheetName);
 		if (debug) {
@@ -186,41 +191,45 @@ public class Utils {
 			}
 			for (int columnIndex = 0; columnIndex < columns.keySet()
 					.size(); columnIndex++) {
-				if (controlColumnIndex == columnIndex) {
-					continue;
-				}
-				cell = sheet.getImmutableCellAt(columnIndex, rowIndex);
-				if (StringUtils.isNotBlank(cell.getValue().toString())) {
 
-					// TODO: column selection
-					/*
-					String cellName = CellReference.convertNumToColString(columnIndex);
-					if (columns.get(cellName).equals("COUNT")) {
-						assertEquals(cell.getValueType(), ODValueType.FLOAT);
-						expected_count = Double.valueOf(cell.getValue().toString());
-					}
-					if (columns.get(cellName).equals("SEARCH")) {
-						assertEquals(cell.getValueType(), ODValueType.STRING);
-						search_keyword = cell.getTextValue();
-					}
-					if (columns.get(cellName).equals("ID")) {
-						System.err.println("Column: " + columns.get(cellName));
-						assertEquals(cell.getValueType(), ODValueType.FLOAT);
-						id = Integer.decode(cell.getValue().toString());
-					}
-					*/
-					@SuppressWarnings("unchecked")
-					Object cellValue = safeOOCellValue(cell);
-					if (debug) {
-						System.err.println("Cell Value: " + cellValue.toString() + " "
-								+ cellValue.getClass());
-					}
-					resultRow.add(cellValue);
-				} else {
-					if (loadEmptyColumns) {
-						resultRow.add(null);
+				String columnName = CellReference.convertNumToColString(columnIndex);
+				if (columns.containsKey(columnName)) {
+					cell = sheet.getImmutableCellAt(columnIndex, rowIndex);
+					if (StringUtils.isNotBlank(cell.getValue().toString())) {
+
+						// TODO: column selection
+						/*
+						String cellName = CellReference.convertNumToColString(columnIndex);
+						if (columns.get(cellName).equals("COUNT")) {
+							assertEquals(cell.getValueType(), ODValueType.FLOAT);
+							expected_count = Double.valueOf(cell.getValue().toString());
+						}
+						if (columns.get(cellName).equals("SEARCH")) {
+							assertEquals(cell.getValueType(), ODValueType.STRING);
+							search_keyword = cell.getTextValue();
+						}
+						if (columns.get(cellName).equals("ID")) {
+							System.err.println("Column: " + columns.get(cellName));
+							assertEquals(cell.getValueType(), ODValueType.FLOAT);
+							id = Integer.decode(cell.getValue().toString());
+						}
+						*/
+						@SuppressWarnings("unchecked")
+						Object cellValue = safeOOCellValue(cell);
+						if (debug) {
+							System.err.println("Cell Value: " + cellValue.toString() + " "
+									+ cellValue.getClass());
+						}
+						resultRow.add(cellValue);
+					} else {
+						if (loadEmptyColumns) {
+							resultRow.add(null);
+						}
 					}
 				}
+			}
+			if (debug) {
+				System.err.println("Added row of parameters: " + resultRow.toString());
 			}
 			result.add(resultRow.toArray());
 		}

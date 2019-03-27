@@ -52,6 +52,13 @@ public class TestNgDataProviderTest {
 		dataTest(searchKeyword, expectedCount);
 	}
 
+	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
+	@DataFileParameters(name = "filtered_data.ods", path = dataPath, sheetName = "Filtered Example" , controlColumn = "ENABLED", withValue = "true", debug = true)
+	public void testFilteredData(double rowNum,
+			String searchKeyword, double expectedCount) throws InterruptedException {
+		dataTest(searchKeyword, expectedCount);
+	}
+
 	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2007", dataProviderClass = ExcelParametersProvider.class)
 	@DataFileParameters(name = "data_2007.xlsx", path = ".", sheetName = "Employee Data", debug = true)
 	public void test_with_Excel_2007(double rowNum, String searchKeyword,
@@ -59,7 +66,7 @@ public class TestNgDataProviderTest {
 		dataTest(searchKeyword, expectedCount);
 	}
 
-	@Test(enabled = false, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "JSON", dataProviderClass = JSONParametersProvider.class)
+	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "JSON", dataProviderClass = JSONParametersProvider.class)
 	@JSONDataFileParameters(name = "data.json", dataKey = "test", columns = "keyword,count"
 	/* columns attribute should not be empty */)
 	public void test_with_JSON(String expectedCount, String searchKeyword)

@@ -235,6 +235,39 @@ Cell Value: "2.0" class java.lang.Double
 ```
 One can easily make this behavior optional, turn the `TEST_ENVIRONMENT` envirnmant name a separate parameter or switch to store definitions of environment specifics into the property file (this is work in progress). Similar changes will be soon available to
 
+
+### Filtering Data Rows for JUnitParams
+
+In addition to using *every row* of spreadsheet as test parameter one may create a designated column which value
+would be indicating to use or skip that row of data, like:
+
+| ROWNUM |    SEARCH    | COUNT |ENABLED
+|--------|--------------|-------|-------
+| 1      | __junit__    | 100   | true
+| 2      | __testng__   | 30    | true
+| 3      | __spock__    | 20    | false
+| 4      | __mockito__  | 41    | true
+
+and annotate the method like
+
+```java
+@Test(enabled = false, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
+@DataFileParameters(name = "filtered_data.ods", path = dataPath, sheetName = "Filtered Example" , controlColumn = "ENABLED", withValue = "true", debug = true)
+public void testWithFilteredParameters(double rowNum,
+    String searchKeyword, double expectedCount) throws InterruptedException {
+  dataTest(searchKeyword, expectedCount);
+}
+```
+
+with this data setting only rows 1,2 and 4 from the data extract above would be used as `testWithFilteredParameters` test method parameters.
+The control column itself is not passed to the subject test method.
+Currently this functionality is implemented for __OpenOffice__ spreadsheet only.
+Remaining format is a work in progress.
+
+This feature of storing more then one set of tests in one spreadsheet and picking the ones which column is set to a specified value
+ has been inspired by some python [post](https://docs.pytest.org/en/latest/fixture.html#parametrizing-fixtures)
+and the [forum (in Russian)(http://software-testing.ru/forum/index.php?/topic/37870-kastomizatciia-parametrizatcii-v-pytest/).
+
 ### Links
 
  * [MySQL testng dataprovider](https://github.com/sskorol/selenium-camp-samples/tree/master/mysql-data-provider)
