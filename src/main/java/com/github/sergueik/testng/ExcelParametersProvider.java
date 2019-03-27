@@ -26,11 +26,8 @@ public class ExcelParametersProvider {
 	private final static String testEnvironment = (System
 			.getenv("TEST_ENVIRONMENT") != null) ? System.getenv("TEST_ENVIRONMENT")
 					: "";
-
-	// passed via ExcelParameters
-	// public void setDebug(boolean debug) {
-	// this.debug = debug;
-	// }
+	private static String controlColumn = null;
+	private static String withValue = null;
 
 	@DataProvider(parallel = false, name = "OpenOffice Spreadsheet")
 	public static Object[][] createData_from_OpenOfficeSpreadsheet(
@@ -62,6 +59,15 @@ public class ExcelParametersProvider {
 		utils.setColumnNames(columnNames);
 		debug = parameters.debug();
 		loadEmptyColumns = parameters.loadEmptyColumns();
+		controlColumn = parameters.controlColumn();
+		if (!controlColumn.isEmpty()) {
+			utils.setControlColumn(controlColumn);
+		}
+		withValue = parameters.withValue();
+		if (!withValue.isEmpty()) {
+			utils.setWithValue(withValue);
+		}
+
 		utils.setLoadEmptyColumns(loadEmptyColumns);
 		utils.setDebug(debug);
 
@@ -97,6 +103,8 @@ public class ExcelParametersProvider {
 		utils.setDebug(debug);
 		loadEmptyColumns = parameters.loadEmptyColumns();
 		utils.setLoadEmptyColumns(loadEmptyColumns);
+		controlColumn = parameters.controlColumn();
+		withValue = parameters.withValue();
 		// String suiteName = context.getCurrentXmlTest().getSuite().getName();
 		if (debug) {
 			System.err.println("Data Provider Caller Suite: "
@@ -163,6 +171,8 @@ public class ExcelParametersProvider {
 		utils.setDebug(debug);
 		loadEmptyColumns = parameters.loadEmptyColumns();
 		utils.setLoadEmptyColumns(loadEmptyColumns);
+		controlColumn = parameters.controlColumn();
+		withValue = parameters.withValue();
 		List<Object[]> result = utils.createDataFromExcel2003(filePath);
 		Object[][] resultArray = new Object[result.size()][];
 		result.toArray(resultArray);

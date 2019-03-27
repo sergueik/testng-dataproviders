@@ -61,6 +61,8 @@ public class Utils {
 	private String columnNames = "*";
 	private boolean debug = false;
 	private boolean loadEmptyColumns = true;
+	private String controlColumn = null;
+	private String withValue = null;
 
 	public void setSheetName(String sheetName) {
 		this.sheetName = sheetName;
@@ -76,6 +78,14 @@ public class Utils {
 
 	public void setLoadEmptyColumns(boolean value) {
 		this.loadEmptyColumns = value;
+	}
+
+	public void setControlColumn(String value) {
+		this.controlColumn = value;
+	}
+
+	public void setWithValue(String value) {
+		this.withValue = value;
 	}
 
 	public static String resolveEnvVars(String input) {
@@ -123,6 +133,12 @@ public class Utils {
 		int rowCount = sheet.getRowCount();
 		@SuppressWarnings("rawtypes")
 		Cell cell = null;
+		@SuppressWarnings("rawtypes")
+		Cell controlCell = null;
+		int controlColumnIndex = -1;
+		if (debug) {
+			System.err.println("Determine control column index for " + controlColumn);
+		}
 		for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
 			String columnHeader = sheet.getImmutableCellAt(columnIndex, 0).getValue()
 					.toString();
@@ -130,10 +146,17 @@ public class Utils {
 				break;
 			}
 			String columnName = CellReference.convertNumToColString(columnIndex);
-			columns.put(columnName, columnHeader);
 			if (debug) {
-				System.err
-						.println(columnIndex + " = " + columnName + " " + columnHeader);
+				System.err.println("Processing column # " + columnIndex + " row 0 "
+						+ columnName + " " + columnHeader);
+			}
+			if (controlColumn == null || controlColumn.isEmpty()
+					|| !controlColumn.equals(columnHeader)) {
+				columns.put(columnName, columnHeader);
+			} else {
+				controlColumnIndex = columnIndex;
+				System.err.println("Determined control column index " + columnIndex
+						+ " and " + columnName + " for " + columnHeader);
 			}
 		}
 		// NOTE: often there may be no ranges defined
@@ -149,8 +172,23 @@ public class Utils {
 		for (int rowIndex = 1; rowIndex < rowCount && StringUtils.isNotBlank(sheet
 				.getImmutableCellAt(0, rowIndex).getValue().toString()); rowIndex++) {
 			List<Object> resultRow = new LinkedList<>();
+			if (controlColumnIndex != -1) {
+				controlCell = sheet.getImmutableCellAt(controlColumnIndex, rowIndex);
+				String controlCellValue = controlCell.getValue().toString();
+				if (StringUtils.isNotBlank(controlCellValue)) {
+					if (debug) {
+						System.err.println("Control Cell Value is: " + controlCellValue);
+					}
+				}
+				if (!controlCellValue.equals(withValue)) {
+					continue;
+				}
+			}
 			for (int columnIndex = 0; columnIndex < columns.keySet()
 					.size(); columnIndex++) {
+				if (controlColumnIndex == columnIndex) {
+					continue;
+				}
 				cell = sheet.getImmutableCellAt(columnIndex, rowIndex);
 				if (StringUtils.isNotBlank(cell.getValue().toString())) {
 

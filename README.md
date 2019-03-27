@@ -1,6 +1,7 @@
 ###  TestNg-DataProviders [![BuildStatus](https://travis-ci.org/sergueik/testng-dataproviders.svg?branch=master)](https://travis-ci.org/sergueik/testng-dataproviders.svg?branch=maste://travis-ci.org/sergueik/testng-dataproviders.svg?branch=master)
 
 This project exercises [testng dataProviders](http://testng.org/doc/documentation-main.html#parameters-dataproviders)
+backed by various Office formats
 
   * Excel 2003 OLE documents - Horrible SpreadSheet Format [org.apache.poi.hssf.usermodel.*)](http://shanmugavelc.blogspot.com/2011/08/apache-poi-read-excel-for-use-of.html)
   * Excel 2007 OOXML (.xlsx) - XML SpreadSheet Format [org.apache.poi.xssf.usermodel.*](http://howtodoinjava.com/2013/06/19/readingwriting-excel-files-in-java-poi-tutorial/)
@@ -277,10 +278,12 @@ To use the snapshot version, add the following to `pom.xml`:
 ```
 ### Apache POI compatibility
 
-  * The default version of the supported Apache POI is 3.17.
-  * Older versions of the package require minor code refactoring. Note that you may also have to clear the other versions of poi and poi-ooxml jars from maven cache '~/.m2/repository'
+  * The default version of the supported Apache POI is __3.17__.
+  * Older versions of the package require minor code refactoring. Note that you may also have to clear the other versions of __poi__ and __poi-ooxml__ jars from maven cache '~/.m2/repository'
   * Project can be built with Apache POI 4.0.0 by modifying `poi.version` to `4.0.0` within `&lt;properties&gt;` node in the `pom.xml` - the profile `poi40` does not work correctly.
   * Creating branches and tags is a work in progress.
+### See Also
+  * [TestNg Excel Data Provider example](https://www.seleniumeasy.com/testng-tutorials/import-data-from-excel-and-pass-to-data-provider)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

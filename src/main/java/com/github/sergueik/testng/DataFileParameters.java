@@ -17,4 +17,6 @@ public @interface DataFileParameters {
 	boolean loadEmptyColumns() default false;
 	String encoding() default "UTF-8";
 	String sheetName() default "test";
+	String controlColumn() default "";
+	String withValue() default "";
 }
