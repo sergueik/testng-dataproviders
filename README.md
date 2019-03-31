@@ -317,6 +317,8 @@ To use the snapshot version, add the following to `pom.xml`:
   * Creating branches and tags is a work in progress.
 ### See Also
   * [TestNg Excel Data Provider example](https://www.seleniumeasy.com/testng-tutorials/import-data-from-excel-and-pass-to-data-provider)
+  * [JUnit4,JUnit5, TestNG comparison](https://www.baeldung.com/junit-vs-testng), covers test parameteterization amond other features
+
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
