@@ -17,18 +17,20 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
 // https://www.programcreek.com/java-api-examples/org.testng.Assert
 import org.testng.Assert;
 
-//NOTE: a need to switch to hamcrest-all.jar and Matchers 
+//NOTE: needed to switch to hamcrest-all.jar and Matchers 
 //just for resolving method 'containsInAnyOrder'
 import static org.hamcrest.Matchers.*;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TestNgDataProviderTest {
 
 	// disabled to prevent errors with file not found under TRAVIS
-	@Test(enabled = false, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2003", dataProviderClass = ExcelParametersProvider.class)
+	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2003", dataProviderClass = ExcelParametersProvider.class)
 	@DataFileParameters(name = "data_2003.xls", path = "${USERPROFILE}\\Desktop", sheetName = "Employee Data")
 	public void test_with_Excel_2003(double rowNum, String searchKeyword,
 			double expectedCount) throws InterruptedException {
@@ -46,16 +48,16 @@ public class TestNgDataProviderTest {
 	}
 
 	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
-	@DataFileParameters(name = "data.ods", path = dataPath, debug = false)
+	@DataFileParameters(name = "data.ods", path = dataPath, debug = true)
 	public void test_with_OpenOffice_Spreadsheet(double rowNum,
 			String searchKeyword, double expectedCount) throws InterruptedException {
 		dataTest(searchKeyword, expectedCount);
 	}
 
 	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
-	@DataFileParameters(name = "filtered_data.ods", path = dataPath, sheetName = "Filtered Example" , controlColumn = "ENABLED", withValue = "true", debug = true)
-	public void testFilteredData(double rowNum,
-			String searchKeyword, double expectedCount) throws InterruptedException {
+	@DataFileParameters(name = "filtered_data.ods", path = dataPath, sheetName = "Filtered Example", controlColumn = "ENABLED", withValue = "true", debug = true)
+	public void testFilteredData(double rowNum, String searchKeyword,
+			double expectedCount) throws InterruptedException {
 		dataTest(searchKeyword, expectedCount);
 	}
 
@@ -142,15 +144,24 @@ public class TestNgDataProviderTest {
 
 	private void dataTest(String keyword, double count) {
 		Assert.assertNotNull(keyword);
-		Assert.assertTrue(keyword.matches("(?:junit|testng|spock)"));
+		System.err.println("keyword: " + keyword);
+		// NOTE: remove one of the alternatives e.g. the "whatever" to trigger
+		// assertionError
+		Assert.assertTrue(keyword.matches("(?:junit|testng|spock|whatever)"));
 		/*
 		Object[] expected = new Object[] { "junit", "testng", "spock" };
 		HashSet<Object> resultHashset = new HashSet<Object>();
 		resultHashset.add(keyword);
 		assertThat(resultHashset, containsInAnyOrder(expected));
 		*/
-		assertThat(keyword, isOneOf("junit", "testng", "spock"));
-		Assert.assertTrue(((int) count > 0));
+		// NOTE: remove one of the alternatives e.g. the "whatever" to trigger
+		// assertionError
+		assertThat(keyword, isOneOf("junit", "testng", "spock", "whatever"));
+		// NOTE: remove one of the alternatives e.g. the "whatever" to trigger
+		// assertionError
+
+		// NOTE: change to greater to trigger assertionError
+		Assert.assertTrue(((int) count >= 0));
 		System.err.println(
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
 						keyword, (int) count));

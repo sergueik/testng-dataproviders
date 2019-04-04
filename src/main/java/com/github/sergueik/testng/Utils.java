@@ -1,7 +1,7 @@
 package com.github.sergueik.testng;
 
 /**
- * Copyright 2017 Serguei Kouzmine
+ * Copyright 2017-2019 Serguei Kouzmine
  */
 import java.io.File;
 import java.io.FileInputStream;
@@ -182,7 +182,7 @@ public class Utils {
 				String controlCellValue = controlCell.getValue().toString();
 				if (StringUtils.isNotBlank(controlCellValue)) {
 					if (debug) {
-						System.err.println("Control Cell Value is: " + controlCellValue);
+						System.err.println("Control cell value is: " + controlCellValue);
 					}
 				}
 				if (!controlCellValue.equals(withValue)) {
@@ -217,8 +217,18 @@ public class Utils {
 						@SuppressWarnings("unchecked")
 						Object cellValue = safeOOCellValue(cell);
 						if (debug) {
-							System.err.println("Cell Value: " + cellValue.toString() + " "
-									+ cellValue.getClass());
+							// NOTE: There appears to be no equivalent of Excel.Application
+							// cell.address() method
+							// https://docs.microsoft.com/en-us/office/vba/api/excel.range.address
+							// in org.jopendocument.dom.spreadsheet
+							// the getRowSpanned, getColumnsSpanned returning 1,1
+							System.err.println(String.format("Cell address: row: %d col: %d",
+									cell.getRowsSpanned(), cell.getColumnsSpanned()));
+						}
+						if (debug) {
+							System.err
+									.println(String.format("Cell value: \"%s\" class \"%s\"",
+											cellValue.toString(), cellValue.getClass().getName()));
 						}
 						resultRow.add(cellValue);
 					} else {
@@ -331,8 +341,13 @@ public class Utils {
 						cell = (HSSFCell) cells.next();
 						Object cellValue = safeUserModeCellValue(cell);
 						if (debug) {
-							System.err.println("Cell Value: " + cellValue.toString() + " "
-									+ cellValue.getClass());
+							System.err.println(String.format("Cell address: row: %d col: %d",
+									cell.getAddress().getRow(), cell.getAddress().getColumn()));
+						}
+						if (debug) {
+							System.err
+									.println(String.format("Cell value: \"%s\" class: \"%s\"",
+											cellValue.toString(), cellValue.getClass().getName()));
 						}
 						resultRow.add(cellValue);
 					}
@@ -429,8 +444,14 @@ public class Utils {
 						if (cell != null) {
 							Object cellValue = safeUserModeCellValue(cell);
 							if (debug) {
-								System.err.println(String.format("Cell Value: \"%s\" %s",
-										cellValue.toString(), cellValue.getClass()));
+								System.err.println(String.format(
+										"Cell address: row: %d col: %d", cell.getAddress().getRow(),
+										cell.getAddress().getColumn()));
+							}
+							if (debug) {
+								System.err
+										.println(String.format("Cell value: \"%s\" class: \"%s\"",
+												cellValue.toString(), cellValue.getClass().getName()));
 							}
 							resultRow.add(cellValue);
 						}
@@ -442,8 +463,13 @@ public class Utils {
 						if (cell != null) {
 							Object cellValue = safeUserModeCellValue(cell);
 							if (debug) {
-								System.err.println(String.format("Cell Value: \"%s\" %s",
-										cellValue.toString(), cellValue.getClass()));
+								System.err.println(String.format(
+										"Cell address: row: %d col: %d", cell.getAddress().getRow(),
+										cell.getAddress().getColumn()));
+							}
+							if (debug) {
+								System.err.println(String.format("Cell value: \"%s\" class: %s",
+										cellValue.toString(), cellValue.getClass().getName()));
 							}
 							resultRow.add(cellValue);
 						}

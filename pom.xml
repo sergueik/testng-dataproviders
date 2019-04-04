@@ -4,7 +4,7 @@
   <groupId>com.github.sergueik.testng</groupId>
   <artifactId>dataprovider</artifactId>
   <packaging>jar</packaging>
-  <version>1.7-SNAPSHOT</version>
+  <version>1.8-SNAPSHOT</version>
   <name>app</name>
   <url>http://maven.apache.org</url>
   <developers>
@@ -131,7 +131,6 @@
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-all</artifactId>
       <version>${hamcrest-all.version}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
@@ -297,4 +296,5 @@
       </build>
     </profile>
   </profiles>
+  <description>TestNg data  provider test annotation backed by various desktop spreadsheet data files through poi</description>
 </project>
