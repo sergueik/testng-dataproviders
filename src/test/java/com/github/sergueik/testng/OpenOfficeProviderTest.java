@@ -40,7 +40,7 @@ public class OpenOfficeProviderTest {
 
 	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
 	@DataFileParameters(name = "data.ods", path = dataPath, debug = true)
-	public void test_with_OpenOffice_Spreadsheet(double rowNum,
+	public void testWithOpenOfficeSpreadsheet(double rowNum,
 			String searchKeyword, double expectedCount) throws InterruptedException {
 		dataTest(searchKeyword, expectedCount);
 	}
@@ -48,7 +48,7 @@ public class OpenOfficeProviderTest {
 	// https://testng.org/doc/documentation-main.html
 	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
 	@DataFileParameters(name = "data.ods", path = dataPath, debug = true)
-	public void test_with_OpenOffice_Spreadsheet_with_Method(Method method,
+	public void testWithOpenOfficeSpreadsheetWithMethod(Method method,
 			double rowNum, String searchKeyword, double expectedCount)
 			throws InterruptedException {
 		dataTestWithMethod(method, searchKeyword, expectedCount);

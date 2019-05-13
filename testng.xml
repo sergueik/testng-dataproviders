@@ -7,15 +7,15 @@
     <classes>
       <class name="com.github.sergueik.testng.ExcelProviderTest">
         <methods>
-          <include name="test_with_Excel_2007"/>
-          <include name="test_with_Excel_2003"/>
+          <include name="testWithExcel2007"/>
+          <include name="testWithExcel2003"/>
         </methods>
       </class>
       <class name="com.github.sergueik.testng.OpenOfficeProviderTest">
         <methods>
-          <include name="test_with_OpenOffice_Spreadsheet_with_Method"/>
+          <include name="testWithOpenOfficeSpreadsheetWithMethod"/>
           <include name="testFilteredData"/>
-          <include name="test_with_OpenOffice_Spreadsheet"/>
+          <include name="testWithOpenOfficeSpreadsheet"/>
         </methods>
       </class>
       <class name="com.github.sergueik.testng.MiscProviderTest">
@@ -26,8 +26,10 @@
       </class>
       <class name="com.github.sergueik.testng.JSONProviderTest">
         <methods>
-          <include name="test_with_JSON"/>
-          <include name="test_with_Static_JSON"/>
+          <include name="testWithJSONDataFile"/>
+          <include name="testParamColumnSwap"/>
+          <include name="testWithStaticJSON"/>
+          <include name="testMissedParameterOrder"/>
         </methods>
       </class>
     </classes>

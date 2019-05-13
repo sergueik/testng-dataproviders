@@ -37,8 +37,8 @@ public class JSONParametersProvider {
 
 	// TODO: will break with versions of JSON newer than 20080701
 	// [Utils] [ERROR] [Error] java.lang.Error: Unresolved compilation problems:
-	// JSONArray cannot be resolved to a type 
-	// JSONObject cannot be resolved to a type 
+	// JSONArray cannot be resolved to a type
+	// JSONObject cannot be resolved to a type
 	// org.json cannot be resolved to a type
 
 	@DataProvider(parallel = false, name = "JSON")
@@ -87,9 +87,10 @@ public class JSONParametersProvider {
 		}
 
 		Assert.assertTrue(obj.has(dataKey));
+		// With JSON >= 20170516
+		// observed org.json.JSONException: JSONObject[&quot;test&quot;] not a
+		// string.
 		String dataString = obj.getString(dataKey);
-
-		// possible org.json.JSONException
 		try {
 			rows = new JSONArray(dataString);
 		} catch (org.json.JSONException e) {
