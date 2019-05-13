@@ -36,6 +36,11 @@ public class JSONParametersProvider {
 	private static List<String> columns = new ArrayList<>();
 
 	// TODO: will break with versions of JSON newer than 20080701
+	// [Utils] [ERROR] [Error] java.lang.Error: Unresolved compilation problems:
+	// JSONArray cannot be resolved to a type 
+	// JSONObject cannot be resolved to a type 
+	// org.json cannot be resolved to a type
+
 	@DataProvider(parallel = false, name = "JSON")
 	public static Object[][] createDataFromJSON(final ITestContext context,
 			final Method method) throws org.json.JSONException {

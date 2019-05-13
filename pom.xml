@@ -24,6 +24,7 @@
     <java.version>1.8</java.version>
     <jOpenDocument.version>1.3</jOpenDocument.version>
     <json.version>20170516</json.version>
+    <json.version>20080701</json.version>
     <json-path.version>2.4.0</json-path.version>
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <poi.version>3.17</poi.version>
