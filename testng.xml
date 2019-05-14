@@ -18,7 +18,7 @@
           <include name="testWithOpenOfficeSpreadsheet"/>
         </methods>
       </class>
-      <class name="com.github.sergueik.testng.MiscProviderTest">
+      <class name="com.github.sergueik.testng.CSVProviderTest">
         <methods>
           <include name="testExplicit"/>
           <include name="testEllipsis"/>

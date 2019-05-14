@@ -1,6 +1,6 @@
 package com.github.sergueik.testng;
 /**
- * Copyright 2017,2018 Serguei Kouzmine
+ * Copyright 2017-2019 Serguei Kouzmine
  */
 
 import java.lang.reflect.Method;
@@ -18,7 +18,7 @@ import org.testng.annotations.Test;
 
 import org.testng.Assert;
 
-public class MiscProviderTest {
+public class CSVProviderTest {
 
 	// https://www.programiz.com/java-programming/varargs
 	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "csv", dataProviderClass = CSVParametersProvider.class)
@@ -34,8 +34,8 @@ public class MiscProviderTest {
 
 	@Test(enabled = false, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "csv", dataProviderClass = CSVParametersProvider.class)
 	@DataFileParameters(name = "data.csv", path = "")
-	public void testExplicit(String column1, String column2,
-			String column3) throws InterruptedException {
+	public void testExplicit(String column1, String column2, String column3)
+			throws InterruptedException {
 		dataTest(column2, column3);
 	}
 
