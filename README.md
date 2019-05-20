@@ -318,7 +318,8 @@ To use the snapshot version, add the following to `pom.xml`:
 ### See Also
   * [TestNg Excel Data Provider example](https://www.seleniumeasy.com/testng-tutorials/import-data-from-excel-and-pass-to-data-provider)
   * [JUnit4,JUnit5, TestNG comparison](https://www.baeldung.com/junit-vs-testng), covers test parameteterization amond other features
-
+  * [dataprovider basics](https://howtodoinjava.com/testng/testng-dataprovider/)
+  * JUnit4,JUnit5, TestNG comparison, covers [parameteterized tests](https://www.baeldung.com/junit-vs-testng)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

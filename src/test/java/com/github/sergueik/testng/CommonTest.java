@@ -3,16 +3,20 @@ package com.github.sergueik.testng;
  * Copyright 2019 Serguei Kouzmine
  */
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
 import org.testng.IAttributes;
 import org.testng.ITestContext;
+import org.testng.ITestNGMethod;
+import org.testng.ITestResult;
 import org.testng.TestRunner;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeMethod;
-
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 // https://www.programcreek.com/java-api-examples/org.testng.Assert
 import org.testng.Assert;
 
@@ -79,6 +83,21 @@ public class CommonTest {
 			double count) {
 		System.err.println("Method name: " + method.getName() + " Parameter count: "
 				+ method.getParameterCount());
+
+		Test testMethodTestAnnotation = method.getAnnotation(Test.class);
+		String dataProviderName = testMethodTestAnnotation.dataProvider();
+		if (dataProviderName != null && !dataProviderName.isEmpty()) {
+			System.err.println("Method name: " + method.getName()
+					+ " DataProvider name: " + dataProviderName);
+			DataProvider dataProviderAnnotation = method
+					.getAnnotation(DataProvider.class);
+			if (dataProviderAnnotation != null) {
+				String thisDataProviderName = dataProviderAnnotation.name();
+				System.err.println("Method name: " + method.getName()
+						+ " DataProvider name: " + thisDataProviderName + " "
+						+ dataProviderAnnotation.toString());
+			}
+		}
 		dataTest(keyword, count);
 	}
 
@@ -106,6 +125,50 @@ public class CommonTest {
 		System.err.println(
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
 						keyword, (int) count));
+	}
+
+	// based on: https://gist.github.com/ae6rt/3805639
+	// @Override
+	public void onTestStart(ITestResult iTestResult) {
+		// Attempt to count invocations of a DataProvider-instrumented test
+		Object instance = iTestResult.getInstance();
+		ITestNGMethod testNGMethod = iTestResult.getMethod();
+		Method testMethod = testNGMethod.getMethod();
+		if (testMethod.isAnnotationPresent(Test.class)
+		/*
+		&& testMethod.isAnnotationPresent(Count.class)*/) {
+			Test testMethodTestAnnotation = testMethod.getAnnotation(Test.class);
+			String dataProviderName = testMethodTestAnnotation.dataProvider();
+			if (dataProviderName != null && !dataProviderName.isEmpty()) {
+				Class<?> aClass = instance.getClass();
+				Method[] allTestClassMethods = aClass.getMethods();
+				for (Method m : allTestClassMethods) {
+					/*
+					Counting will silently fail for Test classes using a DataProvider defined outside the test class instance itself.
+					The reason is that the following code does not look outside the test class instance for the DataProvider method.
+					 */
+					if (m.isAnnotationPresent(DataProvider.class)) {
+						DataProvider dataProviderAnnotation = m
+								.getAnnotation(DataProvider.class);
+						String thisDataProviderName = dataProviderAnnotation.name();
+						if (dataProviderName.equals(thisDataProviderName)) {
+							try {
+								Object[][] theData = (Object[][]) m.invoke(instance);
+								Integer numberOfDataProviderRows = theData.length;
+								System.out.printf("Executing %s %d / %d\n",
+										iTestResult.getName(),
+										testNGMethod.getCurrentInvocationCount() + 1,
+										numberOfDataProviderRows);
+							} catch (IllegalAccessException e) {
+								e.printStackTrace();
+							} catch (InvocationTargetException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 }
