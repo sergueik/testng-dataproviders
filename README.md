@@ -317,9 +317,12 @@ To use the snapshot version, add the following to `pom.xml`:
   * Creating branches and tags is a work in progress.
 ### See Also
   * [TestNg Excel Data Provider example](https://www.seleniumeasy.com/testng-tutorials/import-data-from-excel-and-pass-to-data-provider)
-  * [JUnit4,JUnit5, TestNG comparison](https://www.baeldung.com/junit-vs-testng), covers test parameteterization amond other features
+  * [JUnit4, JUnit5, TestNG comparison](https://www.baeldung.com/junit-vs-testng), covers test parameteterization amond other features
   * [dataprovider basics](https://howtodoinjava.com/testng/testng-dataprovider/)
   * JUnit4,JUnit5, TestNG comparison, covers [parameteterized tests](https://www.baeldung.com/junit-vs-testng)
+  * [poire](https://github.com/ssirekumar/POIRE) - one other API on top of Apache POI to deal with office files
+  * parallel testing ["best practices"](https://docs.experitest.com/display/TE/Parallel+Tests+-+Best+Practices) 
+  * [skip TestNG tests based on condition](https://www.lenar.io/skip-testng-tests-based-condition-using-iinvokedmethodlistener/) interface syntax sugar
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

@@ -25,4 +25,18 @@ public class ExcelProviderTest extends CommonTest {
 		dataTest(searchKeyword, expectedCount);
 	}
 
+	/*
+	 * to expore the interplay between conditional and data providers, branch from
+	 * dd584d3341e3fe782d2d4c2d3ed6a8b77a6c21d2
+	 */
+	/*
+	@WindowsOnly
+	@Test(enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2007", dataProviderClass = ExcelParametersProvider.class)
+	@DataFileParameters(name = "data_2007.xlsx", path = ".", sheetName = "Employee Data", debug = true)
+	public void testDecoratedWithDataProvererAndConditionalMethodAnnotation(
+			double rowNum, String searchKeyword, double expectedCount)
+			throws InterruptedException {
+		dataTest(searchKeyword, expectedCount);
+	}
+	*/
 }
