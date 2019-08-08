@@ -17,6 +17,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import java.lang.reflect.Parameter;
+// import org.testng.internal.reflect.Parameter;
 // https://www.programcreek.com/java-api-examples/org.testng.Assert
 import org.testng.Assert;
 
@@ -41,26 +43,38 @@ public class CommonTest {
 		final String methodName = method.getName();
 		final String testName = context.getCurrentXmlTest().getName();
 
-		System.err.println("BeforeMethod Suite: " + suiteName);
-		System.err.println("BeforeMethod Test: " + testName);
-		System.err.println("BeforeMethod Method: " + methodName);
+		System.err.println("BeforeMethod: " + "\t" + "Suite: " + suiteName + "\t"
+				+ "Test: " + testName + "\t" + "Method: " + methodName);
 		// String dataProvider = ((IDataProvidable)annotation).getDataProvider();
 		// System.err.println("Data Provider: " + dataProvider);
 		@SuppressWarnings("deprecation")
 		final Map<String, String> parameters = (((TestRunner) context).getTest())
 				.getParameters();
 		final Set<String> keys = parameters.keySet();
+		System.err.print("BeforeMethod Parameters:");
 		for (String key : keys) {
-			System.err.println(
-					"BeforeMethod Parameter: " + key + " = " + parameters.get(key));
+			System.err.print("\t" + key + " = " + parameters.get(key));
 		}
-		final Set<java.lang.String> attributeNames = ((IAttributes) context)
+		System.err.println("");
+		final Set<String> attributeNames = ((IAttributes) context)
 				.getAttributeNames();
 		if (attributeNames.size() > 0) {
 			for (String attributeName : attributeNames) {
 				System.err.print("BeforeMethod Attribute: " + attributeName + " = "
 						+ ((IAttributes) context).getAttribute(attributeName));
 			}
+		}
+
+		final Parameter[] methodParameters = method.getParameters();
+		if (methodParameters.length > 0) {
+			System.err.print("Method " + method.getName() + " Parameters:");
+			for (int cnt = 0; cnt != methodParameters.length; cnt++) {
+				Parameter methodParameter = methodParameters[cnt];
+				// not useful
+				System.err.print("\t" + methodParameter.getName() + " = "
+						+ methodParameter.toString());
+			}
+			System.err.println("");
 		}
 	}
 
