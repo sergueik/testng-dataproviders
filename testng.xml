@@ -4,6 +4,7 @@
   <!-- NOTE: testng parameters are not currently used in the test -->
   <!-- NOTE: testng parameters visibleto data provider need tobe global. The class method parameter is not visible -->
   <parameter name="indices" value="0:2"/>
+  <parameter name="debug" value="true"/>
   <parameter name="selenium.browser" value="firefox"/>
   <test name="Parse Search Result" preserve-order="true" parallel="false">
     <classes>
@@ -36,8 +37,9 @@
       </class>
       <class name="com.github.sergueik.testng.FilterIndexTest">
         <methods>
-          <parameter name="indices" value="0:2"/>
-          <include name="testIndex"/>
+          <include name="testIndex">
+            <parameter name="indices" value="0:2"/>
+          </include>
         </methods>
       </class>
     </classes>

@@ -64,18 +64,25 @@ public class CommonTest {
 						+ ((IAttributes) context).getAttribute(attributeName));
 			}
 		}
-
+		// not useful: produces
+		// Method testIndex Parameters:Method testIndex Parameters:
+		// arg0 = java.lang.Object arg0
+		// arg1 = java.lang.Object arg1
+		// ..
+		// those are obtained via reflection from method signature:
+		// private void dataTest(String keyword, String strCount)
+		/*
 		final Parameter[] methodParameters = method.getParameters();
 		if (methodParameters.length > 0) {
 			System.err.print("Method " + method.getName() + " Parameters:");
 			for (int cnt = 0; cnt != methodParameters.length; cnt++) {
 				Parameter methodParameter = methodParameters[cnt];
-				// not useful
 				System.err.print("\t" + methodParameter.getName() + " = "
 						+ methodParameter.toString());
 			}
 			System.err.println("");
 		}
+		*/
 	}
 
 	@AfterClass(alwaysRun = true)
