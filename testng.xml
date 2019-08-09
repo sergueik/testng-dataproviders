@@ -2,9 +2,9 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Suite 1" verbose="10" configfailurepolicy="continue">
   <!-- NOTE: testng parameters are not currently used in the test -->
-  <!-- NOTE: testng parameters visibleto data provider need tobe global. The class method parameter is not visible -->
-  <parameter name="indices" value="0:2"/>
-  <parameter name="debug" value="true"/>
+  <!-- NOTE: testng parameters visible by data provider need to be test-scope.
+      The class-scope method parameters are not visible -->
+  <parameter name="debug" value="false"/>
   <parameter name="selenium.browser" value="firefox"/>
   <test name="Parse Search Result" preserve-order="true" parallel="false">
     <classes>
@@ -35,11 +35,23 @@
           <include name="testMissedParameterOrder"/>
         </methods>
       </class>
+    </classes>
+  </test>
+  <test name="Indexed Parameter Provider" preserve-order="true" parallel="false">
+    <parameter name="indices" value="0:1"/>
+    <parameter name="debug" value="true"/>
+    <classes>
       <class name="com.github.sergueik.testng.FilterIndexTest">
         <methods>
-          <include name="testIndex">
-            <parameter name="indices" value="0:2"/>
-          </include>
+          <include name="testIndex"/>
+          <!-- invalid DOM  example: [ERROR] org.testng.TestNGException: org.xml.sax.SAXParseException; lineNumber: 41; columnNumber: 18; Element type "tests" must be declared. -->
+          <!--
+          <tests>
+            <test>
+              <parameter name="indices" value="0:1"/>
+            </test>
+          </tests>
+          -->
         </methods>
       </class>
     </classes>

@@ -28,8 +28,9 @@ public class FilterIndexTest extends CommonTest {
 	// com.github.sergueik.testng.FilterIndexTest.dataProviderInline(java.lang.String)
 	// parameters unresolved: at 0 typeclass java.lang.String
 	// https://howtodoinjava.com/testng/testng-dataprovider/
+	// https://stackoverflow.com/questions/666477/possible-to-pass-parameters-to-testng-dataprovider
 	@DataProvider(parallel = true, name = "data provider with index")
-	@Parameters({ "indices" }) // global
+	@Parameters({ "indices" }) // ignored
 	public Object[][] dataProviderInline(ITestContext context) {
 
 		// https://stackoverflow.com/questions/21290122/testng-dataprovider-reading-test-data-from-the-testng-xml-config-file
