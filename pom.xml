@@ -4,7 +4,7 @@
   <groupId>com.github.sergueik.testng</groupId>
   <artifactId>dataprovider</artifactId>
   <packaging>jar</packaging>
-  <version>1.9-SNAPSHOT</version>
+  <version>1.10-SNAPSHOT</version>
   <name>app</name>
   <url>http://maven.apache.org</url>
   <developers>
@@ -172,6 +172,16 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.18</version>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>testng.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <licenses>
@@ -186,58 +196,5 @@
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </repository>
   </distributionManagement>
-  <profiles>
-    <profile>
-      <id>indices</id>
-      <properties>
-        <testclass.name>com.github.sergueik.testng.FilterIndexTest</testclass.name>
-        <group.name>indices</group.name>
-      </properties>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.testng</groupId>
-          <artifactId>testng</artifactId>
-          <version>${testng.version}</version>
-        </dependency>
-      </dependencies>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.18</version>
-            <configuration>
-              <suiteXmlFiles>
-                <suiteXmlFile>testng.xml</suiteXmlFile>
-              </suiteXmlFiles>
-              <!-- Skip the default running of this plug-in (or everything is run twice...see below) -->
-              <skip>true</skip>
-              <trimStackTrace>false</trimStackTrace>
-            </configuration>
-            <executions>
-              <execution>
-                <id>unit-tests</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <skip>false</skip>
-		  <!-- NOTE: 
-		  https://www.tutorialspoint.com/testng/testng_executing_tests
-		  https://rationaleemotions.wordpress.com/2017/09/29/dynamic-parameterization-in-testng/
-		  https://stackoverflow.com/questions/13245411/how-to-pass-java-code-a-parameter-from-maven-for-testing - the recommended arguments seem to have no effect on test selection -->
-		  <argLine>-Dtestclass=${testclass.name} -Dtest=${testclass.name} -Dgroups=${group.name}</argLine>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
   <description>TestNg data provider test annotation backed by various desktop spreadsheet data files through poi</description>
 </project>
