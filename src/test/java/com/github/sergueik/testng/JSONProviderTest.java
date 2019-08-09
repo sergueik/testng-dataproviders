@@ -8,7 +8,8 @@ import org.testng.annotations.Test;
 
 public class JSONProviderTest extends CommonTest {
 
-	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "JSON", dataProviderClass = JSONParametersProvider.class)
+	@Test(groups = {
+			"json" }, enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "JSON", dataProviderClass = JSONParametersProvider.class)
 	@JSONDataFileParameters(name = "data.json", dataKey = "test", columns = "keyword,count"
 	/* columns attribute should not be empty */)
 	public void testWithJSONDataFile(String searchKeyword, String expectedCount)
@@ -16,7 +17,8 @@ public class JSONProviderTest extends CommonTest {
 		dataTest(searchKeyword, expectedCount);
 	}
 
-	@Test(enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "JSON", dataProviderClass = JSONParametersProvider.class, expectedExceptions = java.lang.AssertionError.class)
+	@Test(groups = {
+			"json" }, enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "JSON", dataProviderClass = JSONParametersProvider.class, expectedExceptions = java.lang.AssertionError.class)
 	@JSONDataFileParameters(name = "data.json", dataKey = "test", columns = "count,keyword"
 	/* columns attribute swapped */)
 	public void testParamColumnSwap(String searchKeyword, String expectedCount)
@@ -26,13 +28,15 @@ public class JSONProviderTest extends CommonTest {
 
 	// Method JSONProviderTest.test_with_static_JSON_missed_parameter_order should
 	// throw an exception of type class java.lang.AssertionError
-	@Test(enabled = true, dataProvider = "static disconnected data provider", expectedExceptions = java.lang.AssertionError.class)
+	@Test(groups = {
+			"json" }, enabled = true, dataProvider = "static disconnected data provider", expectedExceptions = java.lang.AssertionError.class)
 	public void testMissedParameterOrder(Object expectedCount,
 			Object searchKeyword) throws InterruptedException {
 		dataTest(searchKeyword.toString(), expectedCount.toString());
 	}
 
-	@Test(enabled = true, dataProvider = "static disconnected data provider")
+	@Test(groups = {
+			"json" }, enabled = true, dataProvider = "static disconnected data provider")
 	public void testWithStaticJSON(Object searchKeyword, Object expectedCount)
 			throws InterruptedException {
 		dataTest(searchKeyword.toString(), expectedCount.toString());

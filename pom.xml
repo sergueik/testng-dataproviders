@@ -188,9 +188,10 @@
   </distributionManagement>
   <profiles>
     <profile>
-      <id>chrome</id>
+      <id>indices</id>
       <properties>
-        <browser.name>chrome</browser.name>
+        <testclass.name>com.github.sergueik.testng.FilterIndexTest</testclass.name>
+        <group.name>indices</group.name>
       </properties>
       <activation>
         <activeByDefault>true</activeByDefault>
@@ -212,11 +213,6 @@
               <suiteXmlFiles>
                 <suiteXmlFile>testng.xml</suiteXmlFile>
               </suiteXmlFiles>
-              <systemPropertyVariables>
-                <!-- only for local executions - ignored for CI -->
-                <webdriver.chrome.driver>c:/java/selenium/chromedriver.exe</webdriver.chrome.driver>
-                <webdriver.gecko.driver>c:/java/selenium/geckodriver.exe</webdriver.gecko.driver>
-              </systemPropertyVariables>
               <!-- Skip the default running of this plug-in (or everything is run twice...see below) -->
               <skip>true</skip>
               <trimStackTrace>false</trimStackTrace>
@@ -229,72 +225,12 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <!-- Never skip running the tests when the test phase is invoked -->
                   <skip>false</skip>
-                  <includes>
-                    <!-- Include unit tests within integration-test phase. -->
-                    <include>**/*Test.java</include>
-                  </includes>
-                  <excludes>
-                    <!-- Exclude integration tests within (unit) test phase. -->
-                    <exclude>**/*IntegrationTest.java</exclude>
-                  </excludes>
-                </configuration>
-              </execution>
-              <execution>
-                <id>integration-tests</id>
-                <phase>integration-test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <!-- Never skip running the tests when the integration-test phase is invoked -->
-                  <skip>false</skip>
-                  <includes>
-                    <!-- Include integration tests within integration-test phase. -->
-                    <include>**/TestNg*Test.java</include>
-                  </includes>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>firefox</id>
-      <properties>
-        <browser.name>firefox</browser.name>
-      </properties>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-    </profile>
-    <profile>
-      <id>package</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-                <configuration>
-                  <archive>
-                    <manifest>
-                      <mainClass>${project.groupId}.${mainClass}</mainClass>
-                    </manifest>
-                  </archive>
-                  <descriptorRefs>
-                    <descriptorRef>jar-with-dependencies</descriptorRef>
-                  </descriptorRefs>
+		  <!-- NOTE: 
+		  https://www.tutorialspoint.com/testng/testng_executing_tests
+		  https://rationaleemotions.wordpress.com/2017/09/29/dynamic-parameterization-in-testng/
+		  https://stackoverflow.com/questions/13245411/how-to-pass-java-code-a-parameter-from-maven-for-testing - the recommended arguments seem to have no effect on test selection -->
+		  <argLine>-Dtestclass=${testclass.name} -Dtest=${testclass.name} -Dgroups=${group.name}</argLine>
                 </configuration>
               </execution>
             </executions>
@@ -303,5 +239,5 @@
       </build>
     </profile>
   </profiles>
-  <description>TestNg data  provider test annotation backed by various desktop spreadsheet data files through poi</description>
+  <description>TestNg data provider test annotation backed by various desktop spreadsheet data files through poi</description>
 </project>

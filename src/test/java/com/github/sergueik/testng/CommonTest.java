@@ -30,6 +30,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class CommonTest {
 
+	private static final boolean debug = false;
+
 	// NOTE: cannot change signature of the method to include annotation:
 	// handleTestMethodInformation(final ITestContext context, final Method
 	// method, IDataProviderAnnotation annotation )
@@ -42,26 +44,30 @@ public class CommonTest {
 		final String suiteName = context.getCurrentXmlTest().getSuite().getName();
 		final String methodName = method.getName();
 		final String testName = context.getCurrentXmlTest().getName();
-
-		System.err.println("BeforeMethod: " + "\t" + "Suite: " + suiteName + "\t"
-				+ "Test: " + testName + "\t" + "Method: " + methodName);
+		if (debug)
+			System.err.println("BeforeMethod: " + "\tSuite: " + suiteName + "\tTest: "
+					+ testName + "\tMethod: " + methodName);
 		// String dataProvider = ((IDataProvidable)annotation).getDataProvider();
 		// System.err.println("Data Provider: " + dataProvider);
-		@SuppressWarnings("deprecation")
-		final Map<String, String> parameters = (((TestRunner) context).getTest())
-				.getParameters();
-		final Set<String> keys = parameters.keySet();
-		System.err.print("BeforeMethod Parameters:");
-		for (String key : keys) {
-			System.err.print("\t" + key + " = " + parameters.get(key));
+		if (debug) {
+			@SuppressWarnings("deprecation")
+			final Map<String, String> parameters = (((TestRunner) context).getTest())
+					.getParameters();
+			final Set<String> keys = parameters.keySet();
+			System.err.print("BeforeMethod Parameters:");
+			for (String key : keys) {
+				System.err.print("\t" + key + " = " + parameters.get(key));
+			}
+			System.err.println("");
 		}
-		System.err.println("");
-		final Set<String> attributeNames = ((IAttributes) context)
-				.getAttributeNames();
-		if (attributeNames.size() > 0) {
-			for (String attributeName : attributeNames) {
-				System.err.print("BeforeMethod Attribute: " + attributeName + " = "
-						+ ((IAttributes) context).getAttribute(attributeName));
+		if (debug) {
+			final Set<String> attributeNames = ((IAttributes) context)
+					.getAttributeNames();
+			if (attributeNames.size() > 0) {
+				for (String attributeName : attributeNames) {
+					System.err.print("BeforeMethod Attribute: " + attributeName + " = "
+							+ ((IAttributes) context).getAttribute(attributeName));
+				}
 			}
 		}
 		// not useful: produces
@@ -72,15 +78,17 @@ public class CommonTest {
 		// those are obtained via reflection from method signature:
 		// private void dataTest(String keyword, String strCount)
 		/*
-		final Parameter[] methodParameters = method.getParameters();
-		if (methodParameters.length > 0) {
-			System.err.print("Method " + method.getName() + " Parameters:");
-			for (int cnt = 0; cnt != methodParameters.length; cnt++) {
-				Parameter methodParameter = methodParameters[cnt];
-				System.err.print("\t" + methodParameter.getName() + " = "
-						+ methodParameter.toString());
+		if (debug) {
+			final Parameter[] methodParameters = method.getParameters();
+			if (methodParameters.length > 0) {
+				System.err.print("Method " + method.getName() + " Parameters:");
+				for (int cnt = 0; cnt != methodParameters.length; cnt++) {
+					Parameter methodParameter = methodParameters[cnt];
+					System.err.print("\t" + methodParameter.getName() + " = "
+							+ methodParameter.toString());
+				}
+				System.err.println("");
 			}
-			System.err.println("");
 		}
 		*/
 	}
@@ -102,21 +110,20 @@ public class CommonTest {
 
 	protected void dataTestWithMethod(Method method, String keyword,
 			double count) {
-		System.err.println("Method name: " + method.getName() + " Parameter count: "
-				+ method.getParameterCount());
+		System.err.println("Method name: " + method.getName()
+				+ "\tParameter count: " + method.getParameterCount());
 
 		Test testMethodTestAnnotation = method.getAnnotation(Test.class);
 		String dataProviderName = testMethodTestAnnotation.dataProvider();
 		if (dataProviderName != null && !dataProviderName.isEmpty()) {
-			System.err.println("Method name: " + method.getName()
-					+ " DataProvider name: " + dataProviderName);
+			System.err.println("Method: " + method.getName() + "\tDataProvider: "
+					+ dataProviderName);
 			DataProvider dataProviderAnnotation = method
 					.getAnnotation(DataProvider.class);
 			if (dataProviderAnnotation != null) {
 				String thisDataProviderName = dataProviderAnnotation.name();
-				System.err.println("Method name: " + method.getName()
-						+ " DataProvider name: " + thisDataProviderName + " "
-						+ dataProviderAnnotation.toString());
+				System.err.println("Method: " + method.getName() + "\tDataProvider: "
+						+ thisDataProviderName + " " + dataProviderAnnotation.toString());
 			}
 		}
 		dataTest(keyword, count);
@@ -191,5 +198,4 @@ public class CommonTest {
 			}
 		}
 	}
-
 }
