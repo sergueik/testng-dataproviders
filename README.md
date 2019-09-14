@@ -265,8 +265,19 @@ Currently this functionality is implemented for __OpenOffice__ spreadsheet only.
 Remaining format is a work in progress.
 
 This feature of storing more then one set of tests in one spreadsheet and picking the ones which column is set to a specified value
- has been inspired by some python [post](https://docs.pytest.org/en/latest/fixture.html#parametrizing-fixtures)
-and the [forum (in Russian)(http://software-testing.ru/forum/index.php?/topic/37870-kastomizatciia-parametrizatcii-v-pytest/).
+ has been inspired by some python [post](https://docs.pytest.org/en/latest/fixture.html#parametrizing-fixtures) and the [forum](http://software-testing.ru/forum/index.php?/topic/37870-kastomizatciia-parametrizatcii-v-pytest/)(in Russian)
+
+### Note
+
+When outside the project directory
+it is common to place the test datafile (like Excel spreadsheet) on Desktop, Downloads and similar of the current user. The dataprovider annotation parametes must be constant expressions and the constructs like
+```java
+Test( dataProvider = "Excel", dataProviderClass = ExcelParametersProvider.class)
+@DataFileParameters(name = "data_2003.xls", path = (osName.startsWith("windows")) ? "${USERPROFILE}" : "${HOME}" + File.separator + "Desktop" )
+```
+will not compile.
+
+To workaround this inconvenienve, the __TestNgtestng Data Providers__ internally converts between `${USERPRFILE}` and `${HOME}` and vise versa on Linux and Mac computers therefore the expressions `path = "${USERPROFILE}\\Desktop"` or `path = "${HOMEDIR}/Downloads"` work across OS.
 
 ### Links
 
@@ -321,7 +332,7 @@ To use the snapshot version, add the following to `pom.xml`:
   * [dataprovider basics](https://howtodoinjava.com/testng/testng-dataprovider/)
   * JUnit4,JUnit5, TestNG comparison, covers [parameteterized tests](https://www.baeldung.com/junit-vs-testng)
   * [poire](https://github.com/ssirekumar/POIRE) - one other API on top of Apache POI to deal with office files
-  * parallel testing ["best practices"](https://docs.experitest.com/display/TE/Parallel+Tests+-+Best+Practices) 
+  * parallel testing ["best practices"](https://docs.experitest.com/display/TE/Parallel+Tests+-+Best+Practices)
   * [skip TestNG tests based on condition](https://www.lenar.io/skip-testng-tests-based-condition-using-iinvokedmethodlistener/) interface syntax sugar
 
 ### Author

@@ -1,6 +1,6 @@
 package com.github.sergueik.testng;
 /**
- * Copyright 2017 Serguei Kouzmine
+ * Copyright 2017,2019 Serguei Kouzmine
  */
 
 import java.lang.reflect.Method;
