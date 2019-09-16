@@ -20,8 +20,8 @@ public class FilterIndexTest extends CommonTest {
 	}
 
 	// data provider with index
-	// https://stackoverflow.com/questions/21290122/testng-dataprovider-reading-test-data-from-the-testng-xml-config-
 	// https://www.codota.com/code/java/methods/org.testng.xml.XmlTest/getLocalParameters
+	// https://stackoverflow.com/questions/21290122/testng-dataprovider-reading-test-data-from-the-testng-xml-config-file
 	// https://howtodoinjava.com/testng/testng-dataprovider/
 	@DataProvider(parallel = true, name = "data provider with index")
 	public Object[][] dataProviderInline(ITestContext context) {

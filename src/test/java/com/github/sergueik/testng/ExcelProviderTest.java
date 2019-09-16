@@ -20,6 +20,16 @@ public class ExcelProviderTest extends CommonTest {
 	}
 
 	@Test(groups = {
+	"excel" }, enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2003", dataProviderClass = ExcelParametersProvider.class)
+@DataFileParameters(name = "data_2003.xls", path = "${HOME}\\Desktop", sheetName = "Employee Data")
+public void testWithExcel2003PathSpec(double rowNum, String searchKeyword, double expectedCount)
+	throws InterruptedException {
+dataTest(searchKeyword, expectedCount);
+
+}
+
+
+	@Test(groups = {
 			"excel" }, enabled = true, singleThreaded = true, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "Excel 2007", dataProviderClass = ExcelParametersProvider.class)
 	@DataFileParameters(name = "data_2007.xlsx", path = ".", sheetName = "Employee Data", debug = true)
 	public void testWithExcel2007(double rowNum, String searchKeyword, double expectedCount)

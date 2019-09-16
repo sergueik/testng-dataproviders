@@ -270,12 +270,11 @@ This feature of storing more then one set of tests in one spreadsheet and pickin
 ### Note
 
 When outside the project directory
-it is common to place the test datafile (like Excel spreadsheet) on Desktop, Downloads and similar of the current user. The dataprovider annotation parametes must be constant expressions and the constructs like
+it is common to place the test datafile (like Excel spreadsheet) on Desktop, Downloads and other directories of the current user. However the dataprovider annotation parametes must be constant expressions and test method cannot use class variables or static methods like `File.separator` in annotation value, code like below will not compile:
 ```java
 Test( dataProvider = "Excel", dataProviderClass = ExcelParametersProvider.class)
 @DataFileParameters(name = "data_2003.xls", path = (osName.startsWith("windows")) ? "${USERPROFILE}" : "${HOME}" + File.separator + "Desktop" )
 ```
-will not compile.
 
 To workaround this inconvenienve, the __TestNgtestng Data Providers__ internally converts between `${USERPRFILE}` and `${HOME}` and vise versa on Linux and Mac computers therefore the expressions `path = "${USERPROFILE}\\Desktop"` or `path = "${HOMEDIR}/Downloads"` work across OS.
 

@@ -6,10 +6,13 @@ package com.github.sergueik.testng;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -19,7 +22,7 @@ import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 
 /**
- * @CSVParametersProvider container class for testng dataProvider method for csv
+ * @CSVParametersProvider container class for testng dataProvider defining methods for csv
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 public class CSVParametersProvider {

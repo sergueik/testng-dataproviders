@@ -13,8 +13,7 @@ import java.lang.annotation.Target;
 public @interface DataFileParameters {
 	String name();
 	String path() default "";
-	// NOTE:      element value must be a constant expression
-	// test method cannot use class variables or static methods like File.separator in annotation value:
+	// 
 
 	boolean debug() default false;
 	boolean loadEmptyColumns() default false;
