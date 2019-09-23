@@ -203,30 +203,29 @@
             </goals>
             <configuration>
               <tasks>
+                <condition property="is_mac">
+                  <os family="mac"/>
+                </condition>
+                <condition property="is_windows">
+                  <os family="windows"/>
+                </condition>
+                <condition property="is_unix">
+                  <os family="unix"/>
+                </condition>
                 <!-- https://cduu.wordpress.com/2012/10/17/echo-the-value-of-a-maven-property/ -->
                 <echo>profile_os: ${profile_os} (from profile)</echo>
                 <property environment="env"/>
                 <condition property="desktop_path" value="${env.USERPROFILE}\Desktop" else="${env.HOME}/Desktop">
-                  <isset property="env.USERPROFILE"/>
+                  <istrue value="${is_windows}"/>
                 </condition>
-                <condition property="os" value="windows" else="unix">
-                  <isset property="env.windir"/>
-                </condition>
-                <!-- TODO: as an exercise determine OSX or Linux
-                     through presence of a specific environment TERM_PROGRAM="Apple_Terminal"
-                     cannot run "uname -s" in a condition
-                     -->
-                <condition else="false" property="is_mac" value="true">
-                  <and>
-                    <isset property="env.TERM_PROGRAM"/>
-                    <not>
-                      <equals arg1="${os}" arg2="windows" trim="true"/>
-                    </not>
-                  </and>
-                </condition>
-                <echo message="os = ${os}"/>
+                <echo>ant os details:</echo>
+                <echo message="os.name = ${os.name}"/>
+                <echo message="os.arch = ${os.arch}"/>
+                <echo message="os.version = ${os.version}"/>
+                <echo>custom properties:</echo>
                 <echo message="is_mac = ${is_mac}"/>
-                
+                <echo message="is_windows = ${is_windows}"/>
+                <echo message="is_unix = ${is_unix}"/>
                 <echo message="desktop_path = ${desktop_path}"/>
                 <mkdir dir="${desktop_path}"/>
                 <copy file="data_2003.xls" todir="${desktop_path}" failonerror="true"/>
@@ -251,4 +250,3 @@
   </distributionManagement>
   <description>TestNg data provider test annotation backed by various desktop spreadsheet data files through poi</description>
 </project>
-
