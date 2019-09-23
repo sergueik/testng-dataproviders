@@ -28,6 +28,8 @@
     <json.version>20080701</json.version>
     <json-path.version>2.4.0</json-path.version>
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
+    <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
+    <!-- runs ant build.xml script embedded in the pom -->
     <poi.version>3.17</poi.version>
     <poiooxml.version>${poi.version}</poiooxml.version>
     <selenium.version>3.13.0</selenium.version>
@@ -140,6 +142,11 @@
       <artifactId>hamcrest-all</artifactId>
       <version>${hamcrest-all.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-antrun-plugin</artifactId>
+      <version>${maven-antrun-plugin.version}</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -183,6 +190,51 @@
           </suiteXmlFiles>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${maven-antrun-plugin.version}</version>
+        <executions>
+          <!-- https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <!-- https://cduu.wordpress.com/2012/10/17/echo-the-value-of-a-maven-property/ -->
+                <echo>profile_os: ${profile_os} (from profile)</echo>
+                <property environment="env"/>
+                <condition property="desktop_path" value="${env.USERPROFILE}\Desktop" else="${env.HOME}/Desktop">
+                  <isset property="env.USERPROFILE"/>
+                </condition>
+                <condition property="os" value="windows" else="unix">
+                  <isset property="env.windir"/>
+                </condition>
+                <!-- TODO: as an exercise determine OSX or Linux
+                     through presence of a specific environment TERM_PROGRAM="Apple_Terminal"
+                     cannot run "uname -s" in a condition
+                     -->
+                <condition else="false" property="is_mac" value="true">
+                  <and>
+                    <isset property="env.TERM_PROGRAM"/>
+                    <not>
+                      <equals arg1="${os}" arg2="windows" trim="true"/>
+                    </not>
+                  </and>
+                </condition>
+                <echo message="os = ${os}"/>
+                <echo message="is_mac = ${is_mac}"/>
+                
+                <echo message="desktop_path = ${desktop_path}"/>
+                <mkdir dir="${desktop_path}"/>
+                <copy file="data_2003.xls" todir="${desktop_path}" failonerror="true"/>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <licenses>
@@ -199,3 +251,4 @@
   </distributionManagement>
   <description>TestNg data provider test annotation backed by various desktop spreadsheet data files through poi</description>
 </project>
+
