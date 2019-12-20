@@ -276,7 +276,7 @@ Test( dataProvider = "Excel", dataProviderClass = ExcelParametersProvider.class)
 @DataFileParameters(name = "data_2003.xls", path = (osName.startsWith("windows")) ? "${USERPROFILE}" : "${HOME}" + File.separator + "Desktop" )
 ```
 
-To workaround this inconvenienve, the __TestNgtestng Data Providers__ internally converts between `${USERPRFILE}` and `${HOME}` and vise versa on Linux and Mac computers therefore the expressions `path = "${USERPROFILE}\\Desktop"` or `path = "${HOMEDIR}/Downloads"` work across OS.
+To workaround this inconvenienve, the __TestNg Data Providers__ internally converts between `${USERPRFILE}` and `${HOME}` and vise versa on Linux and Mac computers therefore the expressions `path = "${USERPROFILE}\\Desktop"` or `path = "${HOMEDIR}/Downloads"` work across OS.
 
 ### Links
 
@@ -333,6 +333,12 @@ To use the snapshot version, add the following to `pom.xml`:
   * [poire](https://github.com/ssirekumar/POIRE) - one other API on top of Apache POI to deal with office files
   * parallel testing ["best practices"](https://docs.experitest.com/display/TE/Parallel+Tests+-+Best+Practices)
   * [skip TestNG tests based on condition](https://www.lenar.io/skip-testng-tests-based-condition-using-iinvokedmethodlistener/) interface syntax sugar
+  * [reading data from google spreadsheet tutorial](https://www.seleniumeasy.com/selenium-tutorials/read-data-from-google-spreadsheet-using-api)
+  * another blog on [testnt data providers backed by excel](https://www.uvdesk.com/en/blog/passing-data-dataprovider-excel-sheet-testng/)
+  * [apache JMeter Data-Driven Testing](https://dzone.com/articles/implementing-data-driven-testing-using-google-shee) (naturally, in groovy)
+  * [Google spreadsheet (older) read method using JAVA](https://dzone.com/articles/reading-data-google)
+  * [stackoverflow](https://stackoverflow.com/questions/32860225/read-data-from-google-spreadsheets)
+  * [stackoverflow](https://stackoverflow.com/questions/7566836/read-data-from-google-docs-spreadsheets)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

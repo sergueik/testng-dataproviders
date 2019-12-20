@@ -1,5 +1,9 @@
 package com.github.sergueik.testng;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 /**
  * Copyright 2017-2019 Serguei Kouzmine
  */
@@ -7,7 +11,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
+import java.nio.file.Paths;
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -41,6 +46,16 @@ import org.jopendocument.dom.spreadsheet.Cell;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
+import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.Sheets.Spreadsheets;
+import com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values;
+import com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.BatchGet;
+import com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.Get;
+import com.google.api.services.sheets.v4.model.ValueRange;
+
+import com.github.sergueik.testng.SheetsServiceUtil;
+
 /**
  * Common utilities class for testng dataProviders
  * 
@@ -64,6 +79,10 @@ public class Utils {
 	private boolean loadEmptyColumns = true;
 	private String controlColumn = null;
 	private String withValue = null;
+
+	// TODO: refactor to be loadable through name attribute
+	private final String applicationName = "Google Sheets Example";
+	private SheetsServiceUtil sheetsServiceUtil = null;
 
 	public void setSheetName(String sheetName) {
 		this.sheetName = sheetName;
@@ -107,27 +126,20 @@ public class Utils {
 		if (null == input) {
 			return null;
 		}
-		/*
-				System.err.println("original input: " + input + "\n" + "osname: " + osName + "\n" + "processing input: "
-						+ input.replaceAll("(?:HOME|HOMEDIR|USERPROFILE)", osName.equals("windows") ? "USERPROFILE" : "HOME"));
-		*/
-		Pattern pattern = Pattern.compile("\\$(?:\\{(\\w+)\\}|(\\w+))");
 		// NOTE: ignoring $HOMEDRIVE, $HOMEPATH on Windows
-		Matcher matcher = pattern
+		Matcher matcher = Pattern.compile("\\$(?:\\{(\\w+)\\}|(\\w+))")
 				.matcher(input.replaceAll("(?:HOME|HOMEDIR|USERPROFILE)",
 						osName.equals("windows") ? "USERPROFILE" : "HOME"));
-		StringBuffer stringBuilder = new StringBuffer();
+		StringBuffer stringBuffer = new StringBuffer();
 		while (matcher.find()) {
 			String envVarName = null == matcher.group(1) ? matcher.group(2)
 					: matcher.group(1);
 			String envVarValue = getPropertyEnv(envVarName, null);
-			matcher.appendReplacement(stringBuilder,
+			matcher.appendReplacement(stringBuffer,
 					null == envVarValue ? "" : envVarValue.replace("\\", "\\\\"));
 		}
-		matcher.appendTail(stringBuilder);
-		// [Utils] [ERROR] [Error] java.lang.IllegalArgumentException: character to
-		// be escaped is missing
-		return stringBuilder.toString().replaceAll("(?:\\\\|/)",
+		matcher.appendTail(stringBuffer);
+		return stringBuffer.toString().replaceAll("(?:\\\\|/)",
 				(File.separator.indexOf("\\") > -1) ? "\\\\" : "/");
 	}
 
@@ -516,6 +528,39 @@ public class Utils {
 				} catch (IOException e) {
 				}
 			}
+		}
+		return result;
+	}
+
+	// temporarily add to signature
+
+	public List<Object[]> createDataFromGoogleSpreadsheet(String spreadsheetId,
+			String sheetName) {
+		String range = String.format("%s!A2:Z", sheetName);
+		List<Object[]> result = new LinkedList<>();
+
+		try {
+			String secretFilePath = Paths.get(System.getProperty("user.home"))
+					.resolve(".secret").resolve("client_secret.json").toAbsolutePath()
+					.toString();
+			sheetsServiceUtil = SheetsServiceUtil.getInstance();
+			sheetsServiceUtil.setApplicationName(applicationName);
+			sheetsServiceUtil.setSecretFilePath(secretFilePath);
+			Sheets sheetsService = sheetsServiceUtil.getSheetsService();
+
+			ValueRange response = sheetsService.spreadsheets().values()
+					.get(spreadsheetId, range).execute();
+
+			List<List<Object>> resultRows = response.getValues();
+			assertThat(resultRows, notNullValue());
+			assertThat(resultRows.size() != 0, is(true));
+
+			System.err.println("Got " + resultRows.size() + " result rows");
+			for (List<Object> resultRow : resultRows) {
+				// System.err.println("Got: " + resultRow);
+				result.add(resultRow.toArray());
+			}
+		} catch (IOException | GeneralSecurityException e) {
 		}
 		return result;
 	}
