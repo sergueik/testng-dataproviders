@@ -9,6 +9,7 @@ backed by various Office formats
   * Custom JSON [org.json.JSON](http://www.docjar.com/docs/api/org/json/JSONObject.html)
   * csv [testnt csv file](http://stackoverflow.com/questions/26033985/how-to-pass-parameter-to-data-provider-in-testng-from-csv-file)
   * fillo [fillo](http://codoid.com/fillo/)
+  * [Google sheet](https://www.google.com/sheets/about/) (experimental).
 
 Unlike core TestNg data providers configurable through annotation constant parameters this Data provider class features runtime-flexible data file paths iparameterization enabling one running the jar with environment-specific test data without recompiling the java project. This feature was requested in one of the forums and was easy to implement - details in in __Extra Features__ section below.
 
@@ -325,6 +326,55 @@ To use the snapshot version, add the following to `pom.xml`:
   * Older versions of the package require minor code refactoring. Note that you may also have to clear the other versions of __poi__ and __poi-ooxml__ jars from maven cache '~/.m2/repository'
   * Project can be built with Apache POI 4.0.0 by modifying `poi.version` to `4.0.0` within `&lt;properties&gt;` node in the `pom.xml` - the profile `poi40` does not work correctly.
   * Creating branches and tags is a work in progress.
+
+### Google Sheet Data Provider
+
+This is an experimental provider based on [blog](http://www.seleniumeasy.com/selenium-tutorials/read-data-from-google-spreadsheet-using-api) how to use Google Sheets API to read data from Spreadsheet.
+
+The test method that is about to load the parameters from Google sheet is annotated in a similar fashion as with other providers developed in this project:
+```java
+@Test(dataProviderClass = GoogleSheetParametersProvider.class, dataProvider = "Google Spreadsheet")
+@DataFileParameters(name = "Google Sheets Example", path = "17ImW6iKSF7g-iMvPzeK4Zai9PV-lLvMsZkl6FEkytRg", sheetName = "Test Data", secretFilePath = "/home/sergueik/.secret/client_secret.json", debug = true)
+public void testWithGoogleSheet(String strRowNum, String searchKeyword, String strExpectedCount)
+    throws InterruptedException {
+  double rowNum = Double.parseDouble(strRowNum);
+  double expectedCount = Double.parseDouble(strExpectedCount);
+  dataTest(searchKeyword, expectedCount);
+	}
+```
+
+Here the `name` attibute stores the name of the application, `path` is for the `id` part of the URL:
+`https://docs.google.com/spreadsheets/d/17ImW6iKSF7g-iMvPzeK4Zai9PV-lLvMsZkl6FEkytRg/edit#gid=0`, and optional `sheetName` stores  the name of the sheet.
+![Google Sheet](https://raw.githubusercontent.com/sergueik/testng-dataproviders/master/screenshots/google_sheet.png)
+
+
+The path to secret file that is required to access the API, use the `secretFilePath` attribute. The secret file:
+
+```js
+{
+  "installed": {
+    "client_id": "XXXXXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXX.apps.googleusercontent.com",
+    "project_id": "gogle-sheet-api-test-xxxxxxx",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret": "xxxxxxxxxxxxxxx",
+    "redirect_uris": [
+      "urn:ietf:wg:oauth:2.0:oob",
+      "http://localhost"
+    ]
+  }
+}
+```
+can be stored on disk outside of source control e.g. under ` ~/.secret/client_secret.json`. 
+It will be loaded once and the credential obtained from oauth would be cached and reused until expiration.
+The credential appears to be valid for approximately one hour.
+Currently the test opens the browser window prompting the user to confirm the access:
+
+![running test with Google Sheet Data Provider](https://raw.githubusercontent.com/sergueik/testng-dataproviders/master/screenshots/running_google_sheet_example.png)
+
+In the future versions, parallel execution of parameterized tests and a more flexible caching of the access credentials is planned.
+
 ### See Also
   * [TestNg Excel Data Provider example](https://www.seleniumeasy.com/testng-tutorials/import-data-from-excel-and-pass-to-data-provider)
   * [JUnit4, JUnit5, TestNG comparison](https://www.baeldung.com/junit-vs-testng), covers test parameteterization amond other features
@@ -339,6 +389,8 @@ To use the snapshot version, add the following to `pom.xml`:
   * [Google spreadsheet (older) read method using JAVA](https://dzone.com/articles/reading-data-google)
   * [stackoverflow](https://stackoverflow.com/questions/32860225/read-data-from-google-spreadsheets)
   * [stackoverflow](https://stackoverflow.com/questions/7566836/read-data-from-google-docs-spreadsheets)
-
+  * [Interact with Google Sheets from Java](https://www.baeldung.com/google-sheets-java-client)
+  * very detaled [publication](https://gist.github.com/zmts/802dc9c3510d79fd40f9dc38a12bccfc) on Token-Based Authentication and JSON Web Tokens (JWT) (in Russian)
+ 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
