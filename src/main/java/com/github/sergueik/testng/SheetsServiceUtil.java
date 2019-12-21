@@ -1,7 +1,7 @@
 package com.github.sergueik.testng;
 
 /**
- * Copyright 2017-2019 Serguei Kouzmine
+ * Copyright 2019 Serguei Kouzmine
  */
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -18,7 +18,6 @@ import com.google.api.services.sheets.v4.Sheets;
  */
 
 public class SheetsServiceUtil {
-
 	private static SheetsServiceUtil instance = new SheetsServiceUtil();
 
 	private SheetsServiceUtil() {
@@ -29,6 +28,10 @@ public class SheetsServiceUtil {
 	}
 
 	private boolean debug = false;
+
+	public void setDebug(boolean data) {
+		this.debug = data;
+	}
 
 	private String applicationName = null;
 
@@ -44,7 +47,7 @@ public class SheetsServiceUtil {
 
 	public Sheets getSheetsService()
 			throws IOException, GeneralSecurityException {
-		// TODO: cache credential
+		GoogleAuthorizeUtil.setDebug(this.debug);
 		Credential credential = GoogleAuthorizeUtil.authorize(this.secretFilePath);
 		return new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(),
 				JacksonFactory.getDefaultInstance(), credential)

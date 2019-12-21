@@ -1,7 +1,7 @@
 package com.github.sergueik.testng;
 
 /**
- * Copyright 2017-2019 Serguei Kouzmine
+ * Copyright 2019 Serguei Kouzmine
  */
 
 import java.io.File;
@@ -9,7 +9,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Paths;
 
 import java.security.GeneralSecurityException;
 
@@ -33,26 +32,45 @@ import com.google.api.services.sheets.v4.SheetsScopes;
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 public class GoogleAuthorizeUtil {
+	private static Credential credential = null;
+	private static boolean debug = false;
+	private static Utils utils = Utils.getInstance();
+
+	public static void setDebug(boolean data) {
+		GoogleAuthorizeUtil.debug = data;
+	}
+
 	public static Credential authorize(String secretFilePath)
 			throws IOException, GeneralSecurityException {
-		System.err
-				.println("GoogleAuthorizeUtil.authorize() reads credentials from file: "
-						+ secretFilePath);
+		if (credential == null
+				|| credential.getExpirationTimeMilliseconds() < 120_000) {
+			System.err.println(
+					"GoogleAuthorizeUtil.authorize() reads credentials from file: "
+							+ secretFilePath);
 
-		InputStream in = new FileInputStream(new File(secretFilePath));
+			InputStream in = new FileInputStream(new File(secretFilePath));
 
-		GoogleClientSecrets clientSecrets = GoogleClientSecrets
-				.load(JacksonFactory.getDefaultInstance(), new InputStreamReader(in));
+			GoogleClientSecrets clientSecrets = GoogleClientSecrets
+					.load(JacksonFactory.getDefaultInstance(), new InputStreamReader(in));
 
-		List<String> scopes = Arrays.asList(SheetsScopes.SPREADSHEETS);
+			List<String> scopes = Arrays.asList(SheetsScopes.SPREADSHEETS);
 
-		GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-				GoogleNetHttpTransport.newTrustedTransport(),
-				JacksonFactory.getDefaultInstance(), clientSecrets, scopes)
-						.setDataStoreFactory(new MemoryDataStoreFactory())
-						.setAccessType("offline").build();
-		Credential credential = new AuthorizationCodeInstalledApp(flow,
-				new LocalServerReceiver()).authorize("user");
+			GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+					GoogleNetHttpTransport.newTrustedTransport(),
+					JacksonFactory.getDefaultInstance(), clientSecrets, scopes)
+							.setDataStoreFactory(new MemoryDataStoreFactory())
+							.setAccessType("offline").build();
+			Credential credential = new AuthorizationCodeInstalledApp(flow,
+					new LocalServerReceiver()).authorize("user");
+		} else {
+			if (debug) {
+				System.err
+						.println(String.format("Using cached credential (%s remaining)",
+								utils.getDurationBreakdown(
+										credential.getExpirationTimeMilliseconds()
+												- System.currentTimeMillis())));
+			}
+		}
 		return credential;
 	}
 

@@ -13,7 +13,8 @@ import java.lang.annotation.Target;
 public @interface DataFileParameters {
 	String name();
 	String path() default "";
-	// 
+	// only needed for Google Sheet
+	String secretFilePath() default "";
 
 	boolean debug() default false;
 	boolean loadEmptyColumns() default false;

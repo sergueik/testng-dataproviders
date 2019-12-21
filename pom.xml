@@ -4,7 +4,7 @@
   <groupId>com.github.sergueik.testng</groupId>
   <artifactId>dataprovider</artifactId>
   <packaging>jar</packaging>
-  <version>1.11-SNAPSHOT</version>
+  <version>1.12-SNAPSHOT</version>
   <name>app</name>
   <url>http://maven.apache.org</url>
   <developers>
@@ -21,6 +21,9 @@
     <commons-io.version>2.5</commons-io.version>
     <commons-lang3.version>3.5</commons-lang3.version>
     <hamcrest-all.version>1.3</hamcrest-all.version>
+    <google-api-client.version>1.23.0</google-api-client.version>
+    <google-oauth-client-jetty.version>1.23.0</google-oauth-client-jetty.version>
+    <google-api-services-sheets.version>v4-rev493-1.23.0</google-api-services-sheets.version>
     <java.version>1.8</java.version>
     <jOpenDocument.version>1.3</jOpenDocument.version>
     <json.version>20190722</json.version>
@@ -143,9 +146,19 @@
       <version>${hamcrest-all.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-antrun-plugin</artifactId>
-      <version>${maven-antrun-plugin.version}</version>
+      <groupId>com.google.api-client</groupId>
+      <artifactId>google-api-client</artifactId>
+      <version>${google-api-client.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.oauth-client</groupId>
+      <artifactId>google-oauth-client-jetty</artifactId>
+      <version>${google-oauth-client-jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.apis</groupId>
+      <artifactId>google-api-services-sheets</artifactId>
+      <version>${google-api-services-sheets.version}</version>
     </dependency>
   </dependencies>
   <build>
@@ -194,8 +207,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
         <version>${maven-antrun-plugin.version}</version>
+	<!-- NOTE:
+	No marketplace entries found to handle maven-antrun-plugin
+	(eclipse Mars 2 release 4.5.2)
+	-->
         <executions>
-          <!-- https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
           <execution>
             <phase>generate-resources</phase>
             <goals>
@@ -212,20 +228,11 @@
                 <condition property="is_unix">
                   <os family="unix"/>
                 </condition>
-                <!-- https://cduu.wordpress.com/2012/10/17/echo-the-value-of-a-maven-property/ -->
                 <echo>profile_os: ${profile_os} (from profile)</echo>
                 <property environment="env"/>
                 <condition property="desktop_path" value="${env.USERPROFILE}\Desktop" else="${env.HOME}/Desktop">
                   <istrue value="${is_windows}"/>
                 </condition>
-                <echo>ant os details:</echo>
-                <echo message="os.name = ${os.name}"/>
-                <echo message="os.arch = ${os.arch}"/>
-                <echo message="os.version = ${os.version}"/>
-                <echo>custom properties:</echo>
-                <echo message="is_mac = ${is_mac}"/>
-                <echo message="is_windows = ${is_windows}"/>
-                <echo message="is_unix = ${is_unix}"/>
                 <echo message="desktop_path = ${desktop_path}"/>
                 <mkdir dir="${desktop_path}"/>
                 <copy file="data_2003.xls" todir="${desktop_path}" failonerror="true"/>

@@ -12,13 +12,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+
 import java.security.GeneralSecurityException;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import java.util.concurrent.TimeUnit;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
@@ -74,38 +79,55 @@ public class Utils {
 	}
 
 	private String sheetName;
-	private String columnNames = "*";
-	private boolean debug = false;
-	private boolean loadEmptyColumns = true;
-	private String controlColumn = null;
-	private String withValue = null;
+
+	public void setSheetName(String data) {
+		this.sheetName = data;
+	}
+
+	// will use name path
+	private String secretFilePath = null;
+
+	public void setSecretFilePath(String data) {
+		this.secretFilePath = data;
+	}
 
 	// TODO: refactor to be loadable through name attribute
-	private final String applicationName = "Google Sheets Example";
+	private String applicationName = null;
+
+	public void setApplicationName(String data) {
+		this.applicationName = data;
+	}
+
 	private SheetsServiceUtil sheetsServiceUtil = null;
 
-	public void setSheetName(String sheetName) {
-		this.sheetName = sheetName;
+	private String columnNames = "*";
+
+	public void setColumnNames(String data) {
+		this.columnNames = data;
 	}
 
-	public void setColumnNames(String columnNames) {
-		this.columnNames = columnNames;
+	private boolean debug = false;
+
+	public void setDebug(boolean data) {
+		this.debug = data;
 	}
 
-	public void setDebug(boolean debug) {
-		this.debug = debug;
+	private boolean loadEmptyColumns = true;
+
+	public void setLoadEmptyColumns(boolean data) {
+		this.loadEmptyColumns = data;
 	}
 
-	public void setLoadEmptyColumns(boolean value) {
-		this.loadEmptyColumns = value;
+	private String controlColumn = null;
+
+	public void setControlColumn(String data) {
+		this.controlColumn = data;
 	}
 
-	public void setControlColumn(String value) {
-		this.controlColumn = value;
-	}
+	private String withValue = null;
 
-	public void setWithValue(String value) {
-		this.withValue = value;
+	public void setWithValue(String data) {
+		this.withValue = data;
 	}
 
 	private static String osName = getOsName();
@@ -156,6 +178,7 @@ public class Utils {
 		return value;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public List<Object[]> createDataFromOpenOfficeSpreadsheet(
 			SpreadSheet spreadSheet) {
 		HashMap<String, String> columns = new HashMap<>();
@@ -173,9 +196,7 @@ public class Utils {
 		}
 		int columnCount = sheet.getColumnCount();
 		int rowCount = sheet.getRowCount();
-		@SuppressWarnings("rawtypes")
 		Cell cell = null;
-		@SuppressWarnings("rawtypes")
 		Cell controlCell = null;
 		int controlColumnIndex = -1;
 		if (debug) {
@@ -532,11 +553,16 @@ public class Utils {
 		return result;
 	}
 
-	// temporarily add to signature
+	public List<Object[]> createDataFromGoogleSpreadsheet(String spreadsheetId) {
+		return createDataFromGoogleSpreadsheet(spreadsheetId, "*");
+	}
 
+	// temporarily add to signature
 	public List<Object[]> createDataFromGoogleSpreadsheet(String spreadsheetId,
 			String sheetName) {
+		// TODO: deal with unspecified sheetName
 		String range = String.format("%s!A2:Z", sheetName);
+		// A2:Z for value columns only
 		List<Object[]> result = new LinkedList<>();
 
 		try {
@@ -554,13 +580,30 @@ public class Utils {
 			List<List<Object>> resultRows = response.getValues();
 			assertThat(resultRows, notNullValue());
 			assertThat(resultRows.size() != 0, is(true));
-
-			System.err.println("Got " + resultRows.size() + " result rows");
+			if (debug) {
+				System.err.println("Got " + resultRows.size() + " result rows");
+			}
+			int row = 0;
 			for (List<Object> resultRow : resultRows) {
-				// System.err.println("Got: " + resultRow);
-				result.add(resultRow.toArray());
+				if (row == 0) {
+					Object[] resultArray = resultRow.toArray();
+					Integer numberOfCols = resultArray.length;
+					for (int col = 0; col != numberOfCols; col++) {
+						// TODO: column fitering
+						if (debug) {
+							System.err.println(
+									String.format("column[%d]: %s ", col, resultArray[col]));
+						}
+					}
+				} else {
+					if (debug) {
+						System.err.println("Got: " + resultRow);
+					}
+					result.add(resultRow.toArray());
+				}
 			}
 		} catch (IOException | GeneralSecurityException e) {
+			System.err.println("Exception (ignored): " + e.toString());
 		}
 		return result;
 	}
@@ -648,6 +691,34 @@ public class Utils {
 		}
 		// return (result == null) ? null : result.toString();
 		return result;
+	}
+
+	// origin:
+	// https://stackoverflow.com/questions/625433/how-to-convert-milliseconds-to-x-mins-x-seconds-in-java
+	public String getDurationBreakdown(long durationMilliseconds) {
+		if (durationMilliseconds < 0) {
+			throw new IllegalArgumentException("Duration can not be negative");
+		}
+
+		long days = TimeUnit.MILLISECONDS.toDays(durationMilliseconds);
+		durationMilliseconds -= TimeUnit.DAYS.toMillis(days);
+		long hours = TimeUnit.MILLISECONDS.toHours(durationMilliseconds);
+		durationMilliseconds -= TimeUnit.HOURS.toMillis(hours);
+		long minutes = TimeUnit.MILLISECONDS.toMinutes(durationMilliseconds);
+		durationMilliseconds -= TimeUnit.MINUTES.toMillis(minutes);
+		long seconds = TimeUnit.MILLISECONDS.toSeconds(durationMilliseconds);
+
+		StringBuilder sb = new StringBuilder(64);
+		sb.append(days);
+		sb.append(" Days ");
+		sb.append(hours);
+		sb.append(" Hours ");
+		sb.append(minutes);
+		sb.append(" Minutes ");
+		sb.append(seconds);
+		sb.append(" Seconds");
+
+		return (sb.toString());
 	}
 
 }

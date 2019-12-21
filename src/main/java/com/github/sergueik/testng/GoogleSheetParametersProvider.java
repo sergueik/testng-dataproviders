@@ -20,9 +20,13 @@ public class GoogleSheetParametersProvider {
 	private static Utils utils = Utils.getInstance();
 	private static boolean debug = false;
 	private static boolean loadEmptyColumns = false;
+	// store the spreadsheet id through the path parameter:
+	// with Google Sheet it has no verbatim meaning
 	private static String spreadsheetId = null;
-	// meaningless verbatim, will store the spreadsheet id
-	private static String sheetName = null;
+	// use name parameter
+	private static String applicationName = "Google Sheets Example";
+	private static String sheetName = "*";
+	private static String secretFilePath = null;
 	private static String columnNames = "*";
 	private final static String testEnvironment = (System
 			.getenv("TEST_ENVIRONMENT") != null) ? System.getenv("TEST_ENVIRONMENT")
@@ -37,8 +41,10 @@ public class GoogleSheetParametersProvider {
 		DataFileParameters parameters = method
 				.getAnnotation(DataFileParameters.class);
 		if (parameters != null) {
-			spreadsheetId = parameters.name();
+			applicationName = parameters.name();
+			spreadsheetId = parameters.path();
 			sheetName = parameters.sheetName();
+			secretFilePath = parameters.secretFilePath();
 		} else {
 			throw new RuntimeException(
 					"Missing / invalid DataFileParameters annotation");
