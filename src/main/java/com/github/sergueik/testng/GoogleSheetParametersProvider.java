@@ -28,30 +28,28 @@ public class GoogleSheetParametersProvider {
 	private static String sheetName = "*";
 	private static String secretFilePath = null;
 	private static String columnNames = "*";
-	private final static String testEnvironment = (System
-			.getenv("TEST_ENVIRONMENT") != null) ? System.getenv("TEST_ENVIRONMENT")
-					: "";
+	private final static String testEnvironment = (System.getenv("TEST_ENVIRONMENT") != null)
+			? System.getenv("TEST_ENVIRONMENT")
+			: "";
 	private static String controlColumn = null;
 	private static String withValue = null;
 
 	@DataProvider(parallel = true, name = "Google Spreadsheet")
-	public static Object[][] createDataFromGoogleSpreadsheet(
-			final ITestContext context, final Method method) {
+	public static Object[][] createDataFromGoogleSpreadsheet(final ITestContext context, final Method method) {
 
-		DataFileParameters parameters = method
-				.getAnnotation(DataFileParameters.class);
+		DataFileParameters parameters = method.getAnnotation(DataFileParameters.class);
 		if (parameters != null) {
 			applicationName = parameters.name();
 			spreadsheetId = parameters.path();
 			sheetName = parameters.sheetName();
+			debug = parameters.debug();
 			secretFilePath = parameters.secretFilePath();
 		} else {
-			throw new RuntimeException(
-					"Missing / invalid DataFileParameters annotation");
+			throw new RuntimeException("Missing / invalid DataFileParameters annotation");
 		}
+		utils.setApplicationName(applicationName);
 		utils.setSheetName(sheetName);
 		utils.setColumnNames(columnNames);
-		debug = parameters.debug();
 		loadEmptyColumns = parameters.loadEmptyColumns();
 		controlColumn = parameters.controlColumn();
 		if (!controlColumn.isEmpty()) {
@@ -65,8 +63,7 @@ public class GoogleSheetParametersProvider {
 		utils.setLoadEmptyColumns(loadEmptyColumns);
 		utils.setDebug(debug);
 
-		List<Object[]> result = utils.createDataFromGoogleSpreadsheet(spreadsheetId,
-				sheetName);
+		List<Object[]> result = utils.createDataFromGoogleSpreadsheet(spreadsheetId, sheetName);
 
 		Object[][] resultArray = new Object[result.size()][];
 		result.toArray(resultArray);

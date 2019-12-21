@@ -27,7 +27,8 @@ import com.google.api.client.util.store.MemoryDataStoreFactory;
 import com.google.api.services.sheets.v4.SheetsScopes;
 
 /**
- * Common google api v4 utilities class for testng dataProviders on Google Spreadsheet
+ * Common google api v4 utilities class for testng dataProviders on Google
+ * Spreadsheet
  * 
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
@@ -40,35 +41,25 @@ public class GoogleAuthorizeUtil {
 		GoogleAuthorizeUtil.debug = data;
 	}
 
-	public static Credential authorize(String secretFilePath)
-			throws IOException, GeneralSecurityException {
-		if (credential == null
-				|| credential.getExpirationTimeMilliseconds() < 120_000) {
-			System.err.println(
-					"GoogleAuthorizeUtil.authorize() reads credentials from file: "
-							+ secretFilePath);
+	public static Credential authorize(String secretFilePath) throws IOException, GeneralSecurityException {
+		if (credential == null || credential.getExpirationTimeMilliseconds() < 120_000) {
+			System.err.println("GoogleAuthorizeUtil.authorize() reads credentials from file: " + secretFilePath);
 
 			InputStream in = new FileInputStream(new File(secretFilePath));
 
-			GoogleClientSecrets clientSecrets = GoogleClientSecrets
-					.load(JacksonFactory.getDefaultInstance(), new InputStreamReader(in));
+			GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JacksonFactory.getDefaultInstance(),
+					new InputStreamReader(in));
 
 			List<String> scopes = Arrays.asList(SheetsScopes.SPREADSHEETS);
 
 			GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-					GoogleNetHttpTransport.newTrustedTransport(),
-					JacksonFactory.getDefaultInstance(), clientSecrets, scopes)
-							.setDataStoreFactory(new MemoryDataStoreFactory())
-							.setAccessType("offline").build();
-			Credential credential = new AuthorizationCodeInstalledApp(flow,
-					new LocalServerReceiver()).authorize("user");
+					GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), clientSecrets,
+					scopes).setDataStoreFactory(new MemoryDataStoreFactory()).setAccessType("offline").build();
+			credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
 		} else {
 			if (debug) {
-				System.err
-						.println(String.format("Using cached credential (%s remaining)",
-								utils.getDurationBreakdown(
-										credential.getExpirationTimeMilliseconds()
-												- System.currentTimeMillis())));
+				System.err.println(String.format("Using cached credential (%s remaining)", utils.getDurationBreakdown(
+						credential.getExpirationTimeMilliseconds() - System.currentTimeMillis())));
 			}
 		}
 		return credential;
