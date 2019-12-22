@@ -203,45 +203,45 @@
           </suiteXmlFiles>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>${maven-antrun-plugin.version}</version>
-	<!-- NOTE:
-	No marketplace entries found to handle maven-antrun-plugin
-	(eclipse Mars 2 release 4.5.2)
-	-->
-        <executions>
-          <execution>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <condition property="is_mac">
-                  <os family="mac"/>
-                </condition>
-                <condition property="is_windows">
-                  <os family="windows"/>
-                </condition>
-                <condition property="is_unix">
-                  <os family="unix"/>
-                </condition>
-                <echo>profile_os: ${profile_os} (from profile)</echo>
-                <property environment="env"/>
-                <condition property="desktop_path" value="${env.USERPROFILE}\Desktop" else="${env.HOME}/Desktop">
-                  <istrue value="${is_windows}"/>
-                </condition>
-                <echo message="desktop_path = ${desktop_path}"/>
-                <mkdir dir="${desktop_path}"/>
-                <copy file="data_2003.xls" todir="${desktop_path}" failonerror="true"/>
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>${maven-antrun-plugin.version}</version>
+          <executions>
+            <execution>
+              <phase>generate-resources</phase>
+              <goals>
+                <goal>run</goal>
+              </goals>
+              <configuration>
+                <tasks>
+                  <condition property="is_mac">
+                    <os family="mac"/>
+                  </condition>
+                  <condition property="is_windows">
+                    <os family="windows"/>
+                  </condition>
+                  <condition property="is_unix">
+                    <os family="unix"/>
+                  </condition>
+                  <echo>profile_os: ${profile_os} (from profile)</echo>
+                  <property environment="env"/>
+                  <condition property="desktop_path" value="${env.USERPROFILE}\Desktop" else="${env.HOME}/Desktop">
+                    <istrue value="${is_windows}"/>
+                  </condition>
+                  <echo message="desktop_path = ${desktop_path}"/>
+                  <mkdir dir="${desktop_path}"/>
+                  <copy file="data_2003.xls" todir="${desktop_path}" failonerror="true"/>
+                </tasks>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
   <licenses>
     <license>
