@@ -5,14 +5,6 @@
   <test name="Parse Search Result" preserve-order="true" parallel="false">
     <parameter name="selenium.browser" value="firefox"/>
     <classes>
-      <!-- experimental - uncomment on your own risk -->
-      <!--
-      <class name="com.github.sergueik.testng.GoogleSheetProviderTest">
-        <methods>
-          <include name="testWithGoogleSheet"/>
-        </methods>
-      </class>
--->
       <class name="com.github.sergueik.testng.ExcelProviderTest">
         <methods>
           <include name="testWithExcel2007"/>
@@ -38,6 +30,12 @@
           <include name="testParamColumnSwap"/>
           <include name="testWithStaticJSON"/>
           <include name="testMissedParameterOrder"/>
+        </methods>
+      </class>
+      <!-- experimental - uncomment on your own risk -->
+      <class name="com.github.sergueik.testng.GoogleSheetProviderTest">
+        <methods>
+          <include name="testWithGoogleSheet"/>
         </methods>
       </class>
     </classes>

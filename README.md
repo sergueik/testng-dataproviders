@@ -343,13 +343,28 @@ public void testWithGoogleSheet(String strRowNum, String searchKeyword, String s
 	}
 ```
 
-Here the `name` attibute stores the name of the application, `path` is for the `id` part of the URL:
-`https://docs.google.com/spreadsheets/d/17ImW6iKSF7g-iMvPzeK4Zai9PV-lLvMsZkl6FEkytRg/edit#gid=0`, and optional `sheetName` stores  the name of the sheet.
+Here the `name` attibute stores the name of the application, 
+`path` is for the `id` part of the data spreadsheet URL: `https://docs.google.com/spreadsheets/d/${id}`, and optional `sheetName` stores  the name of the sheet. 
+
 ![Google Sheet](https://raw.githubusercontent.com/sergueik/testng-dataproviders/master/screenshots/google_sheet.png)
 
 
-The path to secret file that is required to access the API, use the `secretFilePath` attribute. The secret file:
+The path to secret file that is required to access the API, is to be defined through the `secretFilePath` attribute. Note: like with other attributes, the 
+the value for annotation attribute `DataFileParameters.secretFilePath` must be a constant expression. 
+The following would not compile:
+```java
+  private static final String SECRET_FILEPATH = Paths
+    .get(System.getProperty("user.home")).resolve(".secret")
+    .resolve("client_secret.json").toAbsolutePath().toString();
 
+  @Test(dataProviderClass = GoogleSheetParametersProvider.class, dataProvider = "Google Spreadsheet")
+  @DataFileParameters(name = "Google Sheets Example", secretFilePath = SECRET_FILEPATH, ...)
+```
+but the following will:
+```java
+  private static final String SECRET_FILEPATH = "C:/Users/Serguei/.secret/client_secret.json";
+```
+The secret file:
 ```js
 {
   "installed": {
@@ -366,14 +381,14 @@ The path to secret file that is required to access the API, use the `secretFileP
   }
 }
 ```
-can be stored on disk outside of source control e.g. under ` ~/.secret/client_secret.json`. 
+can be stored anywhere on disk outside of source control e.g. under `~/.secret/client_secret.json`. 
 It will be loaded once and the credential obtained from oauth would be cached and reused until expiration.
 The credential appears to be valid for approximately one hour.
 Currently the test opens the browser window prompting the user to confirm the access:
 
 ![running test with Google Sheet Data Provider](https://raw.githubusercontent.com/sergueik/testng-dataproviders/master/screenshots/running_google_sheet_example.png)
 
-In the future versions, parallel execution of parameterized tests and a more flexible caching of the access credentials is planned.
+In the future versions, parallel execution of Google Sheet parameterized tests and a more flexible caching of the access credentials is planned.
 
 ### See Also
   * [TestNg Excel Data Provider example](https://www.seleniumeasy.com/testng-tutorials/import-data-from-excel-and-pass-to-data-provider)

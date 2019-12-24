@@ -4,8 +4,8 @@
   <groupId>com.github.sergueik.testng</groupId>
   <artifactId>dataprovider</artifactId>
   <packaging>jar</packaging>
-  <version>1.12-SNAPSHOT</version>
-  <name>app</name>
+  <version>1.13-SNAPSHOT</version>
+  <name>testng-dataproviders</name>
   <url>http://maven.apache.org</url>
   <developers>
     <developer>
@@ -255,5 +255,5 @@
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </repository>
   </distributionManagement>
-  <description>TestNg data provider test annotation backed by various desktop spreadsheet data files through poi</description>
+  <description>TestNg data provider test annotation backed by various desktop spreadsheet data files through poi, google sheets via api, csv and json </description>
 </project>
