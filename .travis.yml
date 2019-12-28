@@ -2,9 +2,10 @@ language: java
 script: mvn test
 addons:
   firefox: '46.0'
-  apt:
-    packages:
-      - oracle-java8-installer
+  # TODO : is this really still needed ?
+#  apt:
+#    packages:
+#      - oracle-java8-installer
 before_install:
   - 'export DISPLAY=:99.0'
   - 'export TRAVIS=true'
@@ -13,8 +14,8 @@ after_script:
   - 'sh -e /etc/init.d/xvfb stop'
 # https://docs.travis-ci.com/user/languages/java/
 jdk:
-  - oraclejdk8
   - openjdk8
+#  - oraclejdk8
 notifications:
   email:
     on_success: never
