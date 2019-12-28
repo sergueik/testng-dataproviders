@@ -1,16 +1,17 @@
 language: java
 script: mvn test
 addons:
-  firefox: '46.0'
+  # firefox: '46.0'
   # TODO : is this really still needed ?
   apt:
     packages:
       - xvfb
 #      - oracle-java8-installer
 before_install:
-  - 'export DISPLAY=:99.0'
-  - 'export TRAVIS=true'
-  - 'sh -e /etc/init.d/xvfb start'
+  # - 'export DISPLAY=:99.0'
+  # - 'export TRAVIS=true'
+  # - 'sh -e /etc/init.d/xvfb start'
+  # sh: 0: Can't open /etc/init.d/xvfb
 after_script:
   - 'sh -e /etc/init.d/xvfb stop'
 # https://docs.travis-ci.com/user/languages/java/
