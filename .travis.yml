@@ -3,8 +3,9 @@ script: mvn test
 addons:
   firefox: '46.0'
   # TODO : is this really still needed ?
-#  apt:
-#    packages:
+  apt:
+    packages:
+      - xvfb
 #      - oracle-java8-installer
 before_install:
   - 'export DISPLAY=:99.0'
