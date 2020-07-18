@@ -41,7 +41,7 @@
     <selenium-firefox-driver.version>${selenium.version}</selenium-firefox-driver.version>
     <snakeyaml.version>1.24</snakeyaml.version>
     <testng.version>6.14.3</testng.version>
-    <webdrivermanager.version>4.0.0</webdrivermanager.version>
+    <webdrivermanager.version>4.1.0</webdrivermanager.version>
     <mainClass>EntryPoint</mainClass>
   </properties>
   <dependencies>
@@ -77,11 +77,6 @@
       <version>${commons-exec.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-chrome-driver</artifactId>
-      <version>${selenium-chrome-driver.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.jopendocument</groupId>
       <artifactId>jOpenDocument</artifactId>
       <version>${jOpenDocument.version}</version>
@@ -110,26 +105,37 @@
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
       <version>${selenium.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-server</artifactId>
       <version>${selenium.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-support</artifactId>
       <version>${selenium.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-firefox-driver</artifactId>
       <version>${selenium-firefox-driver.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-chrome-driver</artifactId>
+      <version>${selenium-chrome-driver.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-remote-driver</artifactId>
       <version>${selenium.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>

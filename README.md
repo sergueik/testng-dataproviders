@@ -406,6 +406,12 @@ In the future versions, parallel execution of Google Sheet parameterized tests a
   * [stackoverflow](https://stackoverflow.com/questions/7566836/read-data-from-google-docs-spreadsheets)
   * [Interact with Google Sheets from Java](https://www.baeldung.com/google-sheets-java-client)
   * very detaled [publication](https://gist.github.com/zmts/802dc9c3510d79fd40f9dc38a12bccfc) on Token-Based Authentication and JSON Web Tokens (JWT) (in Russian)
- 
+### TODO
+on Linux develpment machine, seem to not be able to launch google tests. After authenticaling o Windows machine, issue disappears
+```sh
+[ERROR] org.testng.TestNGException: 
+[ERROR] Cannot find class in classpath: com.github.sergueik.testng.ExcelProviderTest
+
+``` 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
