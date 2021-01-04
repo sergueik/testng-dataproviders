@@ -5,9 +5,9 @@ backed by various Office formats
 
   * Excel 2003 OLE documents - Horrible SpreadSheet Format [org.apache.poi.hssf.usermodel.*)](http://shanmugavelc.blogspot.com/2011/08/apache-poi-read-excel-for-use-of.html)
   * Excel 2007 OOXML (.xlsx) - XML SpreadSheet Format [org.apache.poi.xssf.usermodel.*](http://howtodoinjava.com/2013/06/19/readingwriting-excel-files-in-java-poi-tutorial/)
-  * OpenOffice SpreadSheet (.ods) [example1](http://www.programcreek.com/java-api-examples/index.php?api=org.jopendocument.dom.spreadsheet.Sheet) ,[example 2]http://half-wit4u.blogspot.com/2011/05/read-openoffice-spreadsheet-ods.html
+  * OpenOffice SpreadSheet (.ods) [example1](http://www.programcreek.com/java-api-examples/index.php?api=org.jopendocument.dom.spreadsheet.Sheet), [example 2](http://half-wit4u.blogspot.com/2011/05/read-openoffice-spreadsheet-ods.html)
   * Custom JSON [org.json.JSON](http://www.docjar.com/docs/api/org/json/JSONObject.html)
-  * csv [testnt csv file](http://stackoverflow.com/questions/26033985/how-to-pass-parameter-to-data-provider-in-testng-from-csv-file)
+  * csv [testng csv file](http://stackoverflow.com/questions/26033985/how-to-pass-parameter-to-data-provider-in-testng-from-csv-file)
   * fillo [fillo](http://codoid.com/fillo/)
   * [Google sheet](https://www.google.com/sheets/about/) (experimental).
 
@@ -159,17 +159,32 @@ Compilation failure:
 ```
 so it likely not doable.
 
-However it is quite easy to allow such flexibility in the data provider class `ExcelParametersProvider` itself by adding an extra class variable named  e.g. `testEnvironment` that would receive its value from e.g. the environment variable named `TEST_ENVIRONMENT` that, when set, would override the data file path value in the test method annotation:
+However it is quite easy to allow such flexibility
+in the data provider class `ExcelParametersProvider` itself by
+adding an extra class variable e.g. `testEnvironment` which would
+load its value from the environment variable named `TEST_ENVIRONMENT`
 ```java
-  @Test(enabled = true, dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
-  @DataFileParameters(name = "data.ods", path = "src/main/resources", debug = false)
-  public void test(double rowNum, String searchKeyword, double expectedCount) throws InterruptedException {
-   dataTest(searchKeyword, expectedCount);
-  }
+private final static String testEnvironment = (System
+    .getenv("TEST_ENVIRONMENT") != null) ? System.getenv("TEST_ENVIRONMENT")
+        : "";
 ```
-in the presence of the environment `TEST_ENVIRONMENT` with the value `dev` will make it read parameters of the test from `src/main/resources/dev/data.ods` rather then `src/main/resources/data.ods`.
+and override the datafile path value provided in the test method annotation:
+```java
+@Test(enabled = true, dataProvider = "OpenOffice Spreadsheet", dataProviderClass = ExcelParametersProvider.class)
+@DataFileParameters(name = "data.ods", path = "src/main/resources", debug = false)
+public void test(double rowNum, String searchKeyword, double expectedCount) throws InterruptedException {
+  dataTest(searchKeyword, expectedCount);
+}
+```
+in the presence of the environment `TEST_ENVIRONMENT` with the value `dev` will make it read parameters of the test from `src/main/resources/dev/data.ods` rather then `src/main/resources/data.ods`:
+```java
+if (testEnvironment != null && testEnvironment != "") {
+  filePath = amendFilePath(filePath);
+}
+```
 
-It is implemented directly in the `ExcelParametersProvider` provider in a very basic fashion as shown below:
+This functionaliy is implemented directly in the `ExcelParametersProvider` provider class
+in a very basic fashion as shown below:
 
 ```java
 public class ExcelParametersProvider
@@ -343,14 +358,14 @@ public void testWithGoogleSheet(String strRowNum, String searchKeyword, String s
 	}
 ```
 
-Here the `name` attibute stores the name of the application, 
-`path` is for the `id` part of the data spreadsheet URL: `https://docs.google.com/spreadsheets/d/${id}`, and optional `sheetName` stores  the name of the sheet. 
+Here the `name` attibute stores the name of the application,
+`path` is for the `id` part of the data spreadsheet URL: `https://docs.google.com/spreadsheets/d/${id}`, and optional `sheetName` stores  the name of the sheet.
 
 ![Google Sheet](https://raw.githubusercontent.com/sergueik/testng-dataproviders/master/screenshots/google_sheet.png)
 
 
-The path to secret file that is required to access the API, is to be defined through the `secretFilePath` attribute. Note: like with other attributes, the 
-the value for annotation attribute `DataFileParameters.secretFilePath` must be a constant expression. 
+The path to secret file that is required to access the API, is to be defined through the `secretFilePath` attribute. Note: like with other attributes, the
+the value for annotation attribute `DataFileParameters.secretFilePath` must be a constant expression.
 The following would not compile:
 ```java
   private static final String SECRET_FILEPATH = Paths
@@ -381,7 +396,7 @@ The secret file:
   }
 }
 ```
-can be stored anywhere on disk outside of source control e.g. under `~/.secret/client_secret.json`. 
+can be stored anywhere on disk outside of source control e.g. under `~/.secret/client_secret.json`.
 It will be loaded once and the credential obtained from oauth would be cached and reused until expiration.
 The credential appears to be valid for approximately one hour.
 Currently the test opens the browser window prompting the user to confirm the access:
@@ -399,7 +414,7 @@ In the future versions, parallel execution of Google Sheet parameterized tests a
   * parallel testing ["best practices"](https://docs.experitest.com/display/TE/Parallel+Tests+-+Best+Practices)
   * [skip TestNG tests based on condition](https://www.lenar.io/skip-testng-tests-based-condition-using-iinvokedmethodlistener/) interface syntax sugar
   * [reading data from google spreadsheet tutorial](https://www.seleniumeasy.com/selenium-tutorials/read-data-from-google-spreadsheet-using-api)
-  * another blog on [testnt data providers backed by excel](https://www.uvdesk.com/en/blog/passing-data-dataprovider-excel-sheet-testng/)
+  * another blog on [testng data providers backed by excel](https://www.uvdesk.com/en/blog/passing-data-dataprovider-excel-sheet-testng/)
   * [apache JMeter Data-Driven Testing](https://dzone.com/articles/implementing-data-driven-testing-using-google-shee) (naturally, in groovy)
   * [Google spreadsheet (older) read method using JAVA](https://dzone.com/articles/reading-data-google)
   * [stackoverflow](https://stackoverflow.com/questions/32860225/read-data-from-google-spreadsheets)
@@ -412,8 +427,8 @@ In the future versions, parallel execution of Google Sheet parameterized tests a
 
 on Linux develpment machine, seem to not be able to launch google tests. After authenticaling o Windows machine, issue disappears
 ```sh
-[ERROR] org.testng.TestNGException: 
+[ERROR] org.testng.TestNGException:
 [ERROR] Cannot find class in classpath: com.github.sergueik.testng.ExcelProviderTest
-``` 
+```
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
