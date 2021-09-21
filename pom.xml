@@ -41,7 +41,7 @@
     <selenium-firefox-driver.version>${selenium.version}</selenium-firefox-driver.version>
     <snakeyaml.version>1.26</snakeyaml.version>
     <testng.version>6.14.3</testng.version>
-    <webdrivermanager.version>5.0.1</webdrivermanager.version>
+    <webdrivermanager.version>5.0.3</webdrivermanager.version>
     <mainClass>EntryPoint</mainClass>
   </properties>
   <dependencies>
