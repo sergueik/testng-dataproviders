@@ -251,7 +251,26 @@ Cell Value: "2.0" class java.lang.Double
 ```
 One can easily make this behavior optional, turn the `TEST_ENVIRONMENT` envirnmant name a separate parameter or switch to store definitions of environment specifics into the property file (this is work in progress). Similar changes will be soon available to
 
+### Caller-Specific Behavior
 
+Sometimes a caller-specific behavior is required from custom data provider.
+See also [accessing ITestContext in DataProvider](https://automated-testing.info/t/testng-kak-poluchit-itestcontext-v-lyuboj-moment-vypolneniya-testa/25973/5)(in Russian)
+This is easy to achieve, since the signature of the method one has to implement is:
+```java
+	@DataProvider(parallel = false, name = "OpenOffice Spreadsheet")
+	public static Object[][] createData_from_OpenOfficeSpreadsheet(final ITestContext context, final Method method) {
+		if (debug) {
+			System.err.println(String.format("Providing data to method: '%s' of test '%s'", method.getName(),
+					context.getCurrentXmlTest().getName()));
+		}
+```
+the test log then will include caller information:
+```text
+Providing data to method: 'testWithOpenOfficeSpreadsheet' of test 'Parse Search Result'
+Opening test
+Reading Open Office Spreadsheet : test
+...
+```
 ### Filtering Data Rows for JUnitParams
 
 In addition to using *every row* of spreadsheet as test parameter one may create a designated column which value
@@ -422,6 +441,7 @@ In the future versions, parallel execution of Google Sheet parameterized tests a
   * [Interact with Google Sheets from Java](https://www.baeldung.com/google-sheets-java-client)
   * very detaled [publication](https://gist.github.com/zmts/802dc9c3510d79fd40f9dc38a12bccfc) on Token-Based Authentication and JSON Web Tokens (JWT) (in Russian)
   * POI-backed Excel row/cell generic class member [serialization annotation](https://github.com/ozlerhakan/poiji) support
+  * [overview of TestNG testing in Java](https://habr.com/ru/post/121234/) (in Russian)
   * Python resources for interacting with Office Excel file (unverified):
      + https://xlsxwriter.readthedocs.io/getting_started.html
      + https://www.geeksforgeeks.org/reading-excel-file-using-python/
@@ -431,6 +451,9 @@ In the future versions, parallel execution of Google Sheet parameterized tests a
   * [About Word files](https://habr.com/ru/post/110019/) (in Russian)
   *  https://www.baeldung.com/java-thread-safety
   * .net  [openmcdf](https://github.com/ironfede/openmcdf) assembly to manipulate the OLE structured storage at low level
+  * generic custom annotation [project](https://github.com/swtestacademy/java_annotation_example) and [documentation](https://www.swtestacademy.com/custom-java-annotations/)
+
+
 ### TODO
 
 on Linux develpment machine, seem to not be able to launch google tests. After authenticaling o Windows machine, issue disappears

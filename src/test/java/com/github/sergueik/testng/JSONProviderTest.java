@@ -1,10 +1,13 @@
 package com.github.sergueik.testng;
 /**
- * Copyright 2018-2019 Serguei Kouzmine
+ * Copyright 2018-2019,2021 Serguei Kouzmine
  */
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import org.testng.ITestContext;
+
+import java.lang.reflect.Method;
 
 public class JSONProviderTest extends CommonTest {
 
@@ -45,6 +48,15 @@ public class JSONProviderTest extends CommonTest {
 	// static disconnected data provider
 	@DataProvider(parallel = true, name = "static disconnected data provider")
 	public Object[][] dataProviderInline() {
+		return new Object[][] { { "junit", 100.0 }, { "testng", 30.0 },
+				{ "spock", 10.0 }, };
+	}
+
+	@DataProvider(parallel = true, name = "static caller aware data provider")
+	public static Object[][] dataProviderInlineWithCaller(
+			final ITestContext context, final Method method) {
+		System.err.println(String.format("Providing data to method: '%s' of test '%s'", method.getName(),
+					context.getCurrentXmlTest().getName()));
 		return new Object[][] { { "junit", 100.0 }, { "testng", 30.0 },
 				{ "spock", 10.0 }, };
 	}

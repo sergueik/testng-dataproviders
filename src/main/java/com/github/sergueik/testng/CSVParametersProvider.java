@@ -1,6 +1,6 @@
 package com.github.sergueik.testng;
 /**
- * Copyright 2017-2019 Serguei Kouzmine
+ * Copyright 2017-2019,2021 Serguei Kouzmine
  */
 
 import java.io.File;
@@ -22,7 +22,8 @@ import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 
 /**
- * @CSVParametersProvider container class for testng dataProvider defining methods for csv
+ * @CSVParametersProvider container class for testng dataProvider defining
+ *                        methods for csv
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 public class CSVParametersProvider {
@@ -37,27 +38,24 @@ public class CSVParametersProvider {
 	private static boolean debug = false;
 
 	@DataProvider(parallel = false, name = "csv")
-	public static String[][] createData_from_csv(final ITestContext context,
-			final Method method) {
-
-		DataFileParameters parameters = method
-				.getAnnotation(DataFileParameters.class);
+	public static String[][] createData_from_csv(final ITestContext context, final Method method) {
+		if (debug) {
+			System.err.println(String.format("Providing data to method: '%s' of test '%s'", method.getName(),
+					context.getCurrentXmlTest().getName()));
+		}
+		DataFileParameters parameters = method.getAnnotation(DataFileParameters.class);
 		if (parameters != null) {
 			filePath = String.format("%s/%s",
-					(parameters.path().isEmpty() || parameters.path().matches("^\\.$"))
-							? System.getProperty("user.dir")
+					(parameters.path().isEmpty() || parameters.path().matches("^\\.$")) ? System.getProperty("user.dir")
 							: Utils.resolveEnvVars(parameters.path()),
 					parameters.name());
-			encoding = parameters.encoding().isEmpty() ? "UTF-8"
-					: parameters.encoding();
+			encoding = parameters.encoding().isEmpty() ? "UTF-8" : parameters.encoding();
 		} else {
-			throw new RuntimeException(
-					"Missing / invalid DataFileParameters annotation");
+			throw new RuntimeException("Missing / invalid DataFileParameters annotation");
 		}
 		int linenum = 0;
 		if (debug) {
-			System.err
-					.println(String.format("Reading configuration file: '%s'", filePath));
+			System.err.println(String.format("Reading configuration file: '%s'", filePath));
 		}
 		try {
 			scanner = new Scanner(new File(filePath));
@@ -70,8 +68,7 @@ public class CSVParametersProvider {
 					}
 					continue;
 				}
-				data = line.split(Pattern.compile("(\\||\\|/)").matcher(separator)
-						.replaceAll("\\\\$1"));
+				data = line.split(Pattern.compile("(\\||\\|/)").matcher(separator).replaceAll("\\\\$1"));
 				testData.add(data);
 			}
 			scanner.close();

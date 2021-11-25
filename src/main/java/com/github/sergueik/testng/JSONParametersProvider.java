@@ -1,6 +1,6 @@
 package com.github.sergueik.testng;
 /**
- * Copyright 2017-2019 Serguei Kouzmine
+ * Copyright 2017-2019,2021 Serguei Kouzmine
  */
 
 // import static org.junit.Assert.assertTrue;
@@ -24,7 +24,8 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 
 /**
- * @JSONParametersProvider container class for testng dataProvider method/ dataProviderClass
+ * @JSONParametersProvider container class for testng dataProvider method/
+ *                         dataProviderClass
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 public class JSONParametersProvider {
@@ -42,32 +43,31 @@ public class JSONParametersProvider {
 	// org.json cannot be resolved to a type
 
 	@DataProvider(parallel = false, name = "JSON")
-	public static Object[][] createDataFromJSON(final ITestContext context,
-			final Method method) throws org.json.JSONException {
+	public static Object[][] createDataFromJSON(final ITestContext context, final Method method)
+			throws org.json.JSONException {
+		if (debug) {
+			System.err.println(String.format("Providing data to method: '%s' of test '%s'", method.getName(),
+					context.getCurrentXmlTest().getName()));
+		}
 
-		JSONDataFileParameters parameters = method
-				.getAnnotation(JSONDataFileParameters.class);
+		JSONDataFileParameters parameters = method.getAnnotation(JSONDataFileParameters.class);
 		if (parameters != null) {
 			filePath = String.format("%s/%s",
-					(parameters.path().isEmpty()
-							|| parameters.path().equalsIgnoreCase("."))
-									? System.getProperty("user.dir")
-									: Utils.resolveEnvVars(parameters.path()),
+					(parameters.path().isEmpty() || parameters.path().equalsIgnoreCase("."))
+							? System.getProperty("user.dir")
+							: Utils.resolveEnvVars(parameters.path()),
 					parameters.name());
-			encoding = parameters.encoding().isEmpty() ? "UTF-8"
-					: parameters.encoding();
+			encoding = parameters.encoding().isEmpty() ? "UTF-8" : parameters.encoding();
 			dataKey = parameters.dataKey();
 			columns = Arrays.asList(parameters.columns().split("(?:\\||,| )"));
 			debug = parameters.debug();
 			if (debug) {
 				System.err.println("file path: " + filePath);
 				System.err.println("data key: " + dataKey);
-				System.err
-						.println("columns: " + Arrays.deepToString(columns.toArray()));
+				System.err.println("columns: " + Arrays.deepToString(columns.toArray()));
 			}
 		} else {
-			throw new RuntimeException(
-					"Missing / invalid JSONDataFileParameters annotation");
+			throw new RuntimeException("Missing / invalid JSONDataFileParameters annotation");
 		}
 
 		JSONObject obj = new JSONObject();
@@ -107,8 +107,7 @@ public class JSONParametersProvider {
 		// NOTE: apparently after invoking org.json.JSON library the order of keys
 		// inside the firstRow will be non-deterministic
 		// https://stackoverflow.com/questions/4515676/keep-the-order-of-the-json-keys-during-json-conversion-to-csv
-		firstRow = firstRow.replaceAll("\n", " ").substring(1,
-				firstRow.length() - 1);
+		firstRow = firstRow.replaceAll("\n", " ").substring(1, firstRow.length() - 1);
 		if (debug)
 			System.err.println("1st row: " + firstRow);
 
@@ -140,24 +139,16 @@ public class JSONParametersProvider {
 			testData.add(testDataRow.toArray());
 
 			/*
-			@SuppressWarnings("unchecked")
-			Iterator<String> entryKeyIterator = entryObj.keys();
-			
-			while (entryKeyIterator.hasNext()) {
-				String entryKey = entryKeyIterator.next();
-				String entryData = entryObj.get(entryKey).toString();
-				// System.err.println(entryKey + " = " + entryData);
-				switch (entryKey) {
-				case "keyword":
-					search_keyword = entryData;
-					break;
-				case "count":
-					expected_count = Double.valueOf(entryData);
-					break;
-				}
-			}
-			testData.add(new Object[] { search_keyword, expected_count });
-			*/
+			 * @SuppressWarnings("unchecked") Iterator<String> entryKeyIterator =
+			 * entryObj.keys();
+			 * 
+			 * while (entryKeyIterator.hasNext()) { String entryKey =
+			 * entryKeyIterator.next(); String entryData =
+			 * entryObj.get(entryKey).toString(); // System.err.println(entryKey + " = " +
+			 * entryData); switch (entryKey) { case "keyword": search_keyword = entryData;
+			 * break; case "count": expected_count = Double.valueOf(entryData); break; } }
+			 * testData.add(new Object[] { search_keyword, expected_count });
+			 */
 		}
 
 		Object[][] testDataArray = new Object[testData.size()][];
