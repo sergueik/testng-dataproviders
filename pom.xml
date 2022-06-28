@@ -33,7 +33,7 @@
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
     <!-- runs ant build.xml script embedded in the pom -->
-    <poi.version>3.17</poi.version>
+    <poi.version>4.1.1</poi.version>
     <poiooxml.version>${poi.version}</poiooxml.version>
     <selenium.version>3.13.0</selenium.version>
     <!-- not all ${selenium.version} -->
