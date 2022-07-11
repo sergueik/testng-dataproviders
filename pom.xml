@@ -4,7 +4,7 @@
   <groupId>com.github.sergueik.testng</groupId>
   <artifactId>dataprovider</artifactId>
   <packaging>jar</packaging>
-  <version>1.15-SNAPSHOT</version>
+  <version>1.16-SNAPSHOT</version>
   <name>testng-dataproviders</name>
   <url>http://maven.apache.org</url>
   <developers>
@@ -33,7 +33,7 @@
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
     <!-- runs ant build.xml script embedded in the pom -->
-    <poi.version>3.17</poi.version>
+    <poi.version>4.1.2</poi.version>
     <poiooxml.version>${poi.version}</poiooxml.version>
     <selenium.version>3.13.0</selenium.version>
     <!-- not all ${selenium.version} -->
@@ -41,7 +41,7 @@
     <selenium-firefox-driver.version>${selenium.version}</selenium-firefox-driver.version>
     <snakeyaml.version>1.26</snakeyaml.version>
     <testng.version>6.14.3</testng.version>
-    <webdrivermanager.version>5.2.0</webdrivermanager.version>
+    <webdrivermanager.version>5.2.1</webdrivermanager.version>
     <mainClass>EntryPoint</mainClass>
   </properties>
   <dependencies>
