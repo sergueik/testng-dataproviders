@@ -1,15 +1,12 @@
 package com.github.sergueik.testng;
 /**
- * Copyright 2017,2019 Serguei Kouzmine
+ * Copyright 2017,2019,2023 Serguei Kouzmine
  */
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-/**
- * Copyright 2017-2019 Serguei Kouzmine
- */
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -584,32 +581,35 @@ public class Utils {
 		// return (result == null) ? null : result.toString();
 	}
 
+	// see also:
+	// https://stackoverflow.com/questions/64423111/javajopendocument-nullpointerexception-when-using-getcellat0-0
 	// https://www.jopendocument.org/docs/org/jopendocument/dom/ODValueType.html
-	public static Object safeOOCellValue(org.jopendocument.dom.spreadsheet.Cell<ODDocument> cell) {
+	public static Object safeOOCellValue(Cell<ODDocument> cell) {
 		if (cell == null) {
 			return null;
 		}
 		Object result;
+		String data = cell.getElement().getValue();
 		ODValueType type = cell.getValueType();
 		switch (type) {
 		case FLOAT:
-			result = Double.valueOf(cell.getValue().toString());
+			result = Double.valueOf(data);
 			break;
 		case STRING:
-			result = cell.getTextValue();
+			result = data;
 			break;
 		case TIME:
 			result = null; // TODO
 			break;
 		case BOOLEAN:
-			result = Boolean.getBoolean(cell.getValue().toString());
+			result = Boolean.getBoolean(data);
 			break;
 		default:
 			throw new IllegalStateException("Can't evaluate cell value");
 		}
-		// return (result == null) ? null : result.toString();
 		return result;
 	}
+
 
 	public List<Object[]> createDataFromGoogleSpreadsheet(String spreadsheetId) {
 		return createDataFromGoogleSpreadsheet(spreadsheetId, "*");
