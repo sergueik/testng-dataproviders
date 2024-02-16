@@ -452,7 +452,24 @@ In the future versions, parallel execution of Google Sheet parameterized tests a
   *  https://www.baeldung.com/java-thread-safety
   * .net  [openmcdf](https://github.com/ironfede/openmcdf) assembly to manipulate the OLE structured storage at low level
   * generic custom annotation [project](https://github.com/swtestacademy/java_annotation_example) and [documentation](https://www.swtestacademy.com/custom-java-annotations/)
+### Note
 
+* upgrading to TestNg verson __7.5.1__ breaks certain tests:
+```sh
+mvn -f pom.xml.BROKEN clean compile test-compile test
+
+```
+```text
+[ERROR] /home/sergueik/src/testng-dataproviders/src/test/java/com/github/sergueik/testng/CommonTest.java:[55,41] cannot find symbol
+  symbol:   method getParameters()
+  location: class org.testng.xml.XmlTest
+[ERROR] /home/sergueik/src/testng-dataproviders/src/test/java/com/github/sergueik/testng/CommonTest.java:[164,49] cannot find symbol
+  symbol:   method getMethod()
+  location: variable testNGMethod of type org.testng.ITestNGMethod
+[ERROR] /home/sergueik/src/testng-dataproviders/src/test/java/com/github/sergueik/testng/CSVProviderTest.java:[62,33] cannot find symbol
+  symbol:   method getParameters()
+  location: class org.testng.xml.XmlTest
+```
 
 ### TODO
 
