@@ -454,22 +454,41 @@ In the future versions, parallel execution of Google Sheet parameterized tests a
   * generic custom annotation [project](https://github.com/swtestacademy/java_annotation_example) and [documentation](https://www.swtestacademy.com/custom-java-annotations/)
 ### Note
 
-* upgrading to TestNg verson __7.5.1__ breaks certain tests:
+* upgrading to TestNg from version __6.14.3__ to verson __7.5.1__ breaks certain tests:
 ```sh
 mvn -f pom.xml.BROKEN clean compile test-compile test
-
 ```
 ```text
-[ERROR] /home/sergueik/src/testng-dataproviders/src/test/java/com/github/sergueik/testng/CommonTest.java:[55,41] cannot find symbol
-  symbol:   method getParameters()
-  location: class org.testng.xml.XmlTest
-[ERROR] /home/sergueik/src/testng-dataproviders/src/test/java/com/github/sergueik/testng/CommonTest.java:[164,49] cannot find symbol
-  symbol:   method getMethod()
-  location: variable testNGMethod of type org.testng.ITestNGMethod
-[ERROR] /home/sergueik/src/testng-dataproviders/src/test/java/com/github/sergueik/testng/CSVProviderTest.java:[62,33] cannot find symbol
-  symbol:   method getParameters()
-  location: class org.testng.xml.XmlTest
+[ERROR] CommonTest.java:[55,41] cannot find symbol
+[ERROR] symbol:   method getParameters()
+[ERROR] location: class org.testng.xml.XmlTest
+[ERROR] CommonTest.java:[164,49] cannot find symbol
+[ERROR] symbol:   method getMethod()
+[ERROR] location: variable testNGMethod of type org.testng.ITestNGMethod
+[ERROR] CSVProviderTest.java:[62,33] cannot find symbol
+[ERROR] symbol:   method getParameters()
+[ERROR] location: class org.testng.xml.XmlTest
 ```
+in the code
+```java
+ITestResult iTestResult;
+ITestNGMethod testNGMethod = iTestResult.getMethod();
+Method testMethod = testNGMethod.getMethod();
+```
+and
+
+```java
+final Map<String, String> parameters = 
+(((TestRunner) context).getTest()).getParameters();
+```
+
+Comparison of the version __6.3__ [interface](https://javadoc.io/doc/org.testng/testng/6.3/org/testng/ITestNGMethod.html)
+with version __7.5__ [interface](https://javadoc.io/doc/org.testng/testng/7.5/org/testng/ITestNGMethod.html)
+
+
+Comparison of the version __6.3__ [interface](https://www.javadoc.io/doc/org.testng/testng/6.3/org/testng/xml/XmlTest.html)
+
+with  version __7.5__ [interface](https://www.javadoc.io/doc/org.testng/testng/7.5/org/testng/xml/XmlTest.html)
 
 ### TODO
 
@@ -480,3 +499,4 @@ on Linux develpment machine, seem to not be able to launch google tests. After a
 ```
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
+  

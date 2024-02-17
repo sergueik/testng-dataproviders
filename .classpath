@@ -28,25 +28,11 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/Serguei/.m2/repository/org/apache/poi/poi/3.17/poi-3.17.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Serguei/.m2/repository/org/apache/poi/poi-ooxml/3.17/poi-ooxml-3.17.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Serguei/.m2/repository/org/apache/poi/poi-ooxml-schemas/3.17/poi-ooxml-schemas-3.17.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Serguei/.m2/repository/org/apache/poi/poi-excelant/3.17/poi-excelant-3.17.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Serguei/.m2/repository/org/jopendocument/jOpenDocument/1.3/jOpenDocument-1.3.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Serguei/.m2/repository/org/json/json/20080701/json-20080701.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Serguei/.m2/repository/org/testng/testng/6.14.3/testng-6.14.3.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="org.testng"/>
-			<attribute name="maven.artifactId" value="testng"/>
-			<attribute name="maven.version" value="6.14.3"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -57,9 +57,10 @@ public class CSVProviderTest {
 		System.err.println("BeforeMethod Method: " + methodName);
 		// String dataProvider = ((IDataProvidable)annotation).getDataProvider();
 		// System.err.println("Data Provider: " + dataProvider);
-		@SuppressWarnings("deprecation")
+		
 		final Map<String, String> parameters = (((TestRunner) context).getTest())
-				.getParameters();
+				.getAllParameters();
+		// findMethodParameters
 		final Set<String> keys = parameters.keySet();
 		for (String key : keys) {
 			System.err.println(

@@ -1,6 +1,6 @@
 package com.github.sergueik.testng;
 /**
- * Copyright 2019 Serguei Kouzmine
+ * Copyright 2019,2024 Serguei Kouzmine
  */
 
 import java.lang.reflect.InvocationTargetException;
@@ -39,20 +39,19 @@ public class CommonTest {
 	// Method handleTestMethodInformation requires 3 parameters but 0 were
 	// supplied in the @Configuration annotation.
 	@BeforeMethod
-	public void handleTestMethodInformation(final ITestContext context,
-			final Method method) {
+	public void handleTestMethodInformation(final ITestContext context, final Method method) {
 		final String suiteName = context.getCurrentXmlTest().getSuite().getName();
 		final String methodName = method.getName();
 		final String testName = context.getCurrentXmlTest().getName();
 		if (debug)
-			System.err.println("BeforeMethod: " + "\tSuite: " + suiteName + "\tTest: "
-					+ testName + "\tMethod: " + methodName);
-		// String dataProvider = ((IDataProvidable)annotation).getDataProvider();
+			System.err.println(
+					"BeforeMethod: " + "\tSuite: " + suiteName + "\tTest: " + testName + "\tMethod: " + methodName);
+		// String dataProvider =
+		// ((IDataProvidable)annotation).getDataProvider();
 		// System.err.println("Data Provider: " + dataProvider);
 		if (debug) {
-			@SuppressWarnings("deprecation")
-			final Map<String, String> parameters = (((TestRunner) context).getTest())
-					.getParameters();
+
+			final Map<String, String> parameters = (((TestRunner) context).getTest()).getAllParameters();
 			final Set<String> keys = parameters.keySet();
 			System.err.print("BeforeMethod Parameters:");
 			for (String key : keys) {
@@ -61,8 +60,7 @@ public class CommonTest {
 			System.err.println("");
 		}
 		if (debug) {
-			final Set<String> attributeNames = ((IAttributes) context)
-					.getAttributeNames();
+			final Set<String> attributeNames = ((IAttributes) context).getAttributeNames();
 			if (attributeNames.size() > 0) {
 				for (String attributeName : attributeNames) {
 					System.err.print("BeforeMethod Attribute: " + attributeName + " = "
@@ -78,19 +76,14 @@ public class CommonTest {
 		// those are obtained via reflection from method signature:
 		// private void dataTest(String keyword, String strCount)
 		/*
-		if (debug) {
-			final Parameter[] methodParameters = method.getParameters();
-			if (methodParameters.length > 0) {
-				System.err.print("Method " + method.getName() + " Parameters:");
-				for (int cnt = 0; cnt != methodParameters.length; cnt++) {
-					Parameter methodParameter = methodParameters[cnt];
-					System.err.print("\t" + methodParameter.getName() + " = "
-							+ methodParameter.toString());
-				}
-				System.err.println("");
-			}
-		}
-		*/
+		 * if (debug) { final Parameter[] methodParameters =
+		 * method.getParameters(); if (methodParameters.length > 0) {
+		 * System.err.print("Method " + method.getName() + " Parameters:"); for
+		 * (int cnt = 0; cnt != methodParameters.length; cnt++) { Parameter
+		 * methodParameter = methodParameters[cnt]; System.err.print("\t" +
+		 * methodParameter.getName() + " = " + methodParameter.toString()); }
+		 * System.err.println(""); } }
+		 */
 	}
 
 	@AfterClass(alwaysRun = true)
@@ -103,27 +96,21 @@ public class CommonTest {
 		Assert.assertTrue(keyword.matches("(?:junit|testng|spock)"));
 		double count = Double.valueOf(strCount);
 		Assert.assertTrue((int) count > 0);
-		System.err.println(
-				String.format("Search keyword:'%s'\tExpected minimum link count: %s",
-						keyword, strCount));
+		System.err.println(String.format("Search keyword:'%s'\tExpected minimum link count: %s", keyword, strCount));
 	}
 
-	protected void dataTestWithMethod(Method method, String keyword,
-			double count) {
-		System.err.println("Method name: " + method.getName()
-				+ "\tParameter count: " + method.getParameterCount());
+	protected void dataTestWithMethod(Method method, String keyword, double count) {
+		System.err.println("Method name: " + method.getName() + "\tParameter count: " + method.getParameterCount());
 
 		Test testMethodTestAnnotation = method.getAnnotation(Test.class);
 		String dataProviderName = testMethodTestAnnotation.dataProvider();
 		if (dataProviderName != null && !dataProviderName.isEmpty()) {
-			System.err.println("Method: " + method.getName() + "\tDataProvider: "
-					+ dataProviderName);
-			DataProvider dataProviderAnnotation = method
-					.getAnnotation(DataProvider.class);
+			System.err.println("Method: " + method.getName() + "\tDataProvider: " + dataProviderName);
+			DataProvider dataProviderAnnotation = method.getAnnotation(DataProvider.class);
 			if (dataProviderAnnotation != null) {
 				String thisDataProviderName = dataProviderAnnotation.name();
-				System.err.println("Method: " + method.getName() + "\tDataProvider: "
-						+ thisDataProviderName + " " + dataProviderAnnotation.toString());
+				System.err.println("Method: " + method.getName() + "\tDataProvider: " + thisDataProviderName + " "
+						+ dataProviderAnnotation.toString());
 			}
 		}
 		dataTest(keyword, count);
@@ -136,57 +123,55 @@ public class CommonTest {
 		// assertionError
 		Assert.assertTrue(keyword.matches("(?:junit|testng|spock|whatever)"));
 		/*
-		Object[] expected = new Object[] { "junit", "testng", "spock" };
-		HashSet<Object> resultHashset = new HashSet<Object>();
-		resultHashset.add(keyword);
-		assertThat(resultHashset, containsInAnyOrder(expected));
-		*/
+		 * Object[] expected = new Object[] { "junit", "testng", "spock" };
+		 * HashSet<Object> resultHashset = new HashSet<Object>();
+		 * resultHashset.add(keyword); assertThat(resultHashset,
+		 * containsInAnyOrder(expected));
+		 */
 		// NOTE: remove one of the alternatives e.g. the "whatever" to trigger
 		// assertionError
-		assertThat(keyword,
-				org.hamcrest.Matchers.isOneOf("junit", "testng", "spock", "whatever"));
+		assertThat(keyword, org.hamcrest.Matchers.isOneOf("junit", "testng", "spock", "whatever"));
 		// NOTE: remove one of the alternatives e.g. the "whatever" to trigger
 		// assertionError
 
 		// NOTE: change to greater to trigger assertionError
 		Assert.assertTrue(((int) count >= 0));
-		System.err.println(
-				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
-						keyword, (int) count));
+		System.err.println(String.format("Search keyword:'%s'\tExpected minimum link count:%d", keyword, (int) count));
 	}
 
 	// based on: https://gist.github.com/ae6rt/3805639
+	// commented:
+	// Will not work with TestNg 7.5+
 	// @Override
+	/*
 	public void onTestStart(ITestResult iTestResult) {
 		// Attempt to count invocations of a DataProvider-instrumented test
 		Object instance = iTestResult.getInstance();
 		ITestNGMethod testNGMethod = iTestResult.getMethod();
 		Method testMethod = testNGMethod.getMethod();
-		if (testMethod.isAnnotationPresent(Test.class)
-		/*
-		&& testMethod.isAnnotationPresent(Count.class)*/) {
+		if (testMethod.isAnnotationPresent(Test.class)) {
 			Test testMethodTestAnnotation = testMethod.getAnnotation(Test.class);
 			String dataProviderName = testMethodTestAnnotation.dataProvider();
 			if (dataProviderName != null && !dataProviderName.isEmpty()) {
 				Class<?> aClass = instance.getClass();
 				Method[] allTestClassMethods = aClass.getMethods();
 				for (Method m : allTestClassMethods) {
-					/*
-					Counting will silently fail for Test classes using a DataProvider defined outside the test class instance itself.
-					The reason is that the following code does not look outside the test class instance for the DataProvider method.
-					 */
+					// NOTE:
+					// Counting will silently fail for Test classes using a
+					// DataProvider defined outside the test class instance
+					// itself. The reason is that the following code does not
+					// look outside the test class instance for the DataProvider
+					// method.
+
 					if (m.isAnnotationPresent(DataProvider.class)) {
-						DataProvider dataProviderAnnotation = m
-								.getAnnotation(DataProvider.class);
+						DataProvider dataProviderAnnotation = m.getAnnotation(DataProvider.class);
 						String thisDataProviderName = dataProviderAnnotation.name();
 						if (dataProviderName.equals(thisDataProviderName)) {
 							try {
 								Object[][] theData = (Object[][]) m.invoke(instance);
 								Integer numberOfDataProviderRows = theData.length;
-								System.out.printf("Executing %s %d / %d\n",
-										iTestResult.getName(),
-										testNGMethod.getCurrentInvocationCount() + 1,
-										numberOfDataProviderRows);
+								System.out.printf("Executing *** %s %d / %d\n", iTestResult.getName(),
+										testNGMethod.getCurrentInvocationCount() + 1, numberOfDataProviderRows);
 							} catch (IllegalAccessException e) {
 								e.printStackTrace();
 							} catch (InvocationTargetException e) {
@@ -198,4 +183,5 @@ public class CommonTest {
 			}
 		}
 	}
+	*/
 }
