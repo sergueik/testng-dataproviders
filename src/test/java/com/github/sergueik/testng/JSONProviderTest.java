@@ -1,6 +1,6 @@
 package com.github.sergueik.testng;
 /**
- * Copyright 2018-2019,2021 Serguei Kouzmine
+ * Copyright 2018-2019,2021,2024 Serguei Kouzmine
  */
 
 import org.testng.annotations.DataProvider;
@@ -11,6 +11,16 @@ import java.lang.reflect.Method;
 
 public class JSONProviderTest extends CommonTest {
 
+	// NOTE: supported the following structure of "data.json":
+	// {
+	//   "test": [
+	//            {
+	//              "keyword": "junit",
+	//              "count": 101,
+	//              "comment": "",
+	//              "other unused column": ""
+	//            },
+	//          ...  
 	@Test(groups = {
 			"json" }, enabled = true, singleThreaded = false, threadPoolSize = 1, invocationCount = 1, description = "# of articless for specific keyword", dataProvider = "JSON", dataProviderClass = JSONParametersProvider.class)
 	@JSONDataFileParameters(name = "data.json", dataKey = "test", columns = "keyword,count"
@@ -55,8 +65,9 @@ public class JSONProviderTest extends CommonTest {
 	@DataProvider(parallel = true, name = "static caller aware data provider")
 	public static Object[][] dataProviderInlineWithCaller(
 			final ITestContext context, final Method method) {
-		System.err.println(String.format("Providing data to method: '%s' of test '%s'", method.getName(),
-					context.getCurrentXmlTest().getName()));
+		System.err
+				.println(String.format("Providing data to method: '%s' of test '%s'",
+						method.getName(), context.getCurrentXmlTest().getName()));
 		return new Object[][] { { "junit", 100.0 }, { "testng", 30.0 },
 				{ "spock", 10.0 }, };
 	}

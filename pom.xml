@@ -4,7 +4,7 @@
   <groupId>com.github.sergueik.testng</groupId>
   <artifactId>dataprovider</artifactId>
   <packaging>jar</packaging>
-  <version>1.17-SNAPSHOT</version>
+  <version>1.18-SNAPSHOT</version>
   <name>testng-dataproviders</name>
   <url>http://maven.apache.org</url>
   <developers>

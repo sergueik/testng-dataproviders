@@ -1,6 +1,6 @@
 package com.github.sergueik.testng;
 /**
- * Copyright 2017-2019,2021 Serguei Kouzmine
+ * Copyright 2017-2019,2021,2024 Serguei Kouzmine
  */
 
 // import static org.junit.Assert.assertTrue;
@@ -36,45 +36,45 @@ public class JSONParametersProvider {
 	private static String encoding = null;
 	private static List<String> columns = new ArrayList<>();
 
-	// TODO: will break with versions of JSON newer than 20080701
-	// [Utils] [ERROR] [Error] java.lang.Error: Unresolved compilation problems:
-	// JSONArray cannot be resolved to a type
-	// JSONObject cannot be resolved to a type
-	// org.json cannot be resolved to a type
-
 	@DataProvider(parallel = false, name = "JSON")
-	public static Object[][] createDataFromJSON(final ITestContext context, final Method method)
-			throws org.json.JSONException {
+	public static Object[][] createDataFromJSON(final ITestContext context,
+			final Method method) throws org.json.JSONException {
 		if (debug) {
-			System.err.println(String.format("Providing data to method: '%s' of test '%s'", method.getName(),
-					context.getCurrentXmlTest().getName()));
+			System.err
+					.println(String.format("Providing data to method: '%s' of test '%s'",
+							method.getName(), context.getCurrentXmlTest().getName()));
 		}
 
-		JSONDataFileParameters parameters = method.getAnnotation(JSONDataFileParameters.class);
+		JSONDataFileParameters parameters = method
+				.getAnnotation(JSONDataFileParameters.class);
 		if (parameters != null) {
 			filePath = String.format("%s/%s",
-					(parameters.path().isEmpty() || parameters.path().equalsIgnoreCase("."))
-							? System.getProperty("user.dir")
-							: Utils.resolveEnvVars(parameters.path()),
+					(parameters.path().isEmpty()
+							|| parameters.path().equalsIgnoreCase("."))
+									? System.getProperty("user.dir")
+									: Utils.resolveEnvVars(parameters.path()),
 					parameters.name());
-			encoding = parameters.encoding().isEmpty() ? "UTF-8" : parameters.encoding();
+			encoding = parameters.encoding().isEmpty() ? "UTF-8"
+					: parameters.encoding();
 			dataKey = parameters.dataKey();
 			columns = Arrays.asList(parameters.columns().split("(?:\\||,| )"));
 			debug = parameters.debug();
 			if (debug) {
 				System.err.println("file path: " + filePath);
 				System.err.println("data key: " + dataKey);
-				System.err.println("columns: " + Arrays.deepToString(columns.toArray()));
+				System.err
+						.println("columns: " + Arrays.deepToString(columns.toArray()));
 			}
 		} else {
-			throw new RuntimeException("Missing / invalid JSONDataFileParameters annotation");
+			throw new RuntimeException(
+					"Missing / invalid JSONDataFileParameters annotation");
 		}
 
 		JSONObject obj = new JSONObject();
 		List<Object[]> testData = new ArrayList<>();
 		List<Object> testDataRow = new LinkedList<>();
 		List<String> hashes = new ArrayList<>();
-
+		JSONObject row = new JSONObject();
 		JSONArray rows = new JSONArray();
 
 		try {
@@ -87,17 +87,15 @@ public class JSONParametersProvider {
 		}
 
 		Assert.assertTrue(obj.has(dataKey));
-		// With JSON >= 20170516
-		// observed org.json.JSONException: JSONObject[&quot;test&quot;] not a
-		// string.
-		String dataString = obj.getString(dataKey);
+
 		try {
-			rows = new JSONArray(dataString);
+			rows = obj.getJSONArray(dataKey);
 		} catch (org.json.JSONException e) {
 			e.printStackTrace();
 		}
 		for (int i = 0; i < rows.length(); i++) {
-			String entry = rows.getString(i);
+			row = rows.getJSONObject(i);
+			String entry = row.toString();
 			hashes.add(entry);
 		}
 		Assert.assertTrue(hashes.size() > 0);
@@ -107,7 +105,8 @@ public class JSONParametersProvider {
 		// NOTE: apparently after invoking org.json.JSON library the order of keys
 		// inside the firstRow will be non-deterministic
 		// https://stackoverflow.com/questions/4515676/keep-the-order-of-the-json-keys-during-json-conversion-to-csv
-		firstRow = firstRow.replaceAll("\n", " ").substring(1, firstRow.length() - 1);
+		firstRow = firstRow.replaceAll("\n", " ").substring(1,
+				firstRow.length() - 1);
 		if (debug)
 			System.err.println("1st row: " + firstRow);
 
